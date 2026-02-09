@@ -1,17 +1,20 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Interactive quantum resonance field visualization with multiple visual modes including Aurora, Nebula, Matrix and Zen.">
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta property="og:title" content="Quantum Resonance Field - Visual Modes">
+    <meta property="og:description" content="Interactive quantum resonance field visualization with multiple visual modes.">
+    <meta property="og:type" content="website">
     <title>Quantum Resonance Field - Visual Modes</title>
     <style>
         :root {
             --nexus-blue: #64c8ff;
             --accent-glow: rgba(100, 200, 255, 0.4);
-            --danger: #ff4b2b;
         }
         * {
             margin: 0;
@@ -204,11 +207,11 @@
         let pulseTimer = 0;
 
         const visualModes = {
-            quantum: { h: 190, s: 100, l: 60, bg: 'rgba(0,0,20,0.2)', speed: 1.2, force: 1.0 },
-            aurora: { h: 150, s: 80, l: 50, bg: 'rgba(5,15,10,0.15)', speed: 0.8, force: 0.7 },
-            nebula: { h: 280, s: 70, l: 45, bg: 'rgba(15,0,20,0.12)', speed: 0.6, force: 0.5 },
-            matrix: { h: 120, s: 100, l: 50, bg: 'rgba(0,15,0,0.25)', speed: 2.2, force: 1.5 },
-            zen: { h: 200, s: 20, l: 75, bg: 'rgba(10,10,15,0.08)', speed: 0.4, force: 0.3 }
+            quantum: { h: 190, s: 100, l: 60, bg: 'rgba(0,0,20,0.2)', speed: 1.2 },
+            aurora: { h: 150, s: 80, l: 50, bg: 'rgba(5,15,10,0.15)', speed: 0.8 },
+            nebula: { h: 280, s: 70, l: 45, bg: 'rgba(15,0,20,0.12)', speed: 0.6 },
+            matrix: { h: 120, s: 100, l: 50, bg: 'rgba(0,15,0,0.25)', speed: 2.2 },
+            zen: { h: 200, s: 20, l: 75, bg: 'rgba(10,10,15,0.08)', speed: 0.4 }
         };
 
         const nodes = [];
@@ -228,18 +231,19 @@
         resize();
 
         class Explosion {
-            constructor(x, y, color) {
+            constructor(x, y, r, g, b) {
                 this.x = x; this.y = y; this.r = 0;
                 this.maxR = 150 + Math.random() * 100;
-                this.color = color;
+                this.cr = r; this.cg = g; this.cb = b;
                 this.alpha = 1.0;
             }
             update() {
                 this.r += 10;
                 this.alpha -= 0.02;
+                if(this.r > this.maxR) this.alpha = 0;
             }
             draw() {
-                ctx.strokeStyle = this.color.replace('rgb', 'rgba').replace(')', `, ${this.alpha})`);
+                ctx.strokeStyle = `rgba(${this.cr},${this.cg},${this.cb},${this.alpha})`;
                 ctx.lineWidth = 2;
                 ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.stroke();
             }
@@ -318,13 +322,15 @@
             }
         }
 
-        canvas.addEventListener('touchstart', e => {
-            if(e.touches.length === 1) {
-                const nx = e.touches[0].clientX;
-                const ny = e.touches[0].clientY;
-                nodes.push(new Node(nx, ny, true));
-                explosions.push(new Explosion(nx, ny, `rgb(255,255,255)`));
-                if(nodes.length > 30) nodes.splice(5, 1);
+        canvas.addEventListener('pointerdown', e => {
+            const nx = e.clientX;
+            const ny = e.clientY;
+            nodes.push(new Node(nx, ny, true));
+            explosions.push(new Explosion(nx, ny, 255, 255, 255));
+            // Remove oldest temp node when over cap
+            if(nodes.length > 30) {
+                const idx = nodes.findIndex(n => n.isTemp);
+                if(idx !== -1) nodes.splice(idx, 1);
             }
         });
 
@@ -332,7 +338,7 @@
             pulseTimer = 20;
             resonance = 1.2;
             document.body.classList.add('shaking');
-            explosions.push(new Explosion(width/2, height/2, `rgb(100,200,255)`));
+            explosions.push(new Explosion(width/2, height/2, 100, 200, 255));
             nodes.forEach(n => {
                 n.vx += (Math.random()-0.5) * 20;
                 n.vy += (Math.random()-0.5) * 20;
@@ -397,11 +403,12 @@
         }
         init();
 
-        let lastFrame = 0;
+        let lastFrame = performance.now();
         function loop(now) {
-            const dt = 1;
-            const fps = Math.round(1000 / (now - lastFrame));
+            const elapsed = now - lastFrame;
             lastFrame = now;
+            const dt = Math.min(elapsed / 16.667, 3);
+            const fps = elapsed > 0 ? Math.round(1000 / elapsed) : 60;
             if(pulseTimer > 0) pulseTimer--;
 
             ctx.fillStyle = visualModes[currentMode].bg;

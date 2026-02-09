@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Quantum Resonance Field - Visual Modes</title>
+    <style>
+        :root {
+            --nexus-blue: #64c8ff;
+            --accent-glow: rgba(100, 200, 255, 0.4);
+            --danger: #ff4b2b;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            touch-action: none;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: block;
+        }
+        .ui {
+            position: fixed;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .ui > * {
+            pointer-events: auto;
+        }
+        .controls {
+            top: 1rem;
+            left: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 0.6rem 1rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        button:active { transform: scale(0.9); background: rgba(255,255,255,0.3); }
+        button.active {
+            background: rgba(100, 200, 255, 0.3);
+            border-color: var(--nexus-blue);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+        #btnQuantum { border-color: var(--nexus-blue); color: var(--nexus-blue); }
+
+        .mode-selector {
+            bottom: 6.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(0,0,0,0.6);
+            padding: 0.8rem;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1);
+            max-width: 95vw;
+            overflow-x: auto;
+        }
+        .mode-btn {
+            padding: 0.6rem;
+            min-width: 4.5rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.7rem;
+            transition: 0.3s;
+        }
+        .mode-btn.active {
+            background: rgba(255,255,255,0.2);
+            border-color: var(--nexus-blue);
+            transform: translateY(-5px);
+        }
+        .info-panel {
+            bottom: 1.5rem;
+            left: 1rem;
+            right: 1rem;
+            background: rgba(0,0,0,0.8);
+            padding: 1rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .status-text {
+            color: var(--nexus-blue);
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 4px;
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            font-size: 0.7rem;
+            opacity: 0.7;
+            font-family: monospace;
+        }
+        .clock {
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.1rem;
+            font-weight: 300;
+            background: rgba(0,0,0,0.4);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .mode-transition {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #fff; opacity: 0; pointer-events: none;
+            z-index: 5; transition: opacity 0.2s;
+        }
+        .mode-transition.active { opacity: 0.2; }
+
+        @keyframes shake {
+            0% { transform: translate(0,0); }
+            25% { transform: translate(2px, -2px); }
+            50% { transform: translate(-2px, 2px); }
+            75% { transform: translate(2px, 2px); }
+            100% { transform: translate(0,0); }
+        }
+        .shaking { animation: shake 0.1s infinite; }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div class="mode-transition" id="modeTransition"></div>
+
+    <div class="ui controls">
+        <button id="btnQuantum">Quantum Pulse</button>
+        <button id="btnEntangle">GHZ Mode</button>
+        <button id="btnGyro">Gyro: OFF</button>
+        <button id="btnReset">Clear</button>
+    </div>
+
+    <div class="ui mode-selector" id="modeSelector">
+        <div class="mode-btn active" data-mode="quantum"><span class="icon">⚛️</span><span>Quantum</span></div>
+        <div class="mode-btn" data-mode="aurora"><span class="icon">🌌</span><span>Aurora</span></div>
+        <div class="mode-btn" data-mode="nebula"><span class="icon">☁️</span><span>Nebula</span></div>
+        <div class="mode-btn" data-mode="matrix"><span class="icon">💻</span><span>Matrix</span></div>
+        <div class="mode-btn" data-mode="zen"><span class="icon">🧘</span><span>Zen</span></div>
+    </div>
+
+    <div class="ui clock" id="clock">00:00:00</div>
+
+    <div class="ui info-panel">
+        <div id="status" class="status-text">SYSTEM READY</div>
+        <div class="stats" id="stats">
+            <span id="stat-fps">FPS: --</span>
+            <span id="stat-res">Power: --</span>
+            <span id="stat-nodes">Active: --</span>
+            <span id="stat-mode">Archive: Quantum</span>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d', { alpha: false });
+        const DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+        let width, height;
+        let time = 0;
+        let resonance = 0.5;
+        let entangled = false;
+        let gyroActive = false;
+        let gyroHandler = null;
+        let gravity = { x: 0, y: 0 };
+        let currentMode = 'quantum';
+        let pulseTimer = 0;
+
+        const visualModes = {
+            quantum: { h: 190, s: 100, l: 60, bg: 'rgba(0,0,20,0.2)', speed: 1.2, force: 1.0 },
+            aurora: { h: 150, s: 80, l: 50, bg: 'rgba(5,15,10,0.15)', speed: 0.8, force: 0.7 },
+            nebula: { h: 280, s: 70, l: 45, bg: 'rgba(15,0,20,0.12)', speed: 0.6, force: 0.5 },
+            matrix: { h: 120, s: 100, l: 50, bg: 'rgba(0,15,0,0.25)', speed: 2.2, force: 1.5 },
+            zen: { h: 200, s: 20, l: 75, bg: 'rgba(10,10,15,0.08)', speed: 0.4, force: 0.3 }
+        };
+
+        const nodes = [];
+        const particles = [];
+        const explosions = [];
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width * DPR;
+            canvas.height = height * DPR;
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+            ctx.scale(DPR, DPR);
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Explosion {
+            constructor(x, y, color) {
+                this.x = x; this.y = y; this.r = 0;
+                this.maxR = 150 + Math.random() * 100;
+                this.color = color;
+                this.alpha = 1.0;
+            }
+            update() {
+                this.r += 10;
+                this.alpha -= 0.02;
+            }
+            draw() {
+                ctx.strokeStyle = this.color.replace('rgb', 'rgba').replace(')', `, ${this.alpha})`);
+                ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.stroke();
+            }
+        }
+
+        class Node {
+            constructor(x, y, isTemp = false) {
+                this.x = x; this.y = y;
+                this.radius = isTemp ? 15 : 25;
+                this.vx = (Math.random() - 0.5) * 4;
+                this.vy = (Math.random() - 0.5) * 4;
+                this.life = 1.0;
+                this.isTemp = isTemp;
+                this.mass = isTemp ? 1 : 2;
+            }
+            update(dt) {
+                const mode = visualModes[currentMode];
+                if(gyroActive) {
+                    this.vx += gravity.x * 0.4;
+                    this.vy += gravity.y * 0.4;
+                }
+
+                if(entangled) {
+                    let dx = width/2 - this.x; let dy = height/2 - this.y;
+                    this.vx += dx * 0.002; this.vy += dy * 0.002;
+                }
+
+                this.x += this.vx * dt * mode.speed;
+                this.y += this.vy * dt * mode.speed;
+
+                if(this.x < 0 || this.x > width) { this.vx *= -0.8; this.x = this.x < 0 ? 0 : width; }
+                if(this.y < 0 || this.y > height) { this.vy *= -0.8; this.y = this.y < 0 ? 0 : height; }
+
+                this.vx *= 0.99; this.vy *= 0.99;
+                if(this.isTemp) this.life -= 0.01 * dt;
+            }
+            draw() {
+                const mode = visualModes[currentMode];
+                const activeRes = resonance + (pulseTimer > 0 ? 0.5 : 0);
+                const alpha = (this.isTemp ? this.life : 0.8) * activeRes;
+                const glow = this.radius * 2 * (0.8 + Math.sin(time*0.1)*0.2);
+
+                const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, glow);
+                grad.addColorStop(0, `hsla(${mode.h}, ${mode.s}%, 80%, ${alpha})`);
+                grad.addColorStop(0.3, `hsla(${mode.h}, ${mode.s}%, 50%, ${alpha*0.4})`);
+                grad.addColorStop(1, `hsla(${mode.h}, ${mode.s}%, 20%, 0)`);
+
+                ctx.fillStyle = grad;
+                ctx.beginPath(); ctx.arc(this.x, this.y, glow, 0, Math.PI*2); ctx.fill();
+            }
+        }
+
+        class Particle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * width; this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 2; this.vy = (Math.random() - 0.5) * 2;
+                this.history = [];
+            }
+            update() {
+                this.history.push({x: this.x, y: this.y});
+                if(this.history.length > 5) this.history.shift();
+                this.x += this.vx; this.y += this.vy;
+                if(this.x < 0 || this.x > width || this.y < 0 || this.y > height) this.reset();
+            }
+            draw() {
+                const mode = visualModes[currentMode];
+                ctx.strokeStyle = `hsla(${mode.h}, ${mode.s}%, 70%, ${resonance * 0.4})`;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                if(this.history.length > 0) {
+                    ctx.moveTo(this.history[0].x, this.history[0].y);
+                    for(let p of this.history) ctx.lineTo(p.x, p.y);
+                }
+                ctx.stroke();
+            }
+        }
+
+        canvas.addEventListener('touchstart', e => {
+            if(e.touches.length === 1) {
+                const nx = e.touches[0].clientX;
+                const ny = e.touches[0].clientY;
+                nodes.push(new Node(nx, ny, true));
+                explosions.push(new Explosion(nx, ny, `rgb(255,255,255)`));
+                if(nodes.length > 30) nodes.splice(5, 1);
+            }
+        });
+
+        document.getElementById('btnQuantum').onclick = () => {
+            pulseTimer = 20;
+            resonance = 1.2;
+            document.body.classList.add('shaking');
+            explosions.push(new Explosion(width/2, height/2, `rgb(100,200,255)`));
+            nodes.forEach(n => {
+                n.vx += (Math.random()-0.5) * 20;
+                n.vy += (Math.random()-0.5) * 20;
+            });
+            setTimeout(() => {
+                document.body.classList.remove('shaking');
+                resonance = 0.5;
+            }, 500);
+        };
+
+        document.getElementById('btnEntangle').onclick = (e) => {
+            entangled = !entangled;
+            e.target.classList.toggle('active', entangled);
+            document.getElementById('status').innerText = entangled ? "GHZ CORRELATION ACTIVE" : "DECOHERENCE DETECTED";
+        };
+
+        document.getElementById('btnGyro').onclick = async (e) => {
+            if(!gyroActive) {
+                if(typeof DeviceOrientationEvent !== 'undefined' && DeviceOrientationEvent.requestPermission) {
+                    const res = await DeviceOrientationEvent.requestPermission();
+                    if(res !== 'granted') return;
+                }
+                gyroHandler = (ev) => {
+                    gravity.x = (ev.gamma || 0) / 30;
+                    gravity.y = ((ev.beta || 0) - 45) / 30;
+                };
+                window.addEventListener('deviceorientation', gyroHandler);
+                gyroActive = true;
+                e.target.innerText = "Gyro: ON"; e.target.classList.add('active');
+            } else {
+                window.removeEventListener('deviceorientation', gyroHandler);
+                gyroHandler = null;
+                gravity.x = 0;
+                gravity.y = 0;
+                gyroActive = false;
+                e.target.innerText = "Gyro: OFF"; e.target.classList.remove('active');
+            }
+        };
+
+        document.getElementById('btnReset').onclick = () => {
+            nodes.length = 0; particles.length = 0; init();
+            explosions.length = 0;
+            document.getElementById('status').innerText = "FIELD CLEARED";
+        };
+
+        document.getElementById('modeSelector').onclick = (e) => {
+            const btn = e.target.closest('.mode-btn');
+            if(!btn) return;
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('modeTransition').classList.add('active');
+            setTimeout(() => {
+                currentMode = btn.dataset.mode;
+                document.getElementById('stat-mode').innerText = "Archive: " + currentMode.toUpperCase();
+                document.getElementById('modeTransition').classList.remove('active');
+            }, 200);
+        };
+
+        function init() {
+            for(let i=0; i<8; i++) nodes.push(new Node(Math.random()*width, Math.random()*height));
+            for(let i=0; i<60; i++) particles.push(new Particle());
+        }
+        init();
+
+        let lastFrame = 0;
+        function loop(now) {
+            const dt = 1;
+            const fps = Math.round(1000 / (now - lastFrame));
+            lastFrame = now;
+            if(pulseTimer > 0) pulseTimer--;
+
+            ctx.fillStyle = visualModes[currentMode].bg;
+            ctx.fillRect(0, 0, width, height);
+
+            ctx.lineWidth = 1 + (pulseTimer/5);
+            ctx.beginPath();
+            const mode = visualModes[currentMode];
+            ctx.strokeStyle = `hsla(${mode.h}, ${mode.s}%, 50%, ${resonance * 0.2})`;
+            for(let i=0; i<nodes.length; i++) {
+                for(let j=i+1; j<nodes.length; j++) {
+                    const d = Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y);
+                    if(d < 180) {
+                        ctx.moveTo(nodes[i].x, nodes[i].y);
+                        ctx.lineTo(nodes[j].x, nodes[j].y);
+                    }
+                }
+            }
+            ctx.stroke();
+
+            for(let i=explosions.length-1; i>=0; i--) {
+                explosions[i].update();
+                explosions[i].draw();
+                if(explosions[i].alpha <= 0) explosions.splice(i, 1);
+            }
+
+            for(let i=nodes.length-1; i>=0; i--) {
+                nodes[i].update(dt);
+                nodes[i].draw();
+                if(nodes[i].isTemp && nodes[i].life <= 0) nodes.splice(i, 1);
+            }
+
+            particles.forEach(p => { p.update(); p.draw(); });
+
+            if(time % 15 === 0) {
+                document.getElementById('stat-fps').innerText = `FPS: ${fps || 60}`;
+                document.getElementById('stat-res').innerText = `Power: ${Math.round((resonance + (pulseTimer/20))*100)}%`;
+                document.getElementById('stat-nodes').innerText = `Active: ${nodes.length}`;
+                const d = new Date();
+                document.getElementById('clock').innerText = d.toLocaleTimeString();
+            }
+
+            time++;
+            requestAnimationFrame(loop);
+        }
+
+        requestAnimationFrame(loop);
+    </script>
+</body>
+</html>

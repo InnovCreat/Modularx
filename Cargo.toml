@@ -1,0 +1,9 @@
+[package]
+name = "nexus-tui"
+version = "0.1.0"
+edition = "2021"
+description = "NEXUS TUI - Sovereign Terminal User Interface. Zero dependencies, pure ANSI escape codes."
+license = "MIT"
+
+# Zero external dependencies - only std
+[dependencies]

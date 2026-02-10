@@ -1,0 +1,13 @@
+[package]
+name = "nexus-eval"
+description = "Tree-walking evaluator for the NEXUS compiler"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+nexus-span = { path = "../nexus-span" }
+nexus-parser = { path = "../nexus-parser" }
+
+[dev-dependencies]
+nexus-lexer = { path = "../nexus-lexer" }

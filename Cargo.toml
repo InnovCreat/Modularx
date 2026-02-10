@@ -1,0 +1,16 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/nexus-span",
+    "crates/nexus-token",
+    "crates/nexus-lexer",
+    "crates/nexus-parser",
+    "crates/nexus-typeck",
+    "crates/nexus-eval",
+    "crates/nexus-tui",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"

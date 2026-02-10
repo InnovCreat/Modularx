@@ -1,0 +1,10 @@
+[package]
+name = "nexus-lexer"
+description = "Lexical analysis for the NEXUS compiler"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+nexus-span = { path = "../nexus-span" }
+nexus-token = { path = "../nexus-token" }

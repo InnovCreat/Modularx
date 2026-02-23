@@ -2,6 +2,10 @@
 _Debug/
 Compiled/
 
+# Rust compiled binaries
+veritas
+veritas_tests
+
 # AudioCache can be rebuilt from sources
 AudioCache/
 

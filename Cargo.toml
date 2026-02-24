@@ -1,0 +1,8 @@
+[package]
+name = "modularx"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "modularx"
+path = "src/lib.rs"

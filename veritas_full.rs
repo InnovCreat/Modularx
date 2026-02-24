@@ -137,6 +137,31 @@ impl QuantumState {
     }
 }
 
+// === Metrics ========================================================
+
+pub fn node_spread(s: &mut QuantumState) -> f64 {
+    if s.dirty { s.refresh(); }
+    if s.base_perturbation.is_empty() { return 0.0; }
+    let sum_sq: f64 = s.base_perturbation.iter()
+        .map(|&bp| (bp * s.amplitude).powi(2))
+        .sum();
+    (sum_sq / s.num_points as f64).sqrt() / 3.0
+}
+
+#[derive(Debug, Clone)]
+pub struct Statistics { pub mean: f64, pub stddev: f64 }
+
+pub fn node_statistics(s: &mut QuantumState) -> Statistics {
+    if s.dirty { s.refresh(); }
+    if s.tension.is_empty() { return Statistics { mean: 0.0, stddev: 0.0 }; }
+    let mean = s.tension.iter().sum::<f64>() / s.tension.len() as f64;
+    let variance = s.tension.iter()
+        .map(|&v| (v - mean).powi(2))
+        .sum::<f64>()
+        / s.tension.len() as f64;
+    Statistics { mean, stddev: variance.sqrt() }
+}
+
 // === MycBook & Monitor ==============================================
 
 pub fn unix_now() -> u64 {
@@ -235,8 +260,9 @@ impl NodeCure {
         }
     }
 
-    pub fn needs_cure(&self, s: &mut QuantumState) -> (bool, CureAction) {
+    pub fn needs_cure(&self, s: &mut QuantumState, monitor: &mut NodeMonitor) -> (bool, CureAction) {
         if s.tension.iter().any(|&v| v.is_nan() || v.is_infinite()) {
+            monitor.alert_violation(ViolationType::NaNDetected, "NaN/Inf in tension");
             return (true, CureAction::EmergencyHalt);
         }
         if s.amplitude > self.thresholds.amplitude_hard_max {
@@ -285,6 +311,7 @@ impl NodeCure {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct CureResult {
     pub applied:          bool,
     pub action:           CureAction,
@@ -342,10 +369,21 @@ pub fn guard_and_cure_cycle(
     }
 
     if !watchdog.check(state, monitor) {
-        return None;
+        // Fallback: attempt one damping cure before halting
+        let fallback = cure.apply(state, monitor);
+        monitor.mycbook.append(
+            EntryKind::Info,
+            &format!("Watchdog fallback cure → amp={:.3}", state.amplitude),
+        );
+        if state.amplitude <= watchdog.max_amp {
+            monitor.alert_harmony("Fallback cure succeeded — watchdog cleared");
+        } else {
+            monitor.alert_violation(ViolationType::WatchdogKill, "Fallback cure insufficient");
+        }
+        return Some(fallback);
     }
 
-    let (needs, _) = cure.needs_cure(state);
+    let (needs, _) = cure.needs_cure(state, monitor);
     if needs {
         Some(cure.apply(state, monitor))
     } else {
@@ -373,8 +411,8 @@ fn main() {
 
     // Drive into chaos — mark_dirty() is required after direct field mutation
     // so refresh() doesn't exit early and update_sig() runs
-    state.amplitude        = 12.0;
-    state.base_perturbation = vec![2.0; 100];
+    state.amplitude         = 7.0;   // 12.0 → watchdog kills; 7.0 → cure runs
+    state.base_perturbation = vec![0.1; 100]; // 2.0×7.0=14.0 > max_spread; 0.1×7.0=0.7 ✓
     state.mark_dirty();
     state.refresh();
 

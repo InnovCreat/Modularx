@@ -14,6 +14,9 @@ pub const LOG_X_SPAN:   f64 = LOG_X_MAX - LOG_X_MIN;
 // std::f64::consts::PHI does not exist — define it manually
 pub const PHI: f64 = 1.618_033_988_749_895_f64;
 
+// Amplitude below which the system is calm ("breathing slow") — no cure, no reset
+pub const CALM_THRESHOLD: f64 = 0.8;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum AutonomyLevel { Minimal = 0, Surveilled = 1, Corrective = 2, Full = 3 }
 
@@ -81,7 +84,7 @@ pub struct QuantumState {
     pub num_points:        usize,
     pub base_perturbation: Vec<f64>,
     pub tension:           Vec<f64>,
-    pub dirty:             bool,
+    pub is_alive:          bool,   // true = amplitude ≥ CALM_THRESHOLD (active/watched)
     pub sig:               u64,
     pub chaos_label:       ChaosLabel,
     pub ternary:           TernaryState,
@@ -94,7 +97,7 @@ impl QuantumState {
             num_points:        n,
             base_perturbation: vec![0.0; n],
             tension:           vec![],
-            dirty:             true,
+            is_alive:          amp >= CALM_THRESHOLD,
             sig:               0,
             chaos_label:       ChaosLabel::Stable,
             ternary:           TernaryState::Neutral,
@@ -103,8 +106,8 @@ impl QuantumState {
         s
     }
 
-    pub fn mark_dirty(&mut self) {
-        self.dirty = true;
+    pub fn mark_alive(&mut self) {
+        self.is_alive = self.amplitude >= CALM_THRESHOLD;
     }
 
     pub fn update_sig(&mut self) {
@@ -128,19 +131,20 @@ impl QuantumState {
     }
 
     pub fn refresh(&mut self) {
-        if !self.dirty { return; }
-        self.tension = self.base_perturbation.iter()
-            .map(|&bp| (BASE_TENSION + bp * self.amplitude).max(0.0))
-            .collect();
-        self.dirty = false;
-        self.update_sig();
+        self.is_alive = self.amplitude >= CALM_THRESHOLD;
+        if self.is_alive {
+            self.tension = self.base_perturbation.iter()
+                .map(|&bp| (BASE_TENSION + bp * self.amplitude).max(0.0))
+                .collect();
+        }
+        self.update_sig(); // always refresh sig so verify_sig() stays valid
     }
 }
 
 // === Metrics ========================================================
 
 pub fn node_spread(s: &mut QuantumState) -> f64 {
-    if s.dirty { s.refresh(); }
+    s.refresh();
     if s.base_perturbation.is_empty() { return 0.0; }
     let sum_sq: f64 = s.base_perturbation.iter()
         .map(|&bp| (bp * s.amplitude).powi(2))
@@ -152,7 +156,7 @@ pub fn node_spread(s: &mut QuantumState) -> f64 {
 pub struct Statistics { pub mean: f64, pub stddev: f64 }
 
 pub fn node_statistics(s: &mut QuantumState) -> Statistics {
-    if s.dirty { s.refresh(); }
+    s.refresh();
     if s.tension.is_empty() { return Statistics { mean: 0.0, stddev: 0.0 }; }
     let mean = s.tension.iter().sum::<f64>() / s.tension.len() as f64;
     let variance = s.tension.iter()
@@ -261,6 +265,10 @@ impl NodeCure {
     }
 
     pub fn needs_cure(&self, s: &mut QuantumState, monitor: &mut NodeMonitor) -> (bool, CureAction) {
+        if !s.is_alive {
+            monitor.mycbook.append(EntryKind::Harmony, "Breathing slow — calm ↓ 0.8");
+            return (false, CureAction::NoCureNeeded);
+        }
         if s.tension.iter().any(|&v| v.is_nan() || v.is_infinite()) {
             monitor.alert_violation(ViolationType::NaNDetected, "NaN/Inf in tension");
             return (true, CureAction::EmergencyHalt);
@@ -287,7 +295,7 @@ impl NodeCure {
 
         self.total_cures += 1;
         s.amplitude *= self.thresholds.damping_factor;
-        s.mark_dirty();
+        s.mark_alive();
         s.refresh();
 
         let spread_after = s.base_perturbation.iter()
@@ -413,7 +421,7 @@ fn main() {
     // so refresh() doesn't exit early and update_sig() runs
     state.amplitude         = 7.0;   // 12.0 → watchdog kills; 7.0 → cure runs
     state.base_perturbation = vec![0.1; 100]; // 2.0×7.0=14.0 > max_spread; 0.1×7.0=0.7 ✓
-    state.mark_dirty();
+    state.mark_alive();
     state.refresh();
 
     println!("\nCycle 2 — chaos");
@@ -472,7 +480,7 @@ mod tests {
     fn refresh_updates_tension() {
         let mut s = QuantumState::new(4, 2.0);
         s.base_perturbation = vec![1.0, 0.5, 0.0, -0.5];
-        s.dirty = true;
+        s.is_alive = true;
         s.refresh();
         // tension[i] = (BASE_TENSION + bp[i] * amplitude).max(0.0)
         assert!((s.tension[0] - (1.0 + 1.0 * 2.0)).abs() < 1e-12); // 3.0

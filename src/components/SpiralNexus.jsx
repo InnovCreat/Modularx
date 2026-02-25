@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Circle, Layers, Cpu, BookOpen, Sparkles, GitBranch, PlayCircle, Pause, Network, Zap } from 'lucide-react';
+import { Circle, Layers, Cpu, BookOpen, Sparkles, GitBranch, PlayCircle, Pause, Network, Zap, Activity, Save, RotateCcw } from 'lucide-react';
 
 // ═══════════════════════════════════════════════════════════════
 // DONNÉES DE LA SPIRALE (Structure conceptuelle)
@@ -1417,6 +1417,589 @@ const ModeActivationCascade = () => {
 };
 
 // ═══════════════════════════════════════════════════════════════
+// MODE 8: SYNAPS VM INTROSPECTION
+// Auto-audit, Confidence Scores, Youden/AUC, Time-Travel
+// Basé sur Section VI - SYNAPS VM: Architectures de la Conscience Calculée
+// ═══════════════════════════════════════════════════════════════
+
+const SYNAPS_INITIAL_STATE = {
+  tick: 0,
+  adaptationLevel: 0.5,
+  weights: [0.5, 0.3, 0.7, 0.4, 0.6, 0.2, 0.8, 0.5],
+  thresholds: {
+    stagnation: 0.001,
+    oscillation: 0.6,
+    denied: 5.0,
+    congestion: 50,
+  },
+  confusion: { tp: 0, fp: 0, tn: 0, fn: 0 },
+  youden: 0.5,
+  auc: 0.5,
+  confidenceScores: {
+    stagnation: 0,
+    oscillation: 0,
+    denialPressure: 0,
+    congestion: 0,
+    urgency: 0,
+  },
+};
+
+function simulateSynapsTick(state) {
+  const next = JSON.parse(JSON.stringify(state));
+  next.tick += 1;
+  const t = next.tick;
+
+  // Simulate weight evolution with subtle patterns
+  next.weights = next.weights.map((w, i) => {
+    const noise = (Math.sin(t * 0.1 + i * 1.7) * 0.03) + (Math.random() - 0.5) * 0.02;
+    const stagnationPull = t > 20 && t < 40 ? -noise * 0.8 : 0;
+    const oscillationPush = t > 50 && t < 70 ? Math.sin(t * 0.8 + i) * 0.05 : 0;
+    return Math.max(0, Math.min(1, w + noise + stagnationPull + oscillationPush));
+  });
+
+  // Confidence scores
+  const weightVariance = next.weights.reduce((sum, w) => {
+    const mean = next.weights.reduce((a, b) => a + b, 0) / next.weights.length;
+    return sum + (w - mean) ** 2;
+  }, 0) / next.weights.length;
+
+  next.confidenceScores.stagnation = 1.0 / (1.0 + weightVariance * 1000);
+  next.confidenceScores.oscillation = Math.min(1, Math.abs(Math.sin(t * 0.15)) * (t > 50 && t < 70 ? 1.5 : 0.3));
+  next.confidenceScores.denialPressure = Math.max(0, Math.sin(t * 0.05) * 0.3 + 0.15);
+  next.confidenceScores.congestion = Math.max(0, Math.sin(t * 0.03 + 1) * 0.25 + 0.1);
+  next.confidenceScores.urgency =
+    next.confidenceScores.stagnation * 0.35 +
+    next.confidenceScores.oscillation * 0.30 +
+    next.confidenceScores.denialPressure * 0.20 +
+    next.confidenceScores.congestion * 0.15;
+
+  // Adapt thresholds via gradient
+  const gradient = Math.sin(t * 0.07) * 0.8;
+  if (gradient > 0.5) {
+    next.thresholds.stagnation *= 0.95;
+    next.thresholds.denied *= 1.05;
+    next.thresholds.oscillation *= 1.02;
+  } else if (gradient < -0.5) {
+    next.thresholds.stagnation *= 1.05;
+    next.thresholds.denied *= 0.95;
+    next.thresholds.oscillation *= 0.98;
+  }
+
+  // Simulate confusion matrix updates
+  const decision = next.confidenceScores.urgency > 0.4;
+  const outcome = Math.random() > (0.35 - next.youden * 0.15);
+  if (decision && outcome) next.confusion.tp += 1;
+  else if (decision && !outcome) next.confusion.fp += 1;
+  else if (!decision && outcome) next.confusion.tn += 1;
+  else next.confusion.fn += 1;
+
+  // Youden Index
+  const { tp, fp, tn, fn: fnc } = next.confusion;
+  const sensitivity = tp + fnc > 0 ? tp / (tp + fnc) : 0;
+  const specificity = tn + fp > 0 ? tn / (tn + fp) : 0;
+  next.youden = Math.max(0, Math.min(1, sensitivity + specificity - 1));
+
+  // AUC (approximated)
+  next.auc = 0.5 + next.youden * 0.25 + Math.sin(t * 0.02) * 0.05;
+  next.auc = Math.max(0.3, Math.min(0.95, next.auc));
+
+  // Adaptation level responds to urgency
+  if (next.confidenceScores.urgency > 0.6) {
+    next.adaptationLevel = Math.min(0.95, next.adaptationLevel + 0.02);
+  } else if (next.confidenceScores.urgency < 0.3) {
+    next.adaptationLevel = Math.max(0.05, next.adaptationLevel - 0.01);
+  }
+
+  return next;
+}
+
+const ModeSynapsIntrospection = () => {
+  const [vmState, setVmState] = useState(JSON.parse(JSON.stringify(SYNAPS_INITIAL_STATE)));
+  const [running, setRunning] = useState(false);
+  const [speed, setSpeed] = useState(200);
+  const [saveSlots, setSaveSlots] = useState(Array(9).fill(null));
+  const [quickSave, setQuickSave] = useState(null);
+  const [autoCheckpoint, setAutoCheckpoint] = useState(null);
+  const [history, setHistory] = useState([]);
+  const [champiLog, setChampiLog] = useState([]);
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const intervalRef = useRef(null);
+
+  const doTick = useCallback(() => {
+    setVmState(prev => {
+      const next = simulateSynapsTick(prev);
+
+      setHistory(h => {
+        const newH = [...h, {
+          tick: next.tick,
+          youden: next.youden,
+          auc: next.auc,
+          urgency: next.confidenceScores.urgency,
+          adaptLevel: next.adaptationLevel,
+        }];
+        return newH.length > 100 ? newH.slice(-100) : newH;
+      });
+
+      // Auto-checkpoint every 20 ticks
+      if (next.tick % 20 === 0) {
+        setAutoCheckpoint(JSON.parse(JSON.stringify(next)));
+        setChampiLog(l => [...l.slice(-50), {
+          tick: next.tick,
+          type: 'auto-save',
+          detail: `Auto-checkpoint at tick ${next.tick} (Youden: ${next.youden.toFixed(3)})`
+        }]);
+      }
+
+      // Log interesting events
+      if (next.confidenceScores.urgency > 0.6) {
+        setChampiLog(l => [...l.slice(-50), {
+          tick: next.tick,
+          type: 'alert',
+          detail: `Urgency ${next.confidenceScores.urgency.toFixed(3)} > 0.6 - adaptation_level raised to ${next.adaptationLevel.toFixed(3)}`
+        }]);
+      }
+      if (next.confidenceScores.stagnation > 0.8) {
+        setChampiLog(l => [...l.slice(-50), {
+          tick: next.tick,
+          type: 'stagnation',
+          detail: `Stagnation detected (${next.confidenceScores.stagnation.toFixed(3)}) - weights frozen`
+        }]);
+      }
+
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (running) {
+      intervalRef.current = setInterval(doTick, speed);
+    }
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [running, speed, doTick]);
+
+  const handleQuickSave = () => {
+    const save = JSON.parse(JSON.stringify(vmState));
+    setQuickSave(save);
+    setChampiLog(l => [...l.slice(-50), { tick: vmState.tick, type: 'save', detail: `Quick Save at tick ${vmState.tick}` }]);
+  };
+
+  const handleQuickLoad = () => {
+    if (!quickSave) return;
+    setVmState(JSON.parse(JSON.stringify(quickSave)));
+    setChampiLog(l => [...l.slice(-50), { tick: quickSave.tick, type: 'load', detail: `Quick Load -> tick ${quickSave.tick}` }]);
+  };
+
+  const handleSlotSave = (i) => {
+    const newSlots = [...saveSlots];
+    newSlots[i] = JSON.parse(JSON.stringify(vmState));
+    setSaveSlots(newSlots);
+    setChampiLog(l => [...l.slice(-50), { tick: vmState.tick, type: 'save', detail: `Saved to slot ${i + 1} at tick ${vmState.tick}` }]);
+  };
+
+  const handleSlotLoad = (i) => {
+    if (!saveSlots[i]) return;
+    setVmState(JSON.parse(JSON.stringify(saveSlots[i])));
+    setChampiLog(l => [...l.slice(-50), { tick: saveSlots[i].tick, type: 'load', detail: `Loaded slot ${i + 1} -> tick ${saveSlots[i].tick}` }]);
+  };
+
+  const ConfidenceGauge = ({ label, value, color, threshold }) => (
+    <div className="flex-1 min-w-0">
+      <div className="flex justify-between text-xs mb-1">
+        <span className="text-gray-400 truncate">{label}</span>
+        <span style={{ color }}>{(value * 100).toFixed(1)}%</span>
+      </div>
+      <div className="h-3 bg-gray-800 rounded overflow-hidden relative">
+        <div
+          className="h-full rounded transition-all"
+          style={{ width: `${value * 100}%`, backgroundColor: color, opacity: 0.8 }}
+        />
+        {threshold !== undefined && (
+          <div
+            className="absolute top-0 h-full w-0.5 bg-white/50"
+            style={{ left: `${threshold * 100}%` }}
+            title={`Seuil: ${(threshold * 100).toFixed(1)}%`}
+          />
+        )}
+      </div>
+    </div>
+  );
+
+  const MetricCard = ({ label, value, color, subtitle }) => (
+    <div className="p-3 bg-black/40 border border-gray-800 rounded">
+      <div className="text-xs text-gray-500">{label}</div>
+      <div className="text-2xl font-bold font-mono" style={{ color }}>
+        {typeof value === 'number' ? value.toFixed(3) : value}
+      </div>
+      {subtitle && <div className="text-xs text-gray-600 mt-0.5">{subtitle}</div>}
+    </div>
+  );
+
+  return (
+    <div className="h-full flex flex-col">
+      {/* Tab bar */}
+      <div className="flex gap-1 p-2 bg-gray-900/50 border-b border-gray-800">
+        {[
+          { id: 'dashboard', label: 'Dashboard' },
+          { id: 'timeseries', label: 'Historique' },
+          { id: 'saveload', label: 'Time-Travel' },
+          { id: 'champi', label: 'Champi Book' },
+        ].map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`px-3 py-1.5 rounded text-xs font-mono ${
+              activeTab === tab.id
+                ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50'
+                : 'text-gray-500 hover:text-gray-300'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+        <div className="ml-auto flex items-center gap-2">
+          <span className="text-xs text-gray-600 font-mono">tick:{vmState.tick}</span>
+          <span className="text-xs font-mono" style={{
+            color: vmState.youden > 0.5 ? '#66ffaa' : vmState.youden > 0.2 ? '#ffaa66' : '#ff6666'
+          }}>
+            J={vmState.youden.toFixed(3)}
+          </span>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 overflow-auto p-4">
+        {activeTab === 'dashboard' && (
+          <div className="space-y-4">
+            {/* Top metrics */}
+            <div className="grid grid-cols-5 gap-3">
+              <MetricCard label="YOUDEN INDEX" value={vmState.youden}
+                color={vmState.youden > 0.5 ? '#66ffaa' : vmState.youden > 0.2 ? '#ffaa66' : '#ff6666'}
+                subtitle={vmState.youden > 0.7 ? 'Discrimination forte' : vmState.youden > 0.3 ? 'Acceptable' : 'Faible'} />
+              <MetricCard label="AUC" value={vmState.auc}
+                color={vmState.auc > 0.7 ? '#66aaff' : '#ffaa66'}
+                subtitle={vmState.auc > 0.8 ? 'Bonne sagesse' : 'En apprentissage'} />
+              <MetricCard label="ADAPT LEVEL" value={vmState.adaptationLevel}
+                color="#dd99ff"
+                subtitle={vmState.adaptationLevel > 0.7 ? 'Haute plasticite' : 'Stable'} />
+              <MetricCard label="URGENCY" value={vmState.confidenceScores.urgency}
+                color={vmState.confidenceScores.urgency > 0.6 ? '#ff6666' : '#66ffaa'}
+                subtitle={vmState.confidenceScores.urgency > 0.6 ? 'Intervention requise' : 'Nominal'} />
+              <MetricCard label="TICK" value={vmState.tick}
+                color="#00ffff" subtitle="639 Hz" />
+            </div>
+
+            {/* Confidence Scores */}
+            <div className="p-4 bg-gray-900/50 border border-gray-800 rounded">
+              <h4 className="text-sm font-bold text-gray-400 mb-3">CONFIDENCE SCORES</h4>
+              <div className="space-y-3">
+                <ConfidenceGauge label="Stagnation (variance -> 0)"
+                  value={vmState.confidenceScores.stagnation} color="#ff9966"
+                  threshold={vmState.thresholds.stagnation * 100} />
+                <ConfidenceGauge label="Oscillation (sign changes)"
+                  value={vmState.confidenceScores.oscillation} color="#ff66aa"
+                  threshold={vmState.thresholds.oscillation} />
+                <ConfidenceGauge label="Denial Pressure (Frontier rejections)"
+                  value={vmState.confidenceScores.denialPressure} color="#ffaa66" />
+                <ConfidenceGauge label="Congestion (queue overflow)"
+                  value={vmState.confidenceScores.congestion} color="#66aaff" />
+                <div className="border-t border-gray-700 pt-2">
+                  <ConfidenceGauge label="URGENCY (0.35*stag + 0.30*osc + 0.20*deny + 0.15*cong)"
+                    value={vmState.confidenceScores.urgency}
+                    color={vmState.confidenceScores.urgency > 0.6 ? '#ff4444' : '#44ff88'} />
+                </div>
+              </div>
+            </div>
+
+            {/* Confusion Matrix + Weights */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 bg-gray-900/50 border border-gray-800 rounded">
+                <h4 className="text-sm font-bold text-gray-400 mb-3">MATRICE DE CONFUSION</h4>
+                <div className="grid grid-cols-3 gap-1 text-center text-xs font-mono">
+                  <div />
+                  <div className="text-green-400 pb-1">Ameliore</div>
+                  <div className="text-red-400 pb-1">Degrade</div>
+                  <div className="text-cyan-400 text-right pr-2">Adapte</div>
+                  <div className="p-2 bg-green-500/20 border border-green-500/30 rounded">
+                    TP: {vmState.confusion.tp}
+                  </div>
+                  <div className="p-2 bg-red-500/20 border border-red-500/30 rounded">
+                    FP: {vmState.confusion.fp}
+                  </div>
+                  <div className="text-cyan-400 text-right pr-2">Inaction</div>
+                  <div className="p-2 bg-blue-500/20 border border-blue-500/30 rounded">
+                    TN: {vmState.confusion.tn}
+                  </div>
+                  <div className="p-2 bg-orange-500/20 border border-orange-500/30 rounded">
+                    FN: {vmState.confusion.fn}
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4 bg-gray-900/50 border border-gray-800 rounded">
+                <h4 className="text-sm font-bold text-gray-400 mb-3">POIDS D'ADAPTATION [0..7]</h4>
+                <div className="space-y-1.5">
+                  {vmState.weights.map((w, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <span className="text-xs text-gray-500 w-4 font-mono">{i}</span>
+                      <div className="flex-1 h-2 bg-gray-800 rounded overflow-hidden">
+                        <div
+                          className="h-full rounded transition-all"
+                          style={{
+                            width: `${w * 100}%`,
+                            backgroundColor: `hsl(${180 + i * 25}, 70%, 60%)`
+                          }}
+                        />
+                      </div>
+                      <span className="text-xs text-gray-400 w-10 text-right font-mono">{w.toFixed(3)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'timeseries' && (
+          <div className="space-y-4">
+            <h4 className="text-sm font-bold text-gray-400">HISTORIQUE (100 derniers ticks)</h4>
+            {history.length < 2 ? (
+              <p className="text-gray-600 text-sm">Lancez la simulation pour voir l'historique</p>
+            ) : (
+              <div className="space-y-4">
+                {/* Mini sparkline charts */}
+                {[
+                  { key: 'youden', label: 'Youden Index', color: '#66ffaa' },
+                  { key: 'auc', label: 'AUC', color: '#66aaff' },
+                  { key: 'urgency', label: 'Urgency', color: '#ff6666' },
+                  { key: 'adaptLevel', label: 'Adaptation Level', color: '#dd99ff' },
+                ].map(metric => {
+                  const values = history.map(h => h[metric.key]);
+                  const min = Math.min(...values);
+                  const max = Math.max(...values);
+                  const range = max - min || 1;
+                  return (
+                    <div key={metric.key} className="p-3 bg-gray-900/50 border border-gray-800 rounded">
+                      <div className="flex justify-between text-xs mb-2">
+                        <span className="text-gray-400">{metric.label}</span>
+                        <span style={{ color: metric.color }}>
+                          {values[values.length - 1]?.toFixed(3)}
+                        </span>
+                      </div>
+                      <div className="flex items-end gap-px h-16">
+                        {values.map((v, i) => (
+                          <div
+                            key={i}
+                            className="flex-1 min-w-0 rounded-t"
+                            style={{
+                              height: `${((v - min) / range) * 100}%`,
+                              minHeight: '2px',
+                              backgroundColor: metric.color,
+                              opacity: 0.3 + (i / values.length) * 0.7
+                            }}
+                          />
+                        ))}
+                      </div>
+                      <div className="flex justify-between text-xs text-gray-600 mt-1">
+                        <span>{min.toFixed(3)}</span>
+                        <span>{max.toFixed(3)}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'saveload' && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-4 mb-2">
+              <h4 className="text-sm font-bold text-gray-400">TIME-TRAVEL DEBUGGING</h4>
+              <span className="text-xs text-gray-600">Style Nintendo - 9 slots + quick + auto</span>
+            </div>
+
+            {/* Quick save/load */}
+            <div className="flex gap-3">
+              <button
+                onClick={handleQuickSave}
+                className="flex-1 px-4 py-3 bg-green-600/20 border border-green-500/50 rounded flex items-center justify-center gap-2 hover:bg-green-600/30 transition-all"
+              >
+                <Save size={14} className="text-green-400" />
+                <span className="text-green-400 text-sm font-mono">Quick Save (F5)</span>
+              </button>
+              <button
+                onClick={handleQuickLoad}
+                disabled={!quickSave}
+                className="flex-1 px-4 py-3 bg-blue-600/20 border border-blue-500/50 rounded flex items-center justify-center gap-2 hover:bg-blue-600/30 transition-all disabled:opacity-30"
+              >
+                <RotateCcw size={14} className="text-blue-400" />
+                <span className="text-blue-400 text-sm font-mono">
+                  Quick Load {quickSave ? `(tick ${quickSave.tick})` : ''}
+                </span>
+              </button>
+            </div>
+
+            {/* Auto checkpoint */}
+            <div className="p-3 bg-gray-900/50 border border-gray-800 rounded">
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-gray-400 font-mono">AUTO-CHECKPOINT (tous les 20 ticks)</span>
+                {autoCheckpoint ? (
+                  <button
+                    onClick={() => {
+                      setVmState(JSON.parse(JSON.stringify(autoCheckpoint)));
+                      setChampiLog(l => [...l.slice(-50), {
+                        tick: autoCheckpoint.tick, type: 'load',
+                        detail: `Auto-checkpoint loaded -> tick ${autoCheckpoint.tick}`
+                      }]);
+                    }}
+                    className="px-3 py-1 bg-yellow-600/20 border border-yellow-500/30 rounded text-xs text-yellow-400 hover:bg-yellow-600/30"
+                  >
+                    Load tick {autoCheckpoint.tick} (J={autoCheckpoint.youden.toFixed(3)})
+                  </button>
+                ) : (
+                  <span className="text-xs text-gray-600">Aucun checkpoint</span>
+                )}
+              </div>
+            </div>
+
+            {/* 9 save slots */}
+            <div className="grid grid-cols-3 gap-3">
+              {saveSlots.map((slot, i) => (
+                <div key={i} className="p-3 bg-gray-900/50 border border-gray-800 rounded">
+                  <div className="text-xs text-gray-500 mb-2 font-mono">SLOT {i + 1}</div>
+                  {slot ? (
+                    <div>
+                      <div className="text-xs text-cyan-400 font-mono mb-1">
+                        Tick {slot.tick} | J={slot.youden.toFixed(3)}
+                      </div>
+                      <div className="text-xs text-gray-500 mb-2">
+                        AUC={slot.auc.toFixed(3)} | Adapt={slot.adaptationLevel.toFixed(3)}
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleSlotSave(i)}
+                          className="flex-1 px-2 py-1 bg-green-500/10 border border-green-500/30 rounded text-xs text-green-400 hover:bg-green-500/20"
+                        >
+                          Overwrite
+                        </button>
+                        <button
+                          onClick={() => handleSlotLoad(i)}
+                          className="flex-1 px-2 py-1 bg-blue-500/10 border border-blue-500/30 rounded text-xs text-blue-400 hover:bg-blue-500/20"
+                        >
+                          Load
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => handleSlotSave(i)}
+                      className="w-full px-2 py-3 border border-dashed border-gray-700 rounded text-xs text-gray-600 hover:border-cyan-500/50 hover:text-cyan-400 transition-all"
+                    >
+                      Sauvegarder ici
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'champi' && (
+          <div className="space-y-2">
+            <div className="flex justify-between items-center mb-2">
+              <h4 className="text-sm font-bold text-gray-400">CHAMPI BOOK - Journal Phenomenologique</h4>
+              <span className="text-xs text-gray-600">{champiLog.length} entrees</span>
+            </div>
+            <div className="bg-black/40 border border-gray-800 rounded p-3 font-mono text-xs space-y-1">
+              {champiLog.length === 0 ? (
+                <p className="text-gray-600">Le journal se remplit pendant la simulation...</p>
+              ) : champiLog.map((entry, i) => (
+                <div key={i} className="flex gap-2 items-start">
+                  <span className="text-gray-600 w-12 flex-shrink-0 text-right">t:{entry.tick}</span>
+                  <span className={`w-16 flex-shrink-0 font-bold ${
+                    entry.type === 'alert' ? 'text-red-400' :
+                    entry.type === 'stagnation' ? 'text-orange-400' :
+                    entry.type === 'save' ? 'text-green-400' :
+                    entry.type === 'load' ? 'text-blue-400' :
+                    'text-yellow-400'
+                  }`}>
+                    [{entry.type}]
+                  </span>
+                  <span className="text-gray-300">{entry.detail}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Controls */}
+      <div className="p-3 bg-gray-900/80 border-t border-cyan-500/30 flex items-center gap-3">
+        <button
+          onClick={() => setRunning(!running)}
+          className={`px-4 py-2 rounded flex items-center gap-2 font-mono text-sm ${
+            running
+              ? 'bg-red-500/20 border border-red-500/50 text-red-400'
+              : 'bg-cyan-500/20 border border-cyan-500/50 text-cyan-400'
+          }`}
+        >
+          {running ? <Pause size={14} /> : <PlayCircle size={14} />}
+          {running ? 'Pause' : 'Run'}
+        </button>
+        <button
+          onClick={doTick}
+          disabled={running}
+          className="px-3 py-2 bg-gray-800 border border-gray-700 rounded text-xs text-gray-400 hover:text-white disabled:opacity-30 font-mono"
+        >
+          Step
+        </button>
+        <div className="flex items-center gap-2 ml-2">
+          <span className="text-xs text-gray-500">Vitesse:</span>
+          <input
+            type="range"
+            min="50"
+            max="500"
+            step="50"
+            value={500 - speed + 50}
+            onChange={(e) => setSpeed(500 - parseInt(e.target.value) + 50)}
+            className="w-24"
+          />
+        </div>
+        <button
+          onClick={() => {
+            setRunning(false);
+            setVmState(JSON.parse(JSON.stringify(SYNAPS_INITIAL_STATE)));
+            setHistory([]);
+            setChampiLog([]);
+            setSaveSlots(Array(9).fill(null));
+            setQuickSave(null);
+            setAutoCheckpoint(null);
+          }}
+          className="px-3 py-2 bg-gray-800 border border-gray-700 rounded text-xs text-gray-400 hover:text-white font-mono ml-auto"
+        >
+          Reset VM
+        </button>
+        <button
+          onClick={handleQuickSave}
+          className="px-3 py-2 bg-green-800/30 border border-green-700/50 rounded text-xs text-green-400 font-mono"
+          title="Quick Save"
+        >
+          <Save size={14} />
+        </button>
+        <button
+          onClick={handleQuickLoad}
+          disabled={!quickSave}
+          className="px-3 py-2 bg-blue-800/30 border border-blue-700/50 rounded text-xs text-blue-400 font-mono disabled:opacity-30"
+          title="Quick Load"
+        >
+          <RotateCcw size={14} />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════
 // COMPOSANT PRINCIPAL - Navigation entre modes
 // ═══════════════════════════════════════════════════════════════
 
@@ -1431,6 +2014,7 @@ export default function SpiralNexus() {
     { id: 'memory', name: 'Spiral Memory', icon: BookOpen, component: ModeSpiralMemory },
     { id: 'graph', name: 'Nexus Graph', icon: Network, component: ModeNexusGraph },
     { id: 'cascade', name: 'Cascade', icon: Zap, component: ModeActivationCascade },
+    { id: 'synaps', name: 'SYNAPS VM', icon: Activity, component: ModeSynapsIntrospection },
   ];
 
   const ActiveComponent = modes.find(m => m.id === activeMode)?.component;
@@ -1443,7 +2027,7 @@ export default function SpiralNexus() {
           <div className="flex items-center gap-3">
             <Sparkles className="text-cyan-400" size={24} />
             <h1 className="text-2xl font-bold text-cyan-400">SPIRAL NEXUS</h1>
-            <span className="text-gray-500 text-sm">Les 7 Modes de Conscience</span>
+            <span className="text-gray-500 text-sm">Les 8 Modes de Conscience</span>
           </div>
           <div className="flex items-center gap-2 text-xs text-gray-500">
             <span>639 Hz</span>

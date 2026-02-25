@@ -30,7 +30,7 @@ game28.dta
 # Log files
 warnings.log
 
-# Node.js
-node_modules/
+# Rust/WASM build
+target/
 dist/
-*.local
+node_modules/

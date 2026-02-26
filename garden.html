@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>SYNAPS VM — Veritas Hortus Garden</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a12;
+    color: #c8b8e8;
+    font-family: 'Courier New', monospace;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px;
+    gap: 32px;
+  }
+  #canvas-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+  canvas {
+    display: block;
+    border: 1px solid #2a1a4a;
+    border-radius: 4px;
+  }
+  #svg-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    pointer-events: none;
+  }
+  #panel {
+    width: 280px;
+    padding-top: 4px;
+  }
+  h1 {
+    font-size: 14px;
+    color: #b88aff;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    font-size: 10px;
+    color: #5a4a7a;
+    margin-bottom: 20px;
+  }
+  .metric { margin-bottom: 14px; }
+  .metric-label {
+    font-size: 11px;
+    color: #8877aa;
+    margin-bottom: 3px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .metric-label span { color: #d0c0f0; }
+  .bar-track {
+    height: 8px;
+    background: #1a1228;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.2s ease, background 0.3s ease;
+  }
+  #ternary-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+    transition: background 0.4s, color 0.4s;
+  }
+  .badge-neg { background: #2a0a0a; color: #ff4444; border: 1px solid #ff3333; }
+  .badge-neu { background: #1a180a; color: #ffcc44; border: 1px solid #ffbb22; }
+  .badge-pos { background: #0a1a0a; color: #44ff88; border: 1px solid #33ff77; }
+  .info-row {
+    font-size: 11px;
+    color: #6655aa;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .info-row span { color: #aa99cc; }
+  #archive {
+    margin-top: 20px;
+    border-top: 1px solid #1a1228;
+    padding-top: 12px;
+  }
+  .archive-title {
+    font-size: 10px;
+    color: #5a4a7a;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .archive-entry {
+    font-size: 10px;
+    color: #5a4a7a;
+    margin-bottom: 5px;
+    line-height: 1.4;
+  }
+  .archive-entry .ts { color: #3a2a5a; margin-right: 6px; }
+  .archive-entry .msg { color: #7a6a9a; }
+  #status-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+    transition: background 0.3s;
+  }
+  #waiting {
+    font-size: 11px;
+    color: #4a3a6a;
+    margin-top: 30px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div id="canvas-wrap">
+  <canvas id="garden" width="500" height="500"></canvas>
+  <svg id="svg-overlay" width="500" height="500"></svg>
+</div>
+
+<div id="panel">
+  <h1>SYNAPS VM</h1>
+  <div class="subtitle">639 Hz · Always for Love</div>
+
+  <div id="ternary-badge" class="badge-neu">NEU</div>
+
+  <div class="info-row">State <span id="vm-state">—</span></div>
+  <div class="info-row">Frame <span id="vm-frame">—</span></div>
+  <div class="info-row">PC <span id="vm-pc">—</span></div>
+  <div class="info-row">Threshold <span id="vm-threshold">—</span></div>
+  <div class="info-row">Rewires <span id="vm-rewires">0</span></div>
+
+  <div class="metric">
+    <div class="metric-label">Youden Index <span id="val-youden">—</span></div>
+    <div class="bar-track"><div class="bar-fill" id="bar-youden"></div></div>
+  </div>
+  <div class="metric">
+    <div class="metric-label">AUC <span id="val-auc">—</span></div>
+    <div class="bar-track"><div class="bar-fill" id="bar-auc"></div></div>
+  </div>
+  <div class="metric">
+    <div class="metric-label">Sensitivity <span id="val-sens">—</span></div>
+    <div class="bar-track"><div class="bar-fill" id="bar-sens"></div></div>
+  </div>
+  <div class="metric">
+    <div class="metric-label">Specificity <span id="val-spec">—</span></div>
+    <div class="bar-track"><div class="bar-fill" id="bar-spec"></div></div>
+  </div>
+
+  <div id="archive">
+    <div class="archive-title">ARCHIVE</div>
+    <div id="archive-list"></div>
+  </div>
+
+  <div id="waiting" style="display:none">Waiting for VM…<br><br>
+    Run: <code>./synaps_vm</code>
+  </div>
+</div>
+
+<script>
+// ── State ──
+const CX = 250, CY = 250;
+let state = null;
+let lastRewires = 0;
+let particles = [];
+let branches = Array.from({length: 8}, (_, i) => ({
+  angle: (i / 8) * Math.PI * 2,
+  len: 0,
+  targetLen: 60,
+  hue: 260 + i * 12,
+}));
+let rewireLines = [];
+
+// ── Canvas ──
+const canvas = document.getElementById('garden');
+const ctx = canvas.getContext('2d');
+const svg = document.getElementById('svg-overlay');
+
+// ── Particles init ──
+for (let i = 0; i < 50; i++) {
+  particles.push({
+    x: Math.random() * 500,
+    y: Math.random() * 500,
+    vx: (Math.random() - 0.5) * 0.4,
+    vy: (Math.random() - 0.5) * 0.4,
+    r: Math.random() * 2 + 1,
+    hue: 190 + Math.random() * 20,
+    alpha: Math.random() * 0.5 + 0.2,
+  });
+}
+
+// ── Bar color ──
+function barColor(v) {
+  if (v > 0.7) return '#44ff88';
+  if (v > 0.4) return '#ffcc44';
+  return '#ff4444';
+}
+
+// ── Set bar ──
+function setBar(id, valId, value, norm) {
+  const pct = Math.max(0, Math.min(1, norm)) * 100;
+  const el = document.getElementById(id);
+  el.style.width = pct + '%';
+  el.style.background = barColor(norm);
+  document.getElementById(valId).textContent = value.toFixed(4);
+}
+
+// ── Update panel ──
+function updatePanel(s) {
+  // Ternary badge
+  const badge = document.getElementById('ternary-badge');
+  badge.textContent = s.ternary;
+  badge.className = 'badge-' + s.ternary.toLowerCase();
+
+  document.getElementById('vm-state').textContent = s.state;
+  document.getElementById('vm-frame').textContent = s.frame;
+  document.getElementById('vm-pc').textContent = s.pc;
+  document.getElementById('vm-threshold').textContent = s.threshold.toFixed(3);
+  document.getElementById('vm-rewires').textContent = s.rewires;
+
+  const youdenNorm = (s.youden + 1) / 2;
+  setBar('bar-youden', 'val-youden', s.youden, youdenNorm);
+  setBar('bar-auc', 'val-auc', s.auc, s.auc);
+  setBar('bar-sens', 'val-sens', s.sensitivity, s.sensitivity);
+  setBar('bar-spec', 'val-spec', s.specificity, s.specificity);
+
+  // Archive
+  const list = document.getElementById('archive-list');
+  list.innerHTML = '';
+  (s.archive || []).slice(0, 6).forEach(e => {
+    const div = document.createElement('div');
+    div.className = 'archive-entry';
+    div.innerHTML = `<span class="ts">${e.moment}</span><span class="msg">${e.trace}</span>`;
+    list.appendChild(div);
+  });
+
+  document.getElementById('waiting').style.display = 'none';
+}
+
+// ── Rewire flash ──
+function flashRewire() {
+  const angle = Math.random() * Math.PI * 2;
+  const len = 60 + Math.random() * 120;
+  const x2 = CX + Math.cos(angle) * len;
+  const y2 = CY + Math.sin(angle) * len;
+  rewireLines.push({ x1: CX, y1: CY, x2, y2, alpha: 1.0 });
+}
+
+// ── SVG lines ──
+function updateSvgLines() {
+  svg.innerHTML = '';
+  rewireLines = rewireLines.filter(l => l.alpha > 0.01);
+  rewireLines.forEach(l => {
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', l.x1);
+    line.setAttribute('y1', l.y1);
+    line.setAttribute('x2', l.x2);
+    line.setAttribute('y2', l.y2);
+    line.setAttribute('stroke', `rgba(180,130,255,${l.alpha.toFixed(3)})`);
+    line.setAttribute('stroke-width', '1');
+    svg.appendChild(line);
+    l.alpha *= 0.88;
+  });
+}
+
+// ── Draw frame ──
+function draw() {
+  ctx.clearRect(0, 0, 500, 500);
+
+  // Background gradient
+  const bg = ctx.createRadialGradient(CX, CY, 0, CX, CY, 260);
+  bg.addColorStop(0, '#0e0820');
+  bg.addColorStop(1, '#06040e');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, 500, 500);
+
+  // Particles
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    if (p.x < 0) p.x = 500;
+    if (p.x > 500) p.x = 0;
+    if (p.y < 0) p.y = 500;
+    if (p.y > 500) p.y = 0;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${p.hue}, 70%, 70%, ${p.alpha})`;
+    ctx.fill();
+  });
+
+  // Youden-driven branch length target
+  const youden = state ? state.youden : 0;
+  const youdenNorm = (youden + 1) / 2; // 0..1
+  branches.forEach(b => {
+    b.targetLen = 40 + youdenNorm * 140;
+    b.len += (b.targetLen - b.len) * 0.05;
+
+    const alpha = 0.3 + youdenNorm * 0.6;
+    const x2 = CX + Math.cos(b.angle) * b.len;
+    const y2 = CY + Math.sin(b.angle) * b.len;
+
+    ctx.beginPath();
+    ctx.moveTo(CX, CY);
+    ctx.lineTo(x2, y2);
+    ctx.strokeStyle = `hsla(${b.hue}, 60%, 65%, ${alpha})`;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Leaf at tip
+    ctx.beginPath();
+    ctx.arc(x2, y2, 3, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${b.hue}, 80%, 75%, ${alpha})`;
+    ctx.fill();
+  });
+
+  // Nucleus
+  const ternary = state ? state.ternary : 'NEU';
+  const nucleusColor = ternary === 'POS' ? '#44ff88' : ternary === 'NEG' ? '#ff4444' : '#ffcc44';
+  const pulse = Math.sin(Date.now() * 0.003) * 4 + 16;
+  const grad = ctx.createRadialGradient(CX, CY, 0, CX, CY, pulse + 8);
+  grad.addColorStop(0, nucleusColor);
+  grad.addColorStop(1, 'transparent');
+  ctx.beginPath();
+  ctx.arc(CX, CY, pulse, 0, Math.PI * 2);
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(CX, CY, 6, 0, Math.PI * 2);
+  ctx.fillStyle = nucleusColor;
+  ctx.fill();
+
+  updateSvgLines();
+}
+
+// ── Fetch state.json ──
+async function updateState() {
+  try {
+    const res = await fetch('state.json?t=' + Date.now());
+    if (!res.ok) throw new Error('not found');
+    const s = await res.json();
+    state = s;
+
+    updatePanel(s);
+
+    if (s.rewires > lastRewires) {
+      for (let i = 0; i < s.rewires - lastRewires; i++) flashRewire();
+      lastRewires = s.rewires;
+    }
+  } catch {
+    state = null;
+    document.getElementById('waiting').style.display = 'block';
+  }
+}
+
+// ── Animation loop ──
+function loop() {
+  draw();
+  requestAnimationFrame(loop);
+}
+
+// ── Start ──
+loop();
+setInterval(updateState, 100);
+updateState();
+</script>
+</body>
+</html>

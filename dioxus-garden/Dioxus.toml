@@ -1,0 +1,25 @@
+[application]
+name = "dioxus-garden"
+default_platform = "web"
+
+[web.app]
+title = "SYNAPS VM — Veritas Hortus Garden"
+base_path = ""
+
+# DEV PROXY — forwards /state.json from the dx serve port to the
+# Python HTTP server running on 8090 (which serves the repo root).
+#
+# Setup (3 terminals from repo root):
+#   Terminal 1: rustc main.rs -O -o synaps_vm && ./synaps_vm
+#   Terminal 2: python3 -m http.server 8090
+#   Terminal 3: cd dioxus-garden && dx serve
+#
+# The proxy makes /state.json available on the same origin as the
+# Dioxus app — no CORS issues.
+[[web.proxy]]
+backend = "http://127.0.0.1:8090/"
+
+[web.watcher]
+# Files that trigger hot-reload
+watch_path = ["src"]
+# Don't watch public/ — state.json changes too often

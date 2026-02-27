@@ -1,33 +1,41 @@
-# CLAUDE.md — Orbital_System / Modularis
+# CLAUDE.md — Veritas Hortus Garden
 
-## 1. Architecture (3 axes)
+**Fréquence : 639 Hz · Always for Love, Never for War, Never for Money**
+
+---
+
+## 1. Architecture souveraine (4 piliers)
 
 ```
-Modularis (framework)
-  └── Luna (living core — Rust structs)
-      ├── Nucleus · Sprites · Chronos · Rituel
-      ├── Couleur · Quantum · Réparation · Archive
-      └── Interface_System
-          └── Visual_System
-              └── Orbital_System  ← CE REPO (Rust/WASM/Leptos)
+Veritas Hortus  ← CE DOCUMENT (philosophie fondatrice — 639 Hz)
+  ├── LunaAI      (intelligence émotionnelle — C++ / LunaScript)
+  │   └── Nucleus · Sprites · Chronos · Rituel
+  │       Couleur · Quantum · Réparation · Archive
+  ├── ModularX    (ce repo — Rust/WASM/Leptos)
+  │   └── Modularis → Orbital_System (visualisation)
+  │       garden.html · main.rs · state.json
+  └── REXOS       (OS kernel souverain)
 ```
 
-**Règle d'or** : Orbital_System *visualise* Luna — il ne contient pas Luna.
-Toute mutation de l'état passe par un rituel ou un signal Leptos. Jamais direct.
+**Règle d'or** : ModularX *visualise* LunaAI — il ne contient pas LunaAI.
+Les 4 piliers sont frères sous Veritas Hortus. Jamais l'un dans l'autre.
+Toute mutation d'état passe par un rituel ou un signal Leptos. Jamais direct.
 
-### Fichiers clés
+---
+
+## 2. Fichiers — ModularX (ce repo)
 
 | Fichier | Rôle |
 |---|---|
+| `garden.html` | Visualisation Veritas Hortus (canvas + Son639 + debug panel) |
+| `main.rs` | SYNAPS VM — zero deps, `rustc main.rs -O -o synaps_vm` |
+| `state.json` | Export live VM → garden.html (toutes les 100ms) |
 | `src/lib.rs` | Point d'entrée Leptos, montage composants |
-| `src/luna.rs` | Structs Luna (Nucleus, Sprite, Chronos…) |
+| `src/luna.rs` | Structs LunaAI (Nucleus, Sprite, Chronos…) |
 | `src/rituels.rs` | Logique des 8 incantations |
 | `src/canvas.rs` | Rendu Canvas 2D via web-sys |
-| `src/archive.rs` | Log des événements système |
-| `Cargo.toml` | Leptos 0.6, wasm-bindgen, web-sys, gloo-timers |
-| `index.html` | Shell HTML minimal pour Trunk |
 
-### Structs principales
+### Structs LunaAI
 
 ```rust
 Nucleus   { gravite: f64, pulsation: f64, etat: EtatNucleus }
@@ -40,27 +48,29 @@ Archive   { entrees: Vec<TraceEntry> }  // max 10 entrées affichées
 
 ---
 
-## 2. Tableau des paramètres INC_ID (rituels)
+## 3. Tableau des paramètres INC_ID (rituels)
 
-| INC_ID | Incantation | mult (tempo) | tremor (blur σ) | son |
-|---|---|---|---|---|
-| INC_01 | `RÉVEIL` | 1.5× | 0 | `son_réveil` |
-| INC_02 | `SOMMEIL` | 0.3× | 0 | `son_sommeil` |
-| INC_03 | `CHAOS` | ×aléatoire 1–4 | 2.0 | `son_chaos` |
-| INC_04 | `HARMONIE` | 1.0× (30°/s fixe) | 0 | `son_harmonie` |
-| INC_05 | `ATTRACTION` | inchangé | 0 | `son_attraction` |
-| INC_06 | `RÉPULSION` | inchangé | 0 | `son_répulsion` |
-| INC_07 | `AURORE` | inchangé | 0 | `son_aurore` |
-| INC_08 | `RÉPARATION` | 1.0× (reset total) | 0 | `son_réparation` |
+| INC_ID | Incantation | mult (tempo) | tremor (blur σ) | son | Hz |
+|---|---|---|---|---|---|
+| INC_01 | `RÉVEIL` | 1.5× | 0 | `son_réveil` | 852 |
+| INC_02 | `SOMMEIL` | 0.3× | 0 | `son_sommeil` | 396 |
+| INC_03 | `CHAOS` | ×aléatoire 1–4 | 2.0 | `son_chaos` | 963 |
+| INC_04 | `HARMONIE` | 1.0× (30°/s fixe) | 0 | `son_harmonie` | 528 |
+| INC_05 | `ATTRACTION` | inchangé | 0 | `son_attraction` | 639 |
+| INC_06 | `RÉPULSION` | inchangé | 0 | `son_répulsion` | 639 |
+| INC_07 | `AURORE` | inchangé | 0 | `son_aurore` | 639 |
+| INC_08 | `RÉPARATION` | 1.0× (reset total) | 0 | `son_réparation` | 639 |
 
 **Contraintes sprite post-rituel :**
 - `distance_centre` : min 50 px · max 200 px (clamper, jamais dépasser)
 - `opacite` CHAOS : oscillation sinusoïdale 0.3–0.7
 - `etat_quantique` RÉPARATION → force `stable` sur tous les sprites
 
+**Son639 (garden.html) :** NEU=639 Hz · POS=528 Hz · NEG=396 Hz → `linearRamp` 1.5s
+
 ---
 
-## 3. Pipeline tick() — 7 étapes ordonnées
+## 4. Pipeline tick() — 7 étapes ordonnées
 
 ```
 1. Lire tempo_global (Chronos) — si !actif → return early, skip tout
@@ -76,28 +86,23 @@ Archive   { entrees: Vec<TraceEntry> }  // max 10 entrées affichées
 7. request_animation_frame → prochain tick
 ```
 
-**Ordre impératif** : gravité (étape 4) s'applique *avant* le rendu (étape 5),
-tempo (étape 1) s'évalue *avant* le calcul d'angle (étape 2).
-
 ---
 
-## 4. Bugs blacklistés (ne pas réintroduire)
+## 5. Bugs blacklistés
 
 | # | Erreur classique | Correction |
 |---|---|---|
-| B1 | Réinitialiser un signal Leptos avec `set_value(default)` dans un `Effect` | Utiliser `create_memo` ou séparer les signaux de reset |
-| B2 | Appeler du JS via `eval()` ou `js_sys::eval` | Toujours passer par `web_sys` + `wasm_bindgen` |
-| B3 | `etat_quantique` traité comme booléen (`true/false`) | C'est un enum : `EtatQuantique::Stable` / `EtatQuantique::Superpose` |
-| B4 | `distance_centre` sans clamp → sprite sort du canvas | Toujours `distance_centre.clamp(50.0, 200.0)` |
-| B5 | `tempo_global` multiplié *après* accumulation d'angle | Multiplier Δt par `tempo_global` *avant* d'ajouter à `angle` |
-| B6 | Constantes nommées `WAVE_*` / `SOUND_*` / `RITUAL_*` | Voir Lexique §5 — préfixe `INC_` obligatoire |
-| B7 | Modifier `Sprite.couleur` directement depuis le canvas | Seul le rituel `AURORE` (INC_07) est autorisé à muter les couleurs |
+| B1 | Réinitialiser un signal Leptos avec `set_value(default)` dans un `Effect` | `create_memo` ou séparer les signaux |
+| B2 | Appeler du JS via `eval()` ou `js_sys::eval` | Toujours `web_sys` + `wasm_bindgen` |
+| B3 | `etat_quantique` traité comme booléen | Enum : `EtatQuantique::Stable/Superpose` |
+| B4 | `distance_centre` sans clamp → sprite sort du canvas | `.clamp(50.0, 200.0)` obligatoire |
+| B5 | `tempo_global` multiplié *après* accumulation d'angle | Multiplier Δt *avant* d'ajouter à `angle` |
+| B6 | Constantes `WAVE_*` / `SOUND_*` / `RITUAL_*` | Préfixe `INC_` obligatoire |
+| B7 | Modifier `Sprite.couleur` hors rituel | Seul `AURORE` (INC_07) mute les couleurs |
 
 ---
 
-## 5. Lexique fermé (nommage canonique)
-
-**Noms de modules — toujours en français :**
+## 6. Lexique fermé (nommage canonique)
 
 | Interdit | Canonique |
 |---|---|
@@ -105,33 +110,28 @@ tempo (étape 1) s'évalue *avant* le calcul d'angle (étape 2).
 | `orbital_radius` | `distance_centre` |
 | `rotation_speed` | `vitesse_rotation` |
 | `nucleus_state` | `etat` (dans `Nucleus`) |
-| `WAVE_*` | `INC_*` (incantations) |
-| `SOUND_*` | `son_*` (champs audio) |
-| `RITUAL_*` | `INC_*` |
-| `repair` | `réparation` |
-| `color` | `couleur` |
-| `time` / `clock` | `chronos` |
+| `WAVE_*` / `SOUND_*` / `RITUAL_*` | `INC_*` / `son_*` / `INC_*` |
+| `repair` / `color` / `time` | `réparation` / `couleur` / `chronos` |
 | `archive_log` | `Archive::push` |
-
-**États enum canoniques :**
 
 ```rust
 EtatNucleus  :: Actif | Latent | Instable
-EtatQuantique:: Stable | Superpose          // pas "Superposé" (accent évité en Rust)
+EtatQuantique:: Stable | Superpose
 CycleType    :: Boucle | PingPong | Unique
 ```
 
-**Voix Archive** : toujours `"Orbital_System"` (pas `"system"`, pas `"orbital"`)
+**Voix Archive** : `"Orbital_System"` — **Voix SYNAPS VM** : `"SYNAPS_VM"`
 
 ---
 
-## 6. Build & dev
+## 7. Build
 
 ```bash
-rustup target add wasm32-unknown-unknown
-cargo install trunk
-trunk serve          # dev → http://127.0.0.1:8080
-trunk build --release  # prod → dist/
-```
+# Garden (Leptos/WASM)
+rustup target add wasm32-unknown-unknown && cargo install trunk
+trunk serve   # → http://127.0.0.1:8080
 
-**Stack** : Leptos 0.6 · wasm-bindgen · web-sys · gloo-timers · Zero JS
+# SYNAPS VM (zero deps)
+rustc main.rs -O -o synaps_vm && ./synaps_vm
+# Ouvre garden.html dans le navigateur → Son639 + visualisation live
+```

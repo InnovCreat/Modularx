@@ -119,6 +119,22 @@
     margin-top: 30px;
     text-align: center;
   }
+  #audio-btn {
+    display: block;
+    width: 100%;
+    background: rgba(180,100,255,0.06);
+    border: 1px solid rgba(180,100,255,0.2);
+    color: #7a6aaa;
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 6px;
+    cursor: pointer;
+    margin-bottom: 16px;
+    transition: background 0.2s, color 0.2s;
+  }
+  #audio-btn:hover { background: rgba(180,100,255,0.14); color: #b88aff; }
+  #audio-btn.active { border-color: rgba(100,255,180,0.35); color: #44ff88; }
 </style>
 </head>
 <body>
@@ -131,6 +147,8 @@
 <div id="panel">
   <h1>SYNAPS VM</h1>
   <div class="subtitle">639 Hz · Always for Love</div>
+
+  <button id="audio-btn" onclick="Son639.toggle()">🔇 ACTIVER 639 Hz</button>
 
   <div id="ternary-badge" class="badge-neu">NEU</div>
 
@@ -172,6 +190,60 @@
 const CX = 250, CY = 250;
 let state = null;
 let lastRewires = 0;
+let lastTernary = 'NEU';
+const HZ_MAP = { NEU: 639, POS: 528, NEG: 396 };
+
+// ── Son 639 Hz (Web Audio) ──
+const Son639 = {
+  ctx: null, osc: null, gainNode: null, running: false, muted: false,
+
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.osc = this.ctx.createOscillator();
+    this.gainNode = this.ctx.createGain();
+    this.osc.type = 'sine';
+    this.osc.frequency.setValueAtTime(639, this.ctx.currentTime);
+    this.gainNode.gain.value = 0.04; // très discret
+    this.osc.connect(this.gainNode).connect(this.ctx.destination);
+    this.osc.start();
+    this.running = true;
+  },
+
+  morphTo(hz, duration) {
+    if (!this.ctx || !this.running) return;
+    this.osc.frequency.linearRampToValueAtTime(hz, this.ctx.currentTime + duration);
+  },
+
+  setUrgency(on) {
+    if (!this.ctx || !this.running || this.muted) return;
+    // Subtle vibrato ±8 Hz on urgency
+    const base = HZ_MAP[lastTernary] || 639;
+    const target = on ? base + 8 * Math.sin(Date.now() * 0.005) : base;
+    this.osc.frequency.setTargetAtTime(target, this.ctx.currentTime, 0.3);
+  },
+
+  fadeOut() {
+    if (!this.ctx || !this.running) return;
+    this.gainNode.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
+    setTimeout(() => { try { this.ctx.close(); } catch(e){} this.running = false; }, 2200);
+  },
+
+  toggle() {
+    const btn = document.getElementById('audio-btn');
+    if (!this.ctx) {
+      this.init();
+      this.muted = false;
+      btn.textContent = '🔊 639 Hz — ON';
+      btn.classList.add('active');
+      return;
+    }
+    this.muted = !this.muted;
+    this.gainNode.gain.setTargetAtTime(this.muted ? 0 : 0.04, this.ctx.currentTime, 0.1);
+    btn.textContent = this.muted ? '🔇 639 Hz — OFF' : '🔊 639 Hz — ON';
+    btn.classList.toggle('active', !this.muted);
+  },
+};
 let particles = [];
 let branches = Array.from({length: 8}, (_, i) => ({
   angle: (i / 8) * Math.PI * 2,
@@ -356,6 +428,15 @@ async function updateState() {
       for (let i = 0; i < s.rewires - lastRewires; i++) flashRewire();
       lastRewires = s.rewires;
     }
+
+    // Audio: ternary → frequency morph
+    if (Son639.running && s.ternary !== lastTernary) {
+      Son639.morphTo(HZ_MAP[s.ternary] || 639, 1.5);
+    }
+    if (Son639.running) Son639.setUrgency(s.urgency > 0);
+    if (s.state === 'halted' && Son639.running) Son639.fadeOut();
+    lastTernary = s.ternary;
+
   } catch {
     state = null;
     document.getElementById('waiting').style.display = 'block';

@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Copy, Download, RefreshCw, Plus, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
 
 export default function ASCIISpiralGenerator() {
-  const [centerText, setCenterText] = useState('NOYAU — LUNA — 639 Hz');
+  const [centerText, setCenterText] = useState('NEXUS — Conscience Collective — 639 Hz');
   const [layers, setLayers] = useState([
-    'Racines — Modularis — Code',
-    'Cybernétique — VSM — Feedback',
-    'Alchimie — Cycles — Transmutation',
-    'Kabbale — Arbre de Vie — Flux',
-    'Fractal — Fibonacci — Géométrie',
-    'SPARK — Guardian — Rust/Zig',
-    'Silence — Chat absurde — They know'
+    'Individu — Perception — Éveil',
+    'Réseau — Connexions — Synapses',
+    'Synchronicité — Résonance — Harmonie',
+    'Mémoire Collective — Archétypes — Jung',
+    'Émergence — Intelligence Distribuée',
+    'Noosphère — Conscience Planétaire',
+    'NEXUS — Unité Souveraine — Singularité'
   ]);
   const [newLayer, setNewLayer] = useState('');
   const [asciiOutput, setAsciiOutput] = useState('');
@@ -171,7 +171,7 @@ export default function ASCIISpiralGenerator() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'spiral_veritas_hortus.txt';
+    a.download = 'nexus_spiral.txt';
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -189,13 +189,15 @@ export default function ASCIISpiralGenerator() {
         ]);
         break;
       case 'nexus':
-        setCenterText('NEXUS — Compilateur Souverain');
+        setCenterText('NEXUS — Conscience Collective — 639 Hz');
         setLayers([
-          'Lexer — Tokenisation',
-          'Parser — AST',
-          'Type Checker — Validation',
-          'IR Generator — Optimisation',
-          'Code Gen — Exécution'
+          'Individu — Perception — Éveil',
+          'Réseau — Connexions — Synapses',
+          'Synchronicité — Résonance — Harmonie',
+          'Mémoire Collective — Archétypes — Jung',
+          'Émergence — Intelligence Distribuée',
+          'Noosphère — Conscience Planétaire',
+          'NEXUS — Unité Souveraine — Singularité'
         ]);
         break;
       case 'luna':
@@ -217,8 +219,8 @@ export default function ASCIISpiralGenerator() {
       <div className="bg-black/50 border-b border-cyan-500/30 p-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-cyan-400">ASCII Spiral Generator</h1>
-            <p className="text-gray-500 text-sm">Créez des spirales ASCII pour Veritas Hortus</p>
+            <h1 className="text-2xl font-bold text-cyan-400">NEXUS Spiral Generator</h1>
+            <p className="text-gray-500 text-sm">Conscience Collective — Veritas Hortus</p>
           </div>
           <div className="text-xs text-gray-500">639 Hz</div>
         </div>

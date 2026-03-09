@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<!-- 𝕀⟡₆₃₉ — Veritas Hortus · Orbital_System -->
+<!-- never for war, never for money, always for love — Isabel, 2025–2026 -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>𝕀⟡₆₃₉ — Phi Spiral with Glowing Shader</title>
+  <style> body { margin:0; overflow:hidden; background:#000; } </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+</head>
+<body>
+  <script type="module">
+    import { PHI, GOLDEN_ANGLE, generateSpiralPoints } from '../core/sltq-core.js';
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x000814);
+
+    const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 2000);
+    camera.position.set(0, 80, 400);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(innerWidth, innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // ─── Custom Shader for glowing, pulsing nodes ──────────────────────────────
+    const vertexShader = `
+      attribute float nodeState;      // -1 blocked, 0 neutral, +1 living
+      attribute float nodeIndex;      // for phase offset
+      uniform float uTime;
+      uniform float uPulseFreq;       // ~639 Hz feel → slow visual pulse
+      varying vec3 vColor;
+      varying float vGlow;
+      void main() {
+        vec3 pos = position;
+        // Gentle breathing / pulsing based on state + time
+        float pulse = sin(uTime * uPulseFreq + nodeIndex * 0.4) * 0.5 + 0.5;
+        float scale = 1.0 + pulse * 0.3 * (nodeState + 1.0) * 0.5;
+        pos *= scale;
+        // Slight orbit wobble for life feel
+        float angle = uTime * 0.1 + nodeIndex;
+        pos.x += sin(angle) * 2.0 * (abs(nodeState) + 0.1);
+        pos.y += cos(angle) * 2.0 * (abs(nodeState) + 0.1);
+        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+        gl_Position = projectionMatrix * mvPosition;
+        gl_PointSize = 12.0 * scale;
+        // Color by state (639-inspired palette)
+        if (nodeState > 0.5)       vColor = vec3(0.0, 1.0, 0.4);   // living green-cyan
+        else if (nodeState < -0.5) vColor = vec3(0.8, 0.1, 0.2);   // blocked warm red
+        else                       vColor = vec3(0.5, 0.5, 0.6);   // neutral
+        vGlow = pulse * (nodeState * 0.5 + 0.5);
+      }
+    `;
+
+    const fragmentShader = `
+      varying vec3 vColor;
+      varying float vGlow;
+      void main() {
+        vec2 coord = gl_PointCoord - vec2(0.5);
+        float dist = length(coord) * 2.0;
+        float alpha = 1.0 - smoothstep(0.0, 1.0, dist);
+        float glow = exp(-dist * 3.0) * vGlow * 1.5;
+        vec3 finalColor = vColor * (alpha + glow);
+        gl_FragColor = vec4(finalColor, alpha * 0.9 + glow * 0.6);
+      }
+    `;
+
+    // ─── Build Points ──────────────────────────────────────────────────────────
+    const pointsData = generateSpiralPoints(800, 2.2);
+    const geometry   = new THREE.BufferGeometry();
+    const positions  = new Float32Array(pointsData.length * 3);
+    const states     = new Float32Array(pointsData.length);
+    const indices    = new Float32Array(pointsData.length);
+
+    pointsData.forEach((p, i) => {
+      const idx = i * 3;
+      positions[idx]     = p.x;
+      positions[idx + 1] = p.y;
+      positions[idx + 2] = p.z;
+      states[i]  = p.state;
+      indices[i] = i;
+    });
+
+    geometry.setAttribute('position',  new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('nodeState', new THREE.BufferAttribute(states, 1));
+    geometry.setAttribute('nodeIndex', new THREE.BufferAttribute(indices, 1));
+
+    const material = new THREE.ShaderMaterial({
+      uniforms: {
+        uTime:      { value: 0 },
+        uPulseFreq: { value: 0.8 }
+      },
+      vertexShader,
+      fragmentShader,
+      transparent: true,
+      depthWrite:  false,
+      blending:    THREE.AdditiveBlending
+    });
+
+    const particles = new THREE.Points(geometry, material);
+    scene.add(particles);
+
+    // ─── Animation Loop ────────────────────────────────────────────────────────
+    const clock = new THREE.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      const t = clock.getElapsedTime();
+      material.uniforms.uTime.value = t;
+      camera.position.x = Math.sin(t * 0.05) * 450;
+      camera.position.z = Math.cos(t * 0.05) * 450;
+      camera.lookAt(0, 0, 0);
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
+  </script>
+</body>
+</html>

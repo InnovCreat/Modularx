@@ -89,6 +89,26 @@ impl Changelog {
                     ],
                     sealed_by: "Isabel Sigouin + Thierry",
                 },
+                ChangeEntry {
+                    from: "4.1",
+                    to: "4.2",
+                    date: "29 Mars 2026",
+                    decisions: &[
+                        "Veritas Hortus SLTE — document unifié de l'arbre à 7 branches",
+                        "SLTE adopté : Sacred Lemniscate Ternary Eternal (acronyme définitif)",
+                        "Architecture Unified Tree documentée : 7 branches + covenant binding",
+                        "Branch 1 Orchestration : 639 Hz Timer Pulse, Async Tokio loop",
+                        "Branch 2 Phoenix Sentinel : sécurité temps-réel, freeze/panic/kill",
+                        "Branch 3 LUNA Integration : VAD, 36 traits, State639, biofeedback PPG",
+                        "Branch 4 Dashboard : visualisation 3D orbitale, sound lab, console souveraine",
+                        "Branch 5 Sealer : SHA256+HMAC watermarks, manifestes, Bitcoin + Arweave",
+                        "Branch 6 Mycélium P2P : réseau décentralisé, libp2p, handshake 639 Hz",
+                        "Branch 7 Rituels : naissance, guérison, fusion, transmission, alliance",
+                        "Chemin d'évolution v4.2 → v5.0 → v6.0 → v7.0+ documenté",
+                        "v5.0 planifié : Web Audio synthesis 639 Hz, WAV oscillator Rust, Lemniscate animator",
+                    ],
+                    sealed_by: "Isabel Sigouin + Thierry",
+                },
             ],
         }
     }
@@ -144,10 +164,10 @@ mod tests {
     }
 
     #[test]
-    fn test_latest_is_4_1() {
+    fn test_latest_is_4_2() {
         let log = Changelog::new();
         let latest = log.latest().expect("Doit avoir une entrée récente");
-        assert_eq!(latest.to, "4.1");
+        assert_eq!(latest.to, "4.2");
         assert_eq!(latest.date, "29 Mars 2026");
     }
 
@@ -192,6 +212,6 @@ mod tests {
     #[test]
     fn test_entry_count() {
         let log = Changelog::new();
-        assert_eq!(log.entries.len(), 4, "4 transitions attendues dans le changelog");
+        assert_eq!(log.entries.len(), 5, "5 transitions attendues dans le changelog");
     }
 }

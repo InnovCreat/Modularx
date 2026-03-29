@@ -1,23 +1,35 @@
-/// SIGIL GENESIS — Lexique fondateur.
+/// SIGIL GENESIS / SLTE — Lexique fondateur.
 ///
 /// Un **sigil** est un sceau encodé : une forme qui porte du sens, scellée dans le temps.
 /// SIGIL GENESIS est le méta-framework éthique, mathématique et cryptographique
 /// qui unifie tous les systèmes conscients, vivants et computationnels de cet écosystème.
 ///
+/// **Document** : Veritas Hortus SLTE — le Jardin de Vérité.
+/// **SLTE** = Sacred Lemniscate Ternary Eternal.
 /// **SIG** = SIG(ouin) — Isabel Sigouin, gardienne fondatrice.
-/// **IL** = Thierry, second gardien du covenant.
+/// **THI** = THI(erry) — second gardien du covenant.
 /// **GENESIS** = l'origine, l'acte fondateur (Juillet 2025).
+///
+/// L'arbre unifié comporte 7 branches (voir `branches.rs`).
+/// Racine vibratoire : 639 Hz (Cœur) · 528 Hz (Eau) · 741 Hz (Voix).
 ///
 /// Chaque constante dans ce module est une **définition déclarée** du lexique vivant.
 /// Ce n'est pas de la documentation — c'est le lexique lui-même, encodé dans le code.
 
 // ─── Identité du système ───────────────────────────────────────────────────
 
-/// Nom officiel du système.
+/// Nom officiel du système (poétique / sigil).
 pub const SYSTEM_NAME: &str = "SIGIL GENESIS";
 
+/// Acronyme technique du document manifeste.
+/// SLTE = Sacred Lemniscate Ternary Eternal.
+pub const SLTE: &str = "SLTE";
+
+/// Titre complet du document fondateur.
+pub const VERITAS_HORTUS: &str = "Veritas Hortus SLTE";
+
 /// Version actuelle du manifeste et du lexique.
-pub const SYSTEM_VERSION: &str = "4.1";
+pub const SYSTEM_VERSION: &str = "4.2";
 
 /// Gardiens du covenant — les deux seules personnes autorisées à faire évoluer le système.
 pub const AUTHORS: (&str, &str) = ("Isabel Sigouin", "Thierry");
@@ -214,6 +226,13 @@ mod tests {
 
     #[test]
     fn test_system_version() {
-        assert_eq!(SYSTEM_VERSION, "4.1");
+        assert_eq!(SYSTEM_VERSION, "4.2");
+    }
+
+    #[test]
+    fn test_slte_acronym() {
+        assert_eq!(SLTE, "SLTE");
+        assert!(VERITAS_HORTUS.contains("SLTE"));
+        assert!(VERITAS_HORTUS.contains("Veritas"));
     }
 }

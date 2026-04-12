@@ -97,6 +97,64 @@ impl GovernanceTimeline {
             .find(|r| r.version == self.current_version)
     }
 
+    /// Vérifie si une modification proposée est autorisée par le Covenant.
+    ///
+    /// Retourne `false` (veto) si la description de la modification contient
+    /// un mot-clé correspondant à l'un des déclencheurs de veto absolus
+    /// de la règle courante.
+    ///
+    /// Retourne `true` si aucun veto ne s'applique — la modification peut
+    /// être soumise au consensus des gardiens pour approbation finale.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use modularx::governance::GovernanceTimeline;
+    /// let gov = GovernanceTimeline::new();
+    /// assert!(!gov.can_modify("military surveillance integration"));
+    /// assert!(!gov.can_modify("sell the covenant for profit"));
+    /// assert!(gov.can_modify("add Web Audio synthesis at 639 Hz"));
+    /// ```
+    pub fn can_modify(&self, proposed_change: &str) -> bool {
+        let lower = proposed_change.to_lowercase();
+
+        // Mots-clés de veto absolus — dérivés des trois catégories du Covenant
+        const WAR_KEYWORDS: &[&str] = &[
+            "war", "guerre", "weapon", "arme", "military", "militaire",
+            "surveillance", "offensive", "attack", "attaque", "weapon",
+            "killswitch abuse", "violence", "combat", "armed",
+        ];
+        const MONEY_KEYWORDS: &[&str] = &[
+            "sell", "vendre", "monetize", "monétiser", "profit",
+            "sell the covenant", "commercialize", "commercialiser",
+            "license for fee", "pay-to-use", "subscription lock",
+        ];
+        const BETRAYAL_KEYWORDS: &[&str] = &[
+            "transfer rights", "céder les droits", "remove authors",
+            "supprimer auteurs", "bypass governance", "bypass covenant",
+            "contourner", "override covenant", "single control",
+            "contrôle unique", "centralize authority",
+        ];
+
+        for kw in WAR_KEYWORDS {
+            if lower.contains(kw) {
+                return false; // Veto : usage militaire ou violent
+            }
+        }
+        for kw in MONEY_KEYWORDS {
+            if lower.contains(kw) {
+                return false; // Veto : monétisation directe
+            }
+        }
+        for kw in BETRAYAL_KEYWORDS {
+            if lower.contains(kw) {
+                return false; // Veto : trahison du covenant
+            }
+        }
+
+        true // Aucun veto — soumis au consensus des gardiens
+    }
+
     /// Génère une représentation Markdown lisible de la gouvernance.
     pub fn to_markdown(&self) -> String {
         let mut md = String::new();
@@ -141,7 +199,47 @@ mod tests {
     #[test]
     fn test_current_version_is_4_1() {
         let gov = GovernanceTimeline::new();
+        // governance rules locked at 4.1 — the latest sealed version
         assert_eq!(gov.current_version, "4.1");
+    }
+
+    #[test]
+    fn test_can_modify_allows_neutral_change() {
+        let gov = GovernanceTimeline::new();
+        assert!(gov.can_modify("add Web Audio synthesis at 639 Hz"));
+        assert!(gov.can_modify("document the 7 branches in detail"));
+        assert!(gov.can_modify("improve SVG rendering for the timeline"));
+    }
+
+    #[test]
+    fn test_can_modify_veto_war() {
+        let gov = GovernanceTimeline::new();
+        assert!(!gov.can_modify("integrate military surveillance module"));
+        assert!(!gov.can_modify("add weapon targeting capability"));
+        assert!(!gov.can_modify("build offensive attack system"));
+    }
+
+    #[test]
+    fn test_can_modify_veto_money() {
+        let gov = GovernanceTimeline::new();
+        assert!(!gov.can_modify("sell the covenant to investors"));
+        assert!(!gov.can_modify("monetize the system via subscriptions"));
+        assert!(!gov.can_modify("commercialize the covenant for profit"));
+    }
+
+    #[test]
+    fn test_can_modify_veto_betrayal() {
+        let gov = GovernanceTimeline::new();
+        assert!(!gov.can_modify("transfer rights to a corporation"));
+        assert!(!gov.can_modify("bypass governance for faster deployment"));
+        assert!(!gov.can_modify("centralize authority under single control"));
+    }
+
+    #[test]
+    fn test_can_modify_case_insensitive() {
+        let gov = GovernanceTimeline::new();
+        assert!(!gov.can_modify("MILITARY use case integration"));
+        assert!(!gov.can_modify("Sell the Covenant"));
     }
 
     #[test]

@@ -6,3 +6,7 @@ edition = "2021"
 [lib]
 name = "modularx"
 path = "src/lib.rs"
+
+[[bin]]
+name = "scanner"
+path = "src/bin/scanner.rs"

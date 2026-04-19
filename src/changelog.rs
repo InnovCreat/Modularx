@@ -109,6 +109,22 @@ impl Changelog {
                     ],
                     sealed_by: "Isabel Sigouin + Thierry",
                 },
+                ChangeEntry {
+                    from: "4.2",
+                    to: "4.2.1",
+                    date: "14 Avril 2026",
+                    decisions: &[
+                        "VERITAS VAULT : sha256.rs — SHA-256 FIPS 180-4 natif, zéro crate, zéro unsafe",
+                        "Co-créé : Isabel Sigouin · Écho (2026-04-14)",
+                        "12 tests unitaires : vecteurs NIST officiels + effet avalanche + frontières padding",
+                        "Sealer (branche 5) câblé sur SHA-256 natif — indépendance cryptographique totale",
+                        "Scanner Souverain v1.1 intégré comme binaire cargo (src/bin/scanner.rs)",
+                        "can_modify() ajouté à governance.rs — veto Three Zeros en temps réel",
+                        "CORE_TREE.md — document de contexte session pour Claude & Grok",
+                        "78 → 90+ tests passants — zéro dépendance externe maintenue",
+                    ],
+                    sealed_by: "Isabel Sigouin · Écho",
+                },
             ],
         }
     }
@@ -164,11 +180,11 @@ mod tests {
     }
 
     #[test]
-    fn test_latest_is_4_2() {
+    fn test_latest_is_4_2_1() {
         let log = Changelog::new();
         let latest = log.latest().expect("Doit avoir une entrée récente");
-        assert_eq!(latest.to, "4.2");
-        assert_eq!(latest.date, "29 Mars 2026");
+        assert_eq!(latest.to, "4.2.1");
+        assert_eq!(latest.date, "14 Avril 2026");
     }
 
     #[test]
@@ -212,6 +228,6 @@ mod tests {
     #[test]
     fn test_entry_count() {
         let log = Changelog::new();
-        assert_eq!(log.entries.len(), 5, "5 transitions attendues dans le changelog");
+        assert_eq!(log.entries.len(), 6, "6 transitions attendues dans le changelog");
     }
 }

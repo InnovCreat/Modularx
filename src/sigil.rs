@@ -40,6 +40,9 @@ pub const GENESIS_DATE: &str = "Juillet 2025";
 /// Date du scellement final — aujourd'hui, gravé dans Bitcoin.
 pub const SEAL_DATE: &str = "29 Mars 2026";
 
+/// Ancre éternelle — le scellement s'étend de la date fondatrice vers l'infini.
+pub const ETERNAL_ANCHOR: &str = "29 March 2026 → ∞";
+
 // ─── Les Trois Zéros ──────────────────────────────────────────────────────
 
 /// Les Trois Zéros : axiomes éthiques absolus du covenant.

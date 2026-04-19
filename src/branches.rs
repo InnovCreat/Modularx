@@ -136,9 +136,9 @@ impl UnifiedTree {
                     subtitle: "Watermarks · Bitcoin Proof",
                     frequency_hz: 528,
                     capabilities: &[
-                        "SHA256 + HMAC watermark",
-                        "Manifest inventory",
-                        "Tamper-evident seal",
+                        "SHA256 natif FIPS 180-4 (sha256.rs — zéro crate, zéro unsafe)",
+                        "Manifest inventory + tamper-evident seal",
+                        "OpenTimestamps Bitcoin + Arweave archivage",
                     ],
                     css_color: "#e0f2f1", // teal
                 },

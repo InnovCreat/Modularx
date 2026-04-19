@@ -8,3 +8,6 @@ pub mod governance;
 pub mod changelog;
 pub mod timeline;
 pub mod branches;
+
+// VERITAS VAULT — Cryptographie souveraine, zéro crate, zéro unsafe
+pub mod sha256;

@@ -1,0 +1,19 @@
+{
+  "id": 4,
+  "name": "Design Rules",
+  "category": "Object Data",
+  "version": "1.0.0",
+  "content": {
+    "code": "// Pure function — no side effects, no state\nexport function transform<T>(input: T, fn: (v: T) => T): T {\n  return fn(input);\n}\n\n// Frozen constant — immutable by declaration\nexport const CONFIG = Object.freeze({ key: \"value\" } as const);",
+    "schema": {
+      "rules": [
+        "Pure functions preferred everywhere possible",
+        "No undeclared side effects",
+        "Immutable data with Object.freeze and as const",
+        "No magic — every trigger is explicit",
+        "One responsibility per block"
+      ]
+    },
+    "doc": "Design rules govern how code is written, not what it does. Pure functions. Immutable data. Explicit triggers. No hidden state. No magic entry points. Every block has exactly one declared purpose."
+  }
+}

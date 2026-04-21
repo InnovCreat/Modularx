@@ -1,0 +1,18 @@
+{
+  "id": 2,
+  "name": "Structure & Flow",
+  "category": "Environment",
+  "version": "1.0.0",
+  "content": {
+    "code": "// Module canonical structure\n// module.md  → intent in one sentence\n// types.ts   → Object Data only\n// messages.ts → Command Data only\n// core.ts    → logic\n// index.ts   → public interface, exports only",
+    "schema": {
+      "moduleFiles": ["module.md", "types.ts", "messages.ts", "core.ts", "index.ts"],
+      "rules": [
+        "module.md written before any code",
+        "types.ts never imports from messages.ts",
+        "index.ts never contains logic"
+      ]
+    },
+    "doc": "Every module follows the same fixed structure. The intent is declared first in module.md. Types and messages are strictly separated. The public interface is a clean re-export layer with no logic inside."
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": 3,
+  "name": "Data Management",
+  "category": "Object Data",
+  "version": "1.0.0",
+  "content": {
+    "code": "// Object Data — types.ts\nexport interface Thing {\n  readonly id:   string;\n  readonly name: string;\n}\n\n// Command Data — messages.ts\nexport interface DoThing {\n  type:    \"DO_THING\";\n  payload: { thingId: string };\n}",
+    "schema": {
+      "objectData": "What a thing IS — static, descriptive, types.ts",
+      "commandData": "What to DO with a thing — dynamic, messages.ts",
+      "rule": "These two never live in the same file"
+    },
+    "doc": "Object Data describes what something is. Command Data describes what to do with it. They are never mixed. types.ts holds identity. messages.ts holds intent. This separation is the core invariant of Alchem data management."
+  }
+}

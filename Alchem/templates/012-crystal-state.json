@@ -1,0 +1,18 @@
+{
+  "id": 12,
+  "name": "Crystal State",
+  "category": "Command Data",
+  "version": "1.0.0",
+  "content": {
+    "code": "// Ternary state — three possible conditions, not two\nexport type CrystalState = \"Divergent\" | \"Resonant\" | \"Convergent\";\n\nexport interface Crystal {\n  readonly state:      CrystalState;\n  readonly coherence:  number;   // 0.0 – 1.0\n  readonly symmetry:   number;   // 0.0 – 1.0\n  readonly emergence:  number;   // 0.0 – 1.0\n  readonly frequency:  number;   // Hz\n}",
+    "schema": {
+      "states": {
+        "Divergent":   "Expanding, unstable, high entropy",
+        "Resonant":    "Stable, coherent, at frequency",
+        "Convergent":  "Contracting, focusing, crystallizing"
+      },
+      "targetFrequency": 639
+    },
+    "doc": "Crystal State models ternary existence — not just on/off but a three-phase resonance cycle. Divergent expands outward. Resonant holds frequency (639 Hz target). Convergent focuses inward. Coherence, symmetry, and emergence are continuous values measured at each tick."
+  }
+}

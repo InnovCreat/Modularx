@@ -1,0 +1,22 @@
+{
+  "id": 89,
+  "name": "Archive Header",
+  "category": "Object Data",
+  "version": "1.0.0",
+  "content": {
+    "code": "// Standard archive header — stamped on every artifact at reconstruction\nexport interface ArchiveHeader {\n  readonly artifactId: number;\n  readonly name:       string;\n  readonly createdBy:  string;\n  readonly timestamp:  string;   // ISO 8601\n  readonly status:     string;\n  readonly type:       string;\n  readonly frequency:  string;\n  readonly templates:  number[];\n}",
+    "schema": {
+      "fields": {
+        "artifactId": "Unique numeric ID",
+        "name":       "Human-readable name",
+        "createdBy":  "Architect name",
+        "timestamp":  "ISO 8601 creation date",
+        "status":     "prototype | in_progress | working | finished",
+        "type":       "code | documentation | module | config",
+        "frequency":  "Resonance marker (ex: 639)",
+        "templates":  "Ordered list of template IDs used"
+      }
+    },
+    "doc": "Every artifact begins with an archive header. It is the identity card of the object. It answers: who made it, when, why, what state it is in, which templates built it. The header is read-only. It is stamped at first reconstruction and never modified — only upgraded by creating a new artifact with parentId pointing to this one."
+  }
+}

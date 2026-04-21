@@ -1,0 +1,39 @@
+{
+  "artifactId": 102,
+  "name": "Main Application",
+  "createdBy": "Isabel Sigouin",
+  "timestamp": 1745193825000,
+  "status": "prototype",
+  "type": "code",
+  "frequency": "639",
+  "upgraded": false,
+  "parentId": null,
+
+  "templates": [1, 2, 3, 5, 7, 12, 67, 89],
+  "tickOrder": [1, 2, 3, 5, 7, 12, 67, 89],
+
+  "variables": {
+    "author":      "Isabel Sigouin",
+    "project":     "Veritas Hortus",
+    "version":     "1.0.0",
+    "frequency":   639,
+    "initialState": "Resonant",
+    "coherence":   0.8
+  },
+
+  "_views": {
+    "tree": {
+      "Main Application (102)": [
+        "→ [001] Core Philosophy       — ENV declared, Fixed Sacred Order",
+        "→ [002] Structure & Flow      — module.md + 5-file canonical form",
+        "→ [003] Data Management       — Object Data / Command Data split",
+        "→ [005] Communication         — one-way bus, typed messages",
+        "→ [007] Message Bus           — on / emit / off",
+        "→ [012] Crystal State         — Divergent / Resonant / Convergent",
+        "→ [067] 639 Hz Pulse          — CanResonate at coherence > 0.7",
+        "→ [089] Archive Header        — stamped, read-only, identity card"
+      ]
+    },
+    "text": "This is the main entry point of the Alchem system. It declares the environment first, then follows the Fixed Sacred Order: philosophy, structure, data rules, communication, the message bus, crystal state, 639 Hz resonance, and finally the archive header. Each piece is assembled by calling the corresponding template in the exact tick order. One wrong tick breaks the chain. The system starts in Resonant state at 639 Hz with coherence 0.8."
+  }
+}

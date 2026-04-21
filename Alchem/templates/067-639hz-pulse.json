@@ -1,0 +1,16 @@
+{
+  "id": 67,
+  "name": "639 Hz Pulse",
+  "category": "Ability",
+  "version": "1.0.0",
+  "content": {
+    "code": "// 639 Hz — fréquence de cohérence et d'harmonie\n// CanResonate: true when coherence > 0.7\nexport function canResonate(coherence: number): boolean {\n  return coherence > 0.7;\n}\n\nexport function pulseAt639(timestamp: number): number {\n  return Math.sin((2 * Math.PI * 639 * timestamp) / 1000);\n}",
+    "schema": {
+      "frequency": 639,
+      "meaning": "Harmony, connection, coherence — the frequency of the heart field",
+      "capacity": "CanResonate",
+      "threshold": 0.7
+    },
+    "doc": "639 Hz is the resonance frequency embedded in this system as a coherence marker. It is not decoration — it is the mathematical condition for harmony between modules. When a crystal reaches coherence > 0.7, it can resonate. The pulse function returns a sine wave at 639 Hz for use in renderers and state calculations."
+  }
+}

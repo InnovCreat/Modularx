@@ -1,0 +1,19 @@
+{
+  "id": 1,
+  "name": "Core Philosophy",
+  "category": "Environment",
+  "version": "1.0.0",
+  "content": {
+    "code": "// Environment declared first. Always.\nexport const ENV = Object.freeze({\n  system:  \"Alchem\",\n  version: \"1.0.0\",\n} as const);",
+    "schema": {
+      "principles": [
+        "Everything is a module",
+        "Environment is declared first",
+        "Layers work like CAD — one purpose per layer",
+        "Blocks only when they have one clear purpose",
+        "Fixed Sacred Order — the tick sequence never changes"
+      ]
+    },
+    "doc": "The root philosophy of Alchem. Every module is sovereign. The environment is declared before anything else loads. Layers are visible, purposeful, and non-overlapping. The tick order is fixed and sacred — one wrong tick breaks the chain."
+  }
+}

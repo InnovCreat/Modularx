@@ -1,0 +1,19 @@
+{
+  "id": 5,
+  "name": "Communication & Clarity",
+  "category": "Command Data",
+  "version": "1.0.0",
+  "content": {
+    "code": "// All inter-module communication goes through the bus\n// Never: moduleA.doThing()\n// Always: MessageBus.emit({ type: \"DO_THING\", source: \"moduleA\", ... })",
+    "schema": {
+      "rules": [
+        "One-way communication only",
+        "No direct module-to-module calls",
+        "Every message has an explicit type",
+        "Source is always declared",
+        "module.md declares intent in one sentence before any code"
+      ]
+    },
+    "doc": "Modules never call each other directly. All communication flows through the message bus, one way only. Every message is typed and sourced. Clarity starts with module.md — one sentence declaring why this module exists, written before the first line of code."
+  }
+}

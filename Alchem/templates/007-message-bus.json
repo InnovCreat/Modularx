@@ -1,0 +1,14 @@
+{
+  "id": 7,
+  "name": "Message Bus",
+  "category": "Command Data",
+  "version": "1.0.0",
+  "content": {
+    "code": "// One-way message bus — the only bridge between modules\nMessageBus.on(\"MODULE_READY\", (msg) => { /* handle */ });\nMessageBus.emit({ id: makeId(), type: \"MODULE_READY\", source: \"core\", payload: null, timestamp: Date.now() });",
+    "schema": {
+      "methods": ["on(type, handler)", "emit(message)", "off(type, handler)"],
+      "invariant": "No module calls another module directly. Ever."
+    },
+    "doc": "The message bus is the single point of inter-module communication. Modules subscribe to message types they care about. They emit messages when something happens. They never hold a reference to another module. The bus is initialized after the environment, before any module logic."
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "artifactId": 132,
+  "name": "Ritual_Sound_System",
+  "createdBy": "Isabel Sigouin",
+  "timestamp": 1745194420000,
+  "status": "prototype",
+  "type": "module",
+  "frequency": "639",
+  "upgraded": false,
+  "parentId": 130,
+
+  "templates": [1, 2, 3, 5, 7, 22, 32, 89],
+  "tickOrder": [1, 2, 3, 5, 7, 22, 32, 89],
+
+  "variables": {
+    "ritualSounds": {
+      "RÉVEIL":     { "sweep": "432 → 639 Hz", "duration": "1200ms", "shape": "sine",     "meaning": "Montée vers le cœur" },
+      "SOMMEIL":    { "sweep": "639 → 432 Hz", "duration": "1800ms", "shape": "sine",     "meaning": "Descente vers le repos" },
+      "CHAOS":      { "sweep": "639 → 741 Hz", "duration":  "800ms", "shape": "sawtooth", "meaning": "Explosion harmonique" },
+      "HARMONIE":   { "sweep": "528 → 639 Hz", "duration": "2000ms", "shape": "sine",     "meaning": "Accord parfait 528+639+741" },
+      "ATTRACTION": { "sweep": "741 → 528 Hz", "duration": "1000ms", "shape": "triangle", "meaning": "Convergence harmonique" },
+      "RÉPULSION":  { "sweep": "528 → 741 Hz", "duration": "1000ms", "shape": "triangle", "meaning": "Dispersion harmonique" },
+      "AURORE":     { "sweep": "396 → 963 Hz", "duration": "3000ms", "shape": "sine",     "meaning": "Balayage spectre complet" },
+      "RÉPARATION": { "sweep": "417 → 528 Hz", "duration": "2500ms", "shape": "sine",     "meaning": "Retour à l'accord fondamental" }
+    }
+  },
+
+  "_views": {
+    "tree": {
+      "Ritual_Sound_System (132)  ← parentId: 130 Audio_System": [
+        "→ [001] Core Philosophy     — ENV first",
+        "→ [002] Structure & Flow    — canonical module form",
+        "→ [003] Data Management     — SonicSignature = Object Data",
+        "→ [005] Communication       — écoute RITUEL_INVOKED sur le bus",
+        "→ [007] Message Bus         — keyword reçu → signature sonique jouée",
+        "→ [022] Invocation System   — 8 keywords, même table de référence",
+        "→ [032] Ritual Sound        — sweep fréquences, durées, wave shapes",
+        "→ [089] Archive Header      — identity card"
+      ]
+    },
+    "text": "Ritual_Sound_System listens for RITUEL_INVOKED messages on the bus. When a ritual keyword is received, it plays the corresponding sonic signature — a frequency sweep with a specific start, end, duration, and wave shape. RÉVEIL climbs from 432 to 639 Hz in 1.2 seconds. RÉPARATION glides from 417 to 528 Hz over 2.5 seconds — the listener hears the system healing in real time. AURORE sweeps the full Solfège spectrum from 396 to 963 Hz in 3 seconds. Each sound is self-explanatory — a non-visual user invoking CHAOS hears the harmonic explosion. They do not need the confirmation text."
+  }
+}

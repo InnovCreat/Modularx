@@ -1,0 +1,44 @@
+{
+  "artifactId": 131,
+  "name": "Synthesis_System",
+  "createdBy": "Isabel Sigouin",
+  "timestamp": 1745194410000,
+  "status": "prototype",
+  "type": "module",
+  "frequency": "639",
+  "upgraded": false,
+  "parentId": 130,
+
+  "templates": [1, 2, 3, 4, 31, 67, 89],
+  "tickOrder": [1, 2, 3, 4, 31, 67, 89],
+
+  "variables": {
+    "oscillators": {
+      "Aether":  { "baseFreq": 639, "shape": "sine",     "pan": "angle_to_pan(sprite.angle)" },
+      "Lumina":  { "baseFreq": 528, "shape": "triangle", "pan": "angle_to_pan(sprite.angle)" },
+      "Solaris": { "baseFreq": 741, "shape": "sine",     "pan": "angle_to_pan(sprite.angle)" }
+    },
+    "stateFrequencies": {
+      "Resonant":   639,
+      "Divergent":  741,
+      "Convergent": 528,
+      "Instable":   417
+    },
+    "spatialRule": "angle_to_pan(angleDeg) = sin(angleDeg * PI / 180)"
+  },
+
+  "_views": {
+    "tree": {
+      "Synthesis_System (131)  ← parentId: 130 Audio_System": [
+        "→ [001] Core Philosophy   — ENV first",
+        "→ [002] Structure & Flow  — canonical module form",
+        "→ [003] Data Management   — Oscillator + SpatialAudio = Object Data",
+        "→ [004] Design Rules      — fonctions pures: angle_to_pan, can_synthesize",
+        "→ [031] Audio Synthesis   — STATE_FREQUENCIES, SpatialAudio, wave shapes",
+        "→ [067] 639 Hz Pulse      — fréquence de base, CanSynthesize gate",
+        "→ [089] Archive Header    — identity card"
+      ]
+    },
+    "text": "Synthesis_System is the oscillator engine. Each sprite has its own oscillator tuned to a base frequency: Aether at 639 Hz (sine), Lumina at 528 Hz (triangle), Solaris at 741 Hz (sine). As sprites orbit, their pan position is calculated from their orbital angle via sin(angle) — Aether at 90° sounds in the right ear, at 270° in the left ear. Crystal state shifts the master frequency: Resonant=639, Divergent=741, Convergent=528, Instable=417. These are the Solfège healing frequencies. CanSynthesize checks that AudioContext is available. The spatial encoding means a non-visual user can track each sprite by ear as they rotate around the Nucleus."
+  }
+}

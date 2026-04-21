@@ -1,0 +1,50 @@
+{
+  "artifactId": 130,
+  "name": "Audio_System",
+  "createdBy": "Isabel Sigouin",
+  "timestamp": 1745194400000,
+  "status": "prototype",
+  "type": "module",
+  "frequency": "639",
+  "upgraded": false,
+  "parentId": 119,
+
+  "templates": [1, 2, 3, 5, 7, 30, 31, 89],
+  "tickOrder": [1, 2, 3, 5, 7, 30, 31, 89],
+
+  "variables": {
+    "channel":         "audio",
+    "api":             "Web Audio API (browser) / web-sys AudioContext (WASM)",
+    "solfege":         [396, 417, 528, 639, 741, 852, 963],
+    "coherenceGate":   0.7,
+    "spatialEncoding": "angle orbital → pan stéréo",
+    "accessibility":   "primary channel for non-visual users"
+  },
+
+  "subArtifacts": [
+    { "id": 131, "name": "Synthesis_System",    "role": "Oscillateurs, fréquences, spatialisation" },
+    { "id": 132, "name": "Ritual_Sound_System", "role": "Signature sonique par mot-clé rituel" },
+    { "id": 133, "name": "Ambient_System",      "role": "Son ambiant continu par état Luna" }
+  ],
+
+  "_views": {
+    "tree": {
+      "Audio_System (130)  ← parentId: 119 Interface_System": [
+        "→ [001] Core Philosophy       — ENV first",
+        "→ [002] Structure & Flow      — canonical module form",
+        "→ [003] Data Management       — SonicSignature = Object Data",
+        "→ [005] Communication         — écoute LUNA_STATE_CHANGE sur le bus",
+        "→ [007] Message Bus           — aucun appel direct à Luna",
+        "→ [030] Multi-Modal Interface — canal audio, CanPerceive, CanSubstitute",
+        "→ [031] Audio Synthesis       — oscillateurs, spatial, Solfège fréquences",
+        "→ [089] Archive Header        — identity card",
+        "",
+        "Sub-systems:",
+        "  → [131] Synthesis_System    — moteur oscillateurs + spatialisation",
+        "  → [132] Ritual_Sound_System — 8 keywords → signatures soniques",
+        "  → [133] Ambient_System      — soundscape continu par état"
+      ]
+    },
+    "text": "Audio_System is the auditory channel of Luna. It listens to LUNA_STATE_CHANGE messages on the bus and translates Luna's state into sound using the Solfège healing frequencies (396–963 Hz). It has three sub-systems: Synthesis_System manages oscillators and spatial audio, Ritual_Sound_System maps each of the 8 ritual keywords to a sonic signature (frequency sweeps, wave shapes, durations), and Ambient_System maintains a continuous background soundscape that changes with Luna's state. A non-visual user opens the application and immediately hears which state Luna is in — without any interaction. As sprites orbit, their sound pans left-to-right based on orbital angle, encoding position in space. Audio_System is not a feature added for accessibility. It is a first-class channel carrying the same state as Visual_System."
+  }
+}

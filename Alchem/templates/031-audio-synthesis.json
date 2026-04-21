@@ -1,0 +1,30 @@
+{
+  "id": 31,
+  "name": "Audio Synthesis",
+  "category": "Command Data",
+  "version": "1.0.0",
+  "content": {
+    "code": "export type WaveShape = \"sine\" | \"square\" | \"sawtooth\" | \"triangle\";\n\nexport interface Oscillator {\n  readonly frequency: number;    // Hz\n  readonly shape:     WaveShape;\n  readonly gain:      number;    // 0.0–1.0\n  readonly detune:    number;    // cents — décalage fin en fréquence\n}\n\n// Spatial audio — encode la position orbitale en son\nexport interface SpatialAudio {\n  readonly pan:      number;   // -1.0 (gauche) à +1.0 (droite)\n  readonly distance: number;   // 0.0–1.0 → gain proportionnel\n}\n\n// Les 4 fréquences Solfège mappées aux états Crystal\nexport const STATE_FREQUENCIES = Object.freeze({\n  Resonant:   639,   // connexion, cohérence — cœur\n  Divergent:  741,   // expansion, éveil intuitif\n  Convergent: 528,   // transformation, focalisation\n  Instable:   417,   // changement, chaos créateur\n} as const);\n\n// angle orbital (0–360°) → pan stéréo (-1.0 à +1.0)\nexport function angleToPan(angleDeg: number): number {\n  return Math.sin((angleDeg * Math.PI) / 180);\n}\n\n// CanSynthesize — Web Audio API disponible\nexport function canSynthesize(): boolean {\n  return typeof AudioContext !== \"undefined\" ||\n         typeof (window as any).webkitAudioContext !== \"undefined\";\n}",
+    "rust": "pub const FREQ_RESONANT:   f64 = 639.0;\npub const FREQ_DIVERGENT:  f64 = 741.0;\npub const FREQ_CONVERGENT: f64 = 528.0;\npub const FREQ_INSTABLE:   f64 = 417.0;\n\n/// angle orbital (0–360°) → pan stéréo (-1.0 à +1.0)\n/// Un sprite à 90° s'entend à droite. À 270° à gauche.\npub fn angle_to_pan(angle_deg: f64) -> f64 {\n    (angle_deg.to_radians()).sin()\n}\n\n/// CanSynthesize — AudioContext disponible via web-sys\npub fn can_synthesize(ctx: &Option<web_sys::AudioContext>) -> bool {\n    ctx.is_some()\n}",
+    "schema": {
+      "solfege": {
+        "417": "Instable — transformation, changement",
+        "528": "Convergent — focalisation, réparation",
+        "639": "Resonant — connexion, cohérence, cœur",
+        "741": "Divergent — expansion, éveil"
+      },
+      "spatialEncoding": {
+        "principle": "Position orbitale → son spatialisé → utilisateur aveugle entend où est chaque sprite",
+        "angle":     "0° = centre · 90° = droite · 270° = gauche",
+        "distance":  "100px orbital → gain 0.8 · 150px → gain 0.6 · 80px → gain 0.9"
+      },
+      "waveShapes": {
+        "sine":     "Resonant — pur, stable, doux",
+        "triangle": "Convergent — focalisé, un peu plus riche",
+        "sawtooth": "Divergent — harmoniques riches, expansif",
+        "square":   "Instable — plus agressif, fort contenu harmonique"
+      }
+    },
+    "doc": "Audio Synthesis maps Luna's states to sound using the Solfège healing frequencies (417, 528, 639, 741 Hz). Each Crystal state has a matching frequency and wave shape. Spatial audio encodes orbital position: as a sprite rotates (0–360°), its sound pans left-to-right via sin(angle). Distance from center affects gain. A blind user can close their eyes and hear exactly where Aether, Lumina, and Solaris are — which direction, how far. This is not accessibility as afterthought. It is the same state expressed through a different channel."
+  }
+}

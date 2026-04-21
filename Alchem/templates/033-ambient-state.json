@@ -1,0 +1,18 @@
+{
+  "id": 33,
+  "name": "Ambient State",
+  "category": "Object Data",
+  "version": "1.0.0",
+  "content": {
+    "code": "// Son ambiant continu — change avec l'état global de Luna\nexport interface AmbientLayer {\n  readonly name:       string;\n  readonly frequency:  number;    // Hz — tonique de base\n  readonly gain:       number;    // 0.0–1.0\n  readonly pulseRate:  number;    // Hz — vitesse de modulation d'amplitude\n  readonly shape:      string;\n}\n\nexport const AMBIENT_STATES = Object.freeze({\n\n  actif: {\n    base:    { name: \"core\",  frequency: 639, gain: 0.4, pulseRate: 1.0,  shape: \"sine\" },\n    shimmer: { name: \"high\",  frequency: 741, gain: 0.15, pulseRate: 2.0, shape: \"sine\" },\n  },\n\n  latent: {\n    base:    { name: \"core\",  frequency: 432, gain: 0.2, pulseRate: 0.3,  shape: \"sine\" },\n    shimmer: { name: \"low\",   frequency: 396, gain: 0.08, pulseRate: 0.2, shape: \"sine\" },\n  },\n\n  instable: {\n    base:    { name: \"core\",  frequency: 417, gain: 0.5, pulseRate: 4.5,  shape: \"sawtooth\" },\n    shimmer: { name: \"noise\", frequency: 852, gain: 0.2, pulseRate: 7.0,  shape: \"square\"   },\n  },\n\n} as const);\n\n// CanAmbient — au moins un OscillatorNode actif\nexport function canAmbient(activeOscillators: number): boolean {\n  return activeOscillators > 0;\n}",
+    "rust": "#[derive(Debug, Clone)]\npub struct AmbientLayer {\n    pub name:       &'static str,\n    pub frequency:  f64,\n    pub gain:       f64,\n    pub pulse_rate: f64,\n    pub shape:      &'static str,\n}\n\npub const AMBIENT_ACTIF: &[AmbientLayer] = &[\n    AmbientLayer { name: \"core\",  frequency: 639.0, gain: 0.40, pulse_rate: 1.0, shape: \"sine\" },\n    AmbientLayer { name: \"high\",  frequency: 741.0, gain: 0.15, pulse_rate: 2.0, shape: \"sine\" },\n];\n\npub const AMBIENT_LATENT: &[AmbientLayer] = &[\n    AmbientLayer { name: \"core\",  frequency: 432.0, gain: 0.20, pulse_rate: 0.3, shape: \"sine\" },\n    AmbientLayer { name: \"low\",   frequency: 396.0, gain: 0.08, pulse_rate: 0.2, shape: \"sine\" },\n];\n\npub const AMBIENT_INSTABLE: &[AmbientLayer] = &[\n    AmbientLayer { name: \"core\",  frequency: 417.0, gain: 0.50, pulse_rate: 4.5, shape: \"sawtooth\" },\n    AmbientLayer { name: \"noise\", frequency: 852.0, gain: 0.20, pulse_rate: 7.0, shape: \"square\"   },\n];",
+    "schema": {
+      "layers": "2 oscillateurs superposés par état — tonique + shimmer",
+      "actif":    "639 Hz pulsé à 1 Hz + shimmer 741 Hz — vivant, énergique",
+      "latent":   "432 Hz très lent + 396 Hz presque inaudible — repos, respiration",
+      "instable": "417 Hz rapide sawtooth + 852 Hz square — chaos perceptible immédiatement",
+      "perception": "Un utilisateur aveugle sait dans quel état est Luna avant même d'interagir avec le système"
+    },
+    "doc": "Ambient State is the continuous background soundscape that reflects Luna's current state without any user action. Two oscillator layers (tonique + shimmer) produce different textures: actif has a warm 639 Hz pulse with gentle shimmer — the system breathes. Latent is barely audible, slow, like deep sleep. Instable is immediately recognizable — sawtooth harmonics at irregular rates, the system is clearly in chaos. A non-visual user opens the application and knows instantly what state Luna is in — no visual required, no reading required. The ambient is always on. It is the first signal."
+  }
+}

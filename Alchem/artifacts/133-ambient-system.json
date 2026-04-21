@@ -1,0 +1,40 @@
+{
+  "artifactId": 133,
+  "name": "Ambient_System",
+  "createdBy": "Isabel Sigouin",
+  "timestamp": 1745194430000,
+  "status": "prototype",
+  "type": "module",
+  "frequency": "639",
+  "upgraded": false,
+  "parentId": 130,
+
+  "templates": [1, 2, 3, 20, 33, 67, 89],
+  "tickOrder": [1, 2, 3, 20, 33, 67, 89],
+
+  "variables": {
+    "layers":        2,
+    "alwaysOn":      true,
+    "firstSignal":   true,
+    "states": {
+      "actif":    { "base": "639 Hz sine 1Hz pulse",     "shimmer": "741 Hz 2Hz pulse",    "mood": "vivant, énergique" },
+      "latent":   { "base": "432 Hz sine 0.3Hz pulse",   "shimmer": "396 Hz 0.2Hz pulse",  "mood": "repos, respiration" },
+      "instable": { "base": "417 Hz sawtooth 4.5Hz",     "shimmer": "852 Hz square 7Hz",   "mood": "chaos immédiatement perceptible" }
+    }
+  },
+
+  "_views": {
+    "tree": {
+      "Ambient_System (133)  ← parentId: 130 Audio_System": [
+        "→ [001] Core Philosophy   — ENV first",
+        "→ [002] Structure & Flow  — canonical module form",
+        "→ [003] Data Management   — AmbientLayer = Object Data",
+        "→ [020] Nucleus State     — actif/latent/instable → ambiance correspondante",
+        "→ [033] Ambient State     — 2 couches oscillateurs par état, toujours actif",
+        "→ [067] 639 Hz Pulse      — fréquence de base de l'état actif",
+        "→ [089] Archive Header    — identity card"
+      ]
+    },
+    "text": "Ambient_System is always on. It is the first signal a non-visual user receives when opening the application. Two oscillator layers run continuously and change with Nucleus state: actif plays a warm 639 Hz sine pulsing at 1 Hz with a gentle 741 Hz shimmer — the system breathes. Latent drops to 432 Hz at barely perceptible amplitude, pulsing at 0.3 Hz — deep rest. Instable switches to sawtooth at 417 Hz pulsing at 4.5 Hz with a dissonant 852 Hz square shimmer — chaos is unmistakable. No visual required. No text required. The state is in the air."
+  }
+}

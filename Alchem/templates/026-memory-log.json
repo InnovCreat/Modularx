@@ -1,0 +1,25 @@
+{
+  "id": 26,
+  "name": "Memory Log",
+  "category": "Object Data",
+  "version": "1.0.0",
+  "content": {
+    "code": "export interface LogEntry {\n  readonly moment:    string;   // \"HH:MM:SS\"\n  readonly trace:     string;   // action description\n  readonly voix:      string;   // source module\n}\n\nexport interface MemoryLog {\n  readonly entries:   readonly LogEntry[];\n  readonly maxSize:   number;    // default 10 — newest on top\n}\n\nexport function addEntry(log: MemoryLog, entry: LogEntry): MemoryLog {\n  const entries = [entry, ...log.entries].slice(0, log.maxSize);\n  return Object.freeze({ ...log, entries: Object.freeze(entries) });\n}",
+    "rust": "#[derive(Debug, Clone)]\npub struct LogEntry {\n    pub moment: String,   // \"HH:MM:SS\"\n    pub trace:  String,\n    pub voix:   String,   // source module\n}\n\n#[derive(Debug, Clone)]\npub struct MemoryLog {\n    pub entries:  Vec<LogEntry>,\n    pub max_size: usize,\n}\n\nimpl MemoryLog {\n    pub fn add(&mut self, entry: LogEntry) {\n        self.entries.insert(0, entry);\n        self.entries.truncate(self.max_size);\n    }\n}",
+    "schema": {
+      "maxEntries": 10,
+      "order":      "newest on top",
+      "fields": {
+        "moment": "HH:MM:SS timestamp",
+        "trace":  "Human-readable action description",
+        "voix":   "Name of the module that emitted the entry"
+      },
+      "exampleEntries": [
+        "14:23:15 - Rituel CHAOS déclenché - Les sprites entrent en superposition",
+        "14:23:08 - Chronos réactivé",
+        "14:22:54 - Rituel RÉPARATION - Restauration complète du système"
+      ]
+    },
+    "doc": "The Memory Log is the living archive of the system. It records every significant action with a timestamp, a trace description, and the name of the source module. It keeps the last 10 entries, newest on top. Adding an entry creates a new immutable log state — the old state is never mutated. History is always preserved."
+  }
+}

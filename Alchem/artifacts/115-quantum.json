@@ -1,0 +1,39 @@
+{
+  "artifactId": 115,
+  "name": "Quantum",
+  "createdBy": "Isabel Sigouin",
+  "timestamp": 1745194050000,
+  "status": "prototype",
+  "type": "module",
+  "frequency": "639",
+  "upgraded": false,
+  "parentId": 103,
+
+  "templates": [1, 2, 3, 12, 24, 67, 89],
+  "tickOrder": [1, 2, 3, 12, 24, 67, 89],
+
+  "variables": {
+    "defaultState":    "stable",
+    "blurStdDev":      2,
+    "ghostOffset":     10,
+    "opacityRange":    [0.3, 0.7],
+    "positionShift":   "sinusoidal",
+    "trigger":         "CHAOS",
+    "resolution":      ["HARMONIE", "RÉPARATION"]
+  },
+
+  "_views": {
+    "tree": {
+      "Quantum (115)  ← parentId: 103 Luna": [
+        "→ [001] Core Philosophy       — ENV first",
+        "→ [002] Structure & Flow      — canonical module form",
+        "→ [003] Data Management       — Object / Command split",
+        "→ [012] Crystal State         — ternary basis for superposition",
+        "→ [024] Quantum Superposition — blur, ghost, opacity sine wave",
+        "→ [067] 639 Hz Pulse          — coherence check before superposition",
+        "→ [089] Archive Header        — identity card"
+      ]
+    },
+    "text": "Quantum handles non-classical states in Luna. A sprite in stable state is sharp, solid, opacity 1.0. A sprite in superposé state has a Gaussian blur (stdDeviation 2), a ghost double at +10px offset, and sinusoidal opacity oscillation between 0.3 and 0.7. Superposition is triggered by CHAOS and resolved by HARMONIE or RÉPARATION. A sprite can only enter superposition when the Nucleus coherence allows it — checked via the 639 Hz pulse threshold."
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "artifactId": 114,
+  "name": "Couleur",
+  "createdBy": "Isabel Sigouin",
+  "timestamp": 1745194040000,
+  "status": "prototype",
+  "type": "module",
+  "frequency": "639",
+  "upgraded": false,
+  "parentId": 103,
+
+  "templates": [1, 2, 3, 23, 89],
+  "tickOrder": [1, 2, 3, 23, 89],
+
+  "variables": {
+    "palette": [
+      { "hex": "#FF6B9D", "name": "Rose",  "meaning": "passion" },
+      { "hex": "#4ECDC4", "name": "Cyan",  "meaning": "clarity" },
+      { "hex": "#FFE66D", "name": "Jaune", "meaning": "joy" },
+      { "hex": "#95E1D3", "name": "Mint",  "meaning": "healing" },
+      { "hex": "#F38181", "name": "Coral", "meaning": "tenderness" }
+    ],
+    "defaultMode": "fixed",
+    "transitionSmooth": true
+  },
+
+  "_views": {
+    "tree": {
+      "Couleur (114)  ← parentId: 103 Luna": [
+        "→ [001] Core Philosophy    — ENV first",
+        "→ [002] Structure & Flow   — canonical module form",
+        "→ [003] Data Management    — Object / Command split",
+        "→ [023] Chromatic System   — 5-color palette, 3 modes",
+        "→ [089] Archive Header     — identity card"
+      ]
+    },
+    "text": "Couleur manages the vibrational color palette of Luna. Five colors, each with a meaning: Rose (passion), Cyan (clarity), Jaune (joy), Mint (healing), Coral (tenderness). Three modes: fixed (constant), cyclic (AURORE ritual cycles through palette), reactive (color shifts with quantum state). Orbital path lines match sprite colors. Transitions are always smooth — no hard cuts. Couleur never changes sprite colors directly — it emits COLOR_CHANGE messages."
+  }
+}

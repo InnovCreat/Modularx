@@ -1,0 +1,37 @@
+{
+  "artifactId": 111,
+  "name": "Sprites",
+  "createdBy": "Isabel Sigouin",
+  "timestamp": 1745194010000,
+  "status": "prototype",
+  "type": "module",
+  "frequency": "639",
+  "upgraded": false,
+  "parentId": 103,
+
+  "templates": [1, 2, 3, 21, 24, 89],
+  "tickOrder": [1, 2, 3, 21, 24, 89],
+
+  "variables": {
+    "sprites": [
+      { "nom": "Aether",  "couleur": "#FF6B9D", "vitesse_rotation":  30, "distance_centre": 100, "angle":   0, "taille": 12 },
+      { "nom": "Lumina",  "couleur": "#4ECDC4", "vitesse_rotation": -45, "distance_centre": 150, "angle": 120, "taille": 10 },
+      { "nom": "Solaris", "couleur": "#FFE66D", "vitesse_rotation":  20, "distance_centre":  80, "angle": 240, "taille":  8 }
+    ],
+    "fps": 60
+  },
+
+  "_views": {
+    "tree": {
+      "Sprites (111)  ← parentId: 103 Luna": [
+        "→ [001] Core Philosophy      — ENV first",
+        "→ [002] Structure & Flow     — canonical module form",
+        "→ [003] Data Management      — Object / Command split",
+        "→ [021] Orbital Mechanics    — Aether, Lumina, Solaris",
+        "→ [024] Quantum Superposition — stable / superposé",
+        "→ [089] Archive Header       — identity card"
+      ]
+    },
+    "text": "Sprites are the three orbital entities circling the Nucleus: Aether (pink, 30°/s), Lumina (cyan, -45°/s counter-clockwise), Solaris (yellow, 20°/s). Each follows a circular path at its declared orbital radius. Their positions are updated 60 times per second via requestAnimationFrame. When in superposé state (triggered by CHAOS), a Gaussian blur and ghost double are applied. Sprites receive orbital updates through the message bus — they never read Nucleus state directly."
+  }
+}

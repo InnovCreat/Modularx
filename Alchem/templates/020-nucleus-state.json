@@ -1,0 +1,22 @@
+{
+  "id": 20,
+  "name": "Nucleus State",
+  "category": "Object Data",
+  "version": "1.0.0",
+  "content": {
+    "code": "export type NucleusState = \"actif\" | \"latent\" | \"instable\";\n\nexport interface Nucleus {\n  readonly état:      NucleusState;\n  readonly gravité:   number;   // -2.0 to +3.0\n  readonly pulsation: number;   // 20–120 bpm\n}\n\nexport const NUCLEUS_DEFAULTS: Nucleus = Object.freeze({\n  état:      \"actif\",\n  gravité:   1.0,\n  pulsation: 60,\n});",
+    "rust": "#[derive(Debug, Clone, Copy, PartialEq)]\npub enum NucleusState {\n    Actif,\n    Latent,\n    Instable,\n}\n\n#[derive(Debug, Clone)]\npub struct Nucleus {\n    pub etat:      NucleusState,\n    pub gravite:   f64,   // -2.0 .. +3.0\n    pub pulsation: f64,   // 20.0 .. 120.0 bpm\n}\n\nimpl Default for Nucleus {\n    fn default() -> Self {\n        Self { etat: NucleusState::Actif, gravite: 1.0, pulsation: 60.0 }\n    }\n}",
+    "schema": {
+      "states": {
+        "actif":    "Purple #A855F7 — full energy, gravitational pull active",
+        "latent":   "Blue #6366F1 — resting, low pulsation",
+        "instable": "Red #EF4444 — chaotic, unpredictable gravity"
+      },
+      "ranges": {
+        "gravité":   [-2.0, 3.0],
+        "pulsation": [20, 120]
+      }
+    },
+    "doc": "Nucleus is the living heart of Luna. It has three states: actif (full energy), latent (rest), instable (chaos). Gravité controls orbital attraction — positive pulls sprites in, negative repels. Pulsation is the heartbeat in bpm, visually expressed as a pulsing radius on the canvas."
+  }
+}

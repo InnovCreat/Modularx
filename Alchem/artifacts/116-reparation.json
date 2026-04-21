@@ -1,0 +1,42 @@
+{
+  "artifactId": 116,
+  "name": "Réparation",
+  "createdBy": "Isabel Sigouin",
+  "timestamp": 1745194060000,
+  "status": "prototype",
+  "type": "module",
+  "frequency": "639",
+  "upgraded": false,
+  "parentId": 103,
+
+  "templates": [1, 2, 3, 5, 7, 25, 89],
+  "tickOrder": [1, 2, 3, 5, 7, 25, 89],
+
+  "variables": {
+    "invocation":     "RÉPARATION",
+    "confirmation":   "❤️ Le système se répare avec douceur",
+    "destructive":    false,
+    "scope":          "holistic",
+    "resetTargets": {
+      "sprites":   "stable, 30°/s, opacity 1.0, uniform sizes",
+      "nucleus":   "gravité 1.0, pulsation 60, état actif",
+      "chronos":   "tempo 1.0x, actif true",
+      "quantum":   "all sprites → stable"
+    }
+  },
+
+  "_views": {
+    "tree": {
+      "Réparation (116)  ← parentId: 103 Luna": [
+        "→ [001] Core Philosophy   — ENV first",
+        "→ [002] Structure & Flow  — canonical module form",
+        "→ [003] Data Management   — Object / Command split",
+        "→ [005] Communication     — emits HEAL message, never calls directly",
+        "→ [007] Message Bus       — RÉPARATION → bus.emit(HEAL_ALL)",
+        "→ [025] Healing Protocol  — gentle, complete, non-destructive",
+        "→ [089] Archive Header    — identity card"
+      ]
+    },
+    "text": "Réparation is the healing module of Luna. It is invoked by the RÉPARATION ritual keyword. It emits a HEAL_ALL message on the bus. Every module that needs healing subscribes and applies its own reset. Nothing is deleted — Archive history is always preserved. The confirmation message '❤️ Le système se répare avec douceur' appears immediately. Réparation is the gentlest and most complete operation in the system."
+  }
+}

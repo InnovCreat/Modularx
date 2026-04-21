@@ -1,0 +1,41 @@
+{
+  "artifactId": 110,
+  "name": "Nucleus",
+  "createdBy": "Isabel Sigouin",
+  "timestamp": 1745194000000,
+  "status": "prototype",
+  "type": "module",
+  "frequency": "639",
+  "upgraded": false,
+  "parentId": 103,
+
+  "templates": [1, 2, 3, 20, 12, 67, 89],
+  "tickOrder": [1, 2, 3, 20, 12, 67, 89],
+
+  "variables": {
+    "état":        "actif",
+    "gravité":     1.0,
+    "pulsation":   60,
+    "canvasCenter": [250, 250],
+    "colors": {
+      "actif":    "#A855F7",
+      "latent":   "#6366F1",
+      "instable": "#EF4444"
+    }
+  },
+
+  "_views": {
+    "tree": {
+      "Nucleus (110)  ← parentId: 103 Luna": [
+        "→ [001] Core Philosophy    — ENV first",
+        "→ [002] Structure & Flow   — canonical module form",
+        "→ [003] Data Management    — Object / Command split",
+        "→ [020] Nucleus State      — actif/latent/instable, gravité, pulsation",
+        "→ [012] Crystal State      — Resonant at 60 bpm",
+        "→ [067] 639 Hz Pulse       — CanResonate",
+        "→ [089] Archive Header     — identity card"
+      ]
+    },
+    "text": "Nucleus is the gravitational and energetic heart of Luna. It pulses at 60 bpm in actif state. Gravité controls the orbital attraction of all sprites. Its three states (actif, latent, instable) change its color and behavior. It is rendered as a pulsating circle at canvas center (250, 250). It never calls sprites directly — it emits state-change messages through the bus."
+  }
+}

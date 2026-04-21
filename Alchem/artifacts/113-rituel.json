@@ -1,0 +1,35 @@
+{
+  "artifactId": 113,
+  "name": "Rituel",
+  "createdBy": "Isabel Sigouin",
+  "timestamp": 1745194030000,
+  "status": "prototype",
+  "type": "module",
+  "frequency": "639",
+  "upgraded": false,
+  "parentId": 103,
+
+  "templates": [1, 2, 3, 5, 7, 22, 89],
+  "tickOrder": [1, 2, 3, 5, 7, 22, 89],
+
+  "variables": {
+    "keywords": ["RÉVEIL","SOMMEIL","CHAOS","HARMONIE","ATTRACTION","RÉPULSION","AURORE","RÉPARATION"],
+    "inputFormat": "UPPERCASE",
+    "trigger": "text input + Enter or Invoquer button"
+  },
+
+  "_views": {
+    "tree": {
+      "Rituel (113)  ← parentId: 103 Luna": [
+        "→ [001] Core Philosophy     — ENV first",
+        "→ [002] Structure & Flow    — canonical module form",
+        "→ [003] Data Management     — Object / Command split",
+        "→ [005] Communication       — invocation = message, not direct call",
+        "→ [007] Message Bus         — keyword → bus.emit(RITUEL_INVOKED)",
+        "→ [022] Invocation System   — 8 keywords, UPPERCASE, effects declared",
+        "→ [089] Archive Header      — identity card"
+      ]
+    },
+    "text": "Rituel is the invocation system of Luna. The user types a keyword in UPPERCASE and presses Invoquer or Enter. The keyword is looked up in the invocation table. If valid, a RITUEL_INVOKED message is emitted on the bus with the keyword as payload. Each module that cares about that ritual subscribes independently and applies its own effect. Rituel never calls modules directly — it only emits. Every invocation is logged in the Archive."
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": 21,
+  "name": "Orbital Mechanics",
+  "category": "Object Data",
+  "version": "1.0.0",
+  "content": {
+    "code": "export type QuantumState = \"stable\" | \"superposé\";\n\nexport interface Sprite {\n  readonly nom:              string;\n  readonly couleur:          string;   // hex\n  readonly vitesse_rotation: number;   // deg/s (negative = counter-clockwise)\n  readonly distance_centre:  number;   // px orbital radius\n  readonly angle:            number;   // 0–360°\n  readonly taille:           number;   // px radius\n  readonly opacite:          number;   // 0.0–1.0\n  readonly etat_quantique:   QuantumState;\n}\n\nexport const SPRITES_DEFAULT: readonly Sprite[] = Object.freeze([\n  { nom: \"Aether\",  couleur: \"#FF6B9D\", vitesse_rotation:  30, distance_centre: 100, angle:   0, taille: 12, opacite: 1, etat_quantique: \"stable\" },\n  { nom: \"Lumina\",  couleur: \"#4ECDC4\", vitesse_rotation: -45, distance_centre: 150, angle: 120, taille: 10, opacite: 1, etat_quantique: \"stable\" },\n  { nom: \"Solaris\", couleur: \"#FFE66D\", vitesse_rotation:  20, distance_centre:  80, angle: 240, taille:  8, opacite: 1, etat_quantique: \"stable\" },\n]);",
+    "rust": "#[derive(Debug, Clone, PartialEq)]\npub enum QuantumState { Stable, Superpose }\n\n#[derive(Debug, Clone)]\npub struct Sprite {\n    pub nom:              String,\n    pub couleur:          String,\n    pub vitesse_rotation: f64,\n    pub distance_centre:  f64,\n    pub angle:            f64,\n    pub taille:           f64,\n    pub opacite:          f64,\n    pub etat_quantique:   QuantumState,\n}\n\npub fn default_sprites() -> Vec<Sprite> {\n    vec![\n        Sprite { nom: \"Aether\".into(),  couleur: \"#FF6B9D\".into(), vitesse_rotation:  30.0, distance_centre: 100.0, angle:   0.0, taille: 12.0, opacite: 1.0, etat_quantique: QuantumState::Stable },\n        Sprite { nom: \"Lumina\".into(),  couleur: \"#4ECDC4\".into(), vitesse_rotation: -45.0, distance_centre: 150.0, angle: 120.0, taille: 10.0, opacite: 1.0, etat_quantique: QuantumState::Stable },\n        Sprite { nom: \"Solaris\".into(), couleur: \"#FFE66D\".into(), vitesse_rotation:  20.0, distance_centre:  80.0, angle: 240.0, taille:  8.0, opacite: 1.0, etat_quantique: QuantumState::Stable },\n    ]\n}",
+    "schema": {
+      "sprites": ["Aether", "Lumina", "Solaris"],
+      "quantumStates": ["stable", "superposé"]
+    },
+    "doc": "Orbital mechanics govern how sprites move around the Nucleus. Each sprite has a rotation speed (positive = clockwise, negative = counter-clockwise), an orbital radius, a starting angle, and a quantum state. In superposé state, Gaussian blur and a ghost double are applied. The canvas center is fixed at (250, 250)."
+  }
+}

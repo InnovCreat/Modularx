@@ -1,0 +1,34 @@
+{
+  "artifactId": 112,
+  "name": "Chronos",
+  "createdBy": "Isabel Sigouin",
+  "timestamp": 1745194020000,
+  "status": "prototype",
+  "type": "module",
+  "frequency": "639",
+  "upgraded": false,
+  "parentId": 103,
+
+  "templates": [1, 2, 3, 4, 89],
+  "tickOrder": [1, 2, 3, 4, 89],
+
+  "variables": {
+    "tempo_global": 1.0,
+    "actif":        true,
+    "range":        [0.1, 3.0],
+    "controls":     ["play_pause", "reset", "tempo_slider"]
+  },
+
+  "_views": {
+    "tree": {
+      "Chronos (112)  ← parentId: 103 Luna": [
+        "→ [001] Core Philosophy  — ENV first",
+        "→ [002] Structure & Flow — canonical module form",
+        "→ [003] Data Management  — Object / Command split",
+        "→ [004] Design Rules     — pure tempo multiplier, no state leaks",
+        "→ [089] Archive Header   — identity card"
+      ]
+    },
+    "text": "Chronos is the global time controller of Luna. It exposes a tempo multiplier from 0.1x (very slow) to 3x (very fast) applied to all sprite rotation speeds. Play/Pause freezes all orbital motion. Reset returns tempo to 1.0x. Chronos does not know about sprites — it emits a TEMPO_CHANGE message and every subscriber adjusts its own speed. This is the one-way bus principle in action."
+  }
+}

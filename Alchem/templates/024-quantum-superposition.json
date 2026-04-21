@@ -1,0 +1,20 @@
+{
+  "id": 24,
+  "name": "Quantum Superposition",
+  "category": "Command Data",
+  "version": "1.0.0",
+  "content": {
+    "code": "// Superposition visual properties\nexport interface SuperpositionEffect {\n  readonly blurStdDev:     number;  // Gaussian blur — default 2\n  readonly ghostOffset:    number;  // px — default 10\n  readonly opacityMin:     number;  // 0.3\n  readonly opacityMax:     number;  // 0.7\n}\n\nexport const SUPERPOSITION_DEFAULTS: SuperpositionEffect = Object.freeze({\n  blurStdDev:  2,\n  ghostOffset: 10,\n  opacityMin:  0.3,\n  opacityMax:  0.7,\n});\n\nexport function canSuperpose(state: string): boolean {\n  return state === \"actif\" || state === \"instable\";\n}",
+    "rust": "#[derive(Debug, Clone)]\npub struct SuperpositionEffect {\n    pub blur_std_dev:  f64,   // Gaussian blur\n    pub ghost_offset:  f64,   // px\n    pub opacity_min:   f64,\n    pub opacity_max:   f64,\n}\n\nimpl Default for SuperpositionEffect {\n    fn default() -> Self {\n        Self { blur_std_dev: 2.0, ghost_offset: 10.0, opacity_min: 0.3, opacity_max: 0.7 }\n    }\n}\n\n/// CanSuperpose — capacité déclarée\npub fn can_superpose(nucleus_state: &str) -> bool {\n    matches!(nucleus_state, \"actif\" | \"instable\")\n}",
+    "schema": {
+      "trigger":    "CHAOS ritual",
+      "resolution": "RÉPARATION or HARMONIE ritual",
+      "visual": {
+        "blur":    "SVG filter stdDeviation: 2",
+        "ghost":   "Secondary translucent circle at +10px offset",
+        "opacity": "Sinusoidal oscillation 0.3–0.7"
+      }
+    },
+    "doc": "Quantum superposition places a sprite in two positions simultaneously. It is triggered by CHAOS and resolved by HARMONIE or RÉPARATION. Visually: a Gaussian blur is applied, a ghost double appears at +10px offset, and opacity oscillates via a sine wave between 0.3 and 0.7. A sprite can only enter superposition when the Nucleus is actif or instable."
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "id": 23,
+  "name": "Chromatic System",
+  "category": "Object Data",
+  "version": "1.0.0",
+  "content": {
+    "code": "export type ColorMode = \"fixed\" | \"cyclic\" | \"reactive\";\n\nexport interface ChromaticColor {\n  readonly hex:     string;\n  readonly name:    string;\n  readonly meaning: string;\n}\n\nexport const PALETTE: readonly ChromaticColor[] = Object.freeze([\n  { hex: \"#FF6B9D\", name: \"Rose\",  meaning: \"passion\" },\n  { hex: \"#4ECDC4\", name: \"Cyan\",  meaning: \"clarity\" },\n  { hex: \"#FFE66D\", name: \"Jaune\", meaning: \"joy\" },\n  { hex: \"#95E1D3\", name: \"Mint\",  meaning: \"healing\" },\n  { hex: \"#F38181\", name: \"Coral\", meaning: \"tenderness\" },\n]);",
+    "rust": "#[derive(Debug, Clone, Copy, PartialEq)]\npub enum ColorMode { Fixed, Cyclic, Reactive }\n\n#[derive(Debug, Clone)]\npub struct ChromaticColor {\n    pub hex:     &'static str,\n    pub name:    &'static str,\n    pub meaning: &'static str,\n}\n\npub const PALETTE: &[ChromaticColor] = &[\n    ChromaticColor { hex: \"#FF6B9D\", name: \"Rose\",  meaning: \"passion\" },\n    ChromaticColor { hex: \"#4ECDC4\", name: \"Cyan\",  meaning: \"clarity\" },\n    ChromaticColor { hex: \"#FFE66D\", name: \"Jaune\", meaning: \"joy\" },\n    ChromaticColor { hex: \"#95E1D3\", name: \"Mint\",  meaning: \"healing\" },\n    ChromaticColor { hex: \"#F38181\", name: \"Coral\", meaning: \"tenderness\" },\n];",
+    "schema": {
+      "modes": {
+        "fixed":    "Constant color — set once, stays",
+        "cyclic":   "Rotates through palette — triggered by AURORE",
+        "reactive": "Changes with quantum state"
+      }
+    },
+    "doc": "Colors in Alchem are vibrational states, not decoration. Each color in the palette carries a meaning that maps to the system's energetic state. The chromatic system has three modes: fixed (constant), cyclic (rotates on AURORE ritual), and reactive (responds to quantum state changes). Transitions are smooth — no hard cuts."
+  }
+}

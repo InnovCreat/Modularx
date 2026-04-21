@@ -1,0 +1,16 @@
+{
+  "id": 22,
+  "name": "Invocation System",
+  "category": "Command Data",
+  "version": "1.0.0",
+  "content": {
+    "code": "export type RituelKeyword =\n  | \"RÉVEIL\" | \"SOMMEIL\" | \"CHAOS\" | \"HARMONIE\"\n  | \"ATTRACTION\" | \"RÉPULSION\" | \"AURORE\" | \"RÉPARATION\";\n\nexport interface RituelEffect {\n  readonly keyword:     RituelKeyword;\n  readonly description: string;\n}\n\nexport const RITUELS: readonly RituelEffect[] = Object.freeze([\n  { keyword: \"RÉVEIL\",     description: \"Activates Nucleus — état: actif, pulsation: 80 bpm\" },\n  { keyword: \"SOMMEIL\",    description: \"Calms Nucleus — état: latent, pulsation: 20 bpm\" },\n  { keyword: \"CHAOS\",      description: \"Quantum superposition — sprites randomized, speeds ×1-4\" },\n  { keyword: \"HARMONIE\",   description: \"Full stabilization — all sprites stable, 30°/s, 60 bpm\" },\n  { keyword: \"ATTRACTION\", description: \"Gravity +2 — sprites -30px closer (min 50px)\" },\n  { keyword: \"RÉPULSION\",  description: \"Gravity -1 — sprites +30px farther (max 200px)\" },\n  { keyword: \"AURORE\",     description: \"Chromatic cycle — colors shift through palette\" },\n  { keyword: \"RÉPARATION\", description: \"Full healing — all parameters reset to defaults\" },\n]);",
+    "rust": "#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]\npub enum RituelKeyword {\n    Reveil, Sommeil, Chaos, Harmonie,\n    Attraction, Repulsion, Aurore, Reparation,\n}\n\nimpl RituelKeyword {\n    pub fn from_str(s: &str) -> Option<Self> {\n        match s {\n            \"RÉVEIL\"     => Some(Self::Reveil),\n            \"SOMMEIL\"    => Some(Self::Sommeil),\n            \"CHAOS\"      => Some(Self::Chaos),\n            \"HARMONIE\"   => Some(Self::Harmonie),\n            \"ATTRACTION\" => Some(Self::Attraction),\n            \"RÉPULSION\"  => Some(Self::Repulsion),\n            \"AURORE\"     => Some(Self::Aurore),\n            \"RÉPARATION\" => Some(Self::Reparation),\n            _            => None,\n        }\n    }\n}",
+    "schema": {
+      "keywords": ["RÉVEIL","SOMMEIL","CHAOS","HARMONIE","ATTRACTION","RÉPULSION","AURORE","RÉPARATION"],
+      "inputFormat": "UPPERCASE only",
+      "trigger": "Text input + Invoquer button or Enter key"
+    },
+    "doc": "The invocation system maps ritual keywords to system-wide effects. Keywords must be entered in UPPERCASE. Each invocation is logged in the Archive with timestamp and trace. RÉPARATION is the universal reset — it heals everything back to defaults without destroying state history."
+  }
+}

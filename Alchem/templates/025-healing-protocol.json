@@ -1,0 +1,24 @@
+{
+  "id": 25,
+  "name": "Healing Protocol",
+  "category": "Command Data",
+  "version": "1.0.0",
+  "content": {
+    "code": "// Healing is non-destructive — it resets values, never erases history\nexport interface HealingResult {\n  readonly spritesStabilized: number;\n  readonly nucleusReset:      boolean;\n  readonly archiveEntry:      string;\n}\n\nexport function canHeal(status: string): boolean {\n  return status !== \"finished\";\n}",
+    "rust": "pub struct HealingResult {\n    pub sprites_stabilized: usize,\n    pub nucleus_reset:      bool,\n    pub archive_entry:      String,\n}\n\n/// CanHeal — toujours vrai sauf si le module est terminé\npub fn can_heal(status: &str) -> bool {\n    status != \"finished\"\n}",
+    "schema": {
+      "actions": [
+        "Stabilize all sprites — etat_quantique: stable",
+        "Normalize speeds — 30°/s uniform",
+        "Restore opacity — 1.0",
+        "Reset Nucleus — gravité: 1.0, pulsation: 60, état: actif",
+        "Uniform sprite sizes"
+      ],
+      "type":         "gentle and complete",
+      "destructive":  false,
+      "scope":        "holistic — affects entire system",
+      "confirmation": "❤️ Le système se répare avec douceur"
+    },
+    "doc": "Healing is non-destructive. It resets all values to their defaults but never erases Archive entries. History is preserved. The healing protocol stabilizes all sprites, normalizes their velocities, restores full opacity, and resets Nucleus parameters. It creates an Archive entry to confirm the event. CanHeal is true as long as the module is not in finished state."
+  }
+}

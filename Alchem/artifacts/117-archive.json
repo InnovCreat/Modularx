@@ -1,0 +1,43 @@
+{
+  "artifactId": 117,
+  "name": "Archive",
+  "createdBy": "Isabel Sigouin",
+  "timestamp": 1745194070000,
+  "status": "prototype",
+  "type": "module",
+  "frequency": "639",
+  "upgraded": false,
+  "parentId": 103,
+
+  "templates": [1, 2, 3, 26, 89],
+  "tickOrder": [1, 2, 3, 26, 89],
+
+  "variables": {
+    "maxEntries":  10,
+    "order":       "newest on top",
+    "display":     "scrollable panel",
+    "entryFormat": {
+      "moment": "HH:MM:SS",
+      "trace":  "action description",
+      "voix":   "source module name"
+    },
+    "exampleEntries": [
+      "14:23:15 - Rituel CHAOS déclenché - Les sprites entrent en superposition",
+      "14:23:08 - Chronos réactivé",
+      "14:22:54 - Rituel RÉPARATION - Restauration complète du système"
+    ]
+  },
+
+  "_views": {
+    "tree": {
+      "Archive (117)  ← parentId: 103 Luna": [
+        "→ [001] Core Philosophy — ENV first",
+        "→ [002] Structure & Flow — canonical module form",
+        "→ [003] Data Management — Object / Command split",
+        "→ [026] Memory Log      — 10 entries max, newest on top, immutable append",
+        "→ [089] Archive Header  — identity card"
+      ]
+    },
+    "text": "Archive is the living memory of Luna. It records every significant action: ritual invocations, Nucleus state changes, Chronos modifications, system resets. Each entry carries a timestamp (HH:MM:SS), a trace description, and the name of the module that emitted the event. The last 10 entries are displayed newest on top in a scrollable panel. Archive never modifies existing entries — it only appends. History is inviolable."
+  }
+}

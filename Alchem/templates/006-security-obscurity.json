@@ -1,0 +1,11 @@
+{
+  "id": 6,
+  "name": "Security & Obscurity",
+  "category": "Security",
+  "version": "1.0.0",
+  "content": {
+    "doc": "Modules expose minimal public interface. Internal state is obscured — never imported directly from outside the module. All inter-module access routes through the message bus. Guard files (.guard) define the access boundary. What is not declared public does not exist outside.",
+    "code": "// Guard boundary — only message bus crosses this line\n// Internal state: private\n// Public surface: index.ts exports only\n// Direct import of internals: forbidden",
+    "rust": "// pub only on interface types and entry functions\n// Internal state: private or pub(crate)\n// Cross-module access: message bus only, never direct crate-path imports\n// Guard pattern: validate at boundary, trust inside"
+  }
+}

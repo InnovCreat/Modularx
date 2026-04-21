@@ -1,0 +1,52 @@
+{
+  "artifactId": 119,
+  "name": "Interface_System",
+  "createdBy": "Isabel Sigouin",
+  "timestamp": 1745194300000,
+  "status": "prototype",
+  "type": "module",
+  "frequency": "639",
+  "upgraded": false,
+  "parentId": 103,
+
+  "templates": [1, 2, 3, 5, 7, 30, 89],
+  "tickOrder": [1, 2, 3, 5, 7, 30, 89],
+
+  "variables": {
+    "channels":          ["visual", "audio", "haptic", "data", "api"],
+    "activeByDefault":   ["visual"],
+    "coherenceGate":     0.7,
+    "degradationModel":  "graceful — jamais muet",
+    "neurological":      "substitution sensorielle — le cerveau bascule sur les canaux disponibles"
+  },
+
+  "subArtifacts": [
+    { "id": 120, "name": "Visual_System",  "status": "prototype", "channel": "visual" },
+    { "id": 130, "name": "Audio_System",   "status": "future",    "channel": "audio"  },
+    { "id": 140, "name": "Haptic_System",  "status": "future",    "channel": "haptic" },
+    { "id": 150, "name": "Data_System",    "status": "future",    "channel": "data"   },
+    { "id": 160, "name": "API_System",     "status": "future",    "channel": "api"    }
+  ],
+
+  "_views": {
+    "tree": {
+      "Interface_System (119)  ← parentId: 103 Luna": [
+        "→ [001] Core Philosophy        — ENV first",
+        "→ [002] Structure & Flow       — canonical module form",
+        "→ [003] Data Management        — ChannelState = Object Data",
+        "→ [005] Communication          — Luna émet état, channels écoutent",
+        "→ [007] Message Bus            — LUNA_STATE_CHANGE → tous les canaux",
+        "→ [030] Multi-Modal Interface  — CanPerceive, CanSubstitute, 5 canaux",
+        "→ [089] Archive Header         — identity card",
+        "",
+        "Sub-systems:",
+        "  → [120] Visual_System   ← prototype",
+        "  → [130] Audio_System    ← future",
+        "  → [140] Haptic_System   ← future",
+        "  → [150] Data_System     ← future",
+        "  → [160] API_System      ← future"
+      ]
+    },
+    "text": "Interface_System is the sensory layer of Luna — the bridge between the living core and human perception. It does not contain Luna. It listens to Luna's state through the message bus and expresses it across five independent sensory channels: visual (position, movement, color), audio (639 Hz rendered as sound, ritual states as sonic signatures), haptic (quantum state felt as vibration), data (raw state for machines), API (external systems). Each channel is sovereign — removing one never crashes the others. This mirrors the brain's neurological principle: when one sensory channel is lost, the brain reconstructs spatio-temporal reality from what remains. CanSubstitute means the system always speaks in the language that's available."
+  }
+}

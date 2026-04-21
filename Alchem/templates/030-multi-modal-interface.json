@@ -1,0 +1,24 @@
+{
+  "id": 30,
+  "name": "Multi-Modal Interface",
+  "category": "Environment",
+  "version": "1.0.0",
+  "content": {
+    "code": "// Le même état Luna — exprimé sur plusieurs canaux sensoriels en parallèle.\n// Retirer un canal ne casse pas les autres.\n// Le cerveau reconstruit la réalité depuis les canaux actifs.\n\nexport type SensoryChannel = \"visual\" | \"audio\" | \"haptic\" | \"data\" | \"api\";\n\nexport interface ChannelState {\n  readonly channel:   SensoryChannel;\n  readonly active:    boolean;\n  readonly coherence: number;   // 0.0–1.0 — qualité du signal\n}\n\n// CanPerceive — au moins un canal actif avec cohérence > 0.7\nexport function canPerceive(channels: readonly ChannelState[]): boolean {\n  return channels.some(c => c.active && c.coherence > 0.7);\n}\n\n// CanSubstitute — si un canal tombe, un autre peut porter l'état\nexport function canSubstitute(channels: readonly ChannelState[]): boolean {\n  return channels.filter(c => c.active && c.coherence > 0.7).length > 1;\n}",
+    "rust": "pub const CHANNELS: &[&str] = &[\"visual\", \"audio\", \"haptic\", \"data\", \"api\"];\n\n#[derive(Debug, Clone)]\npub struct ChannelState {\n    pub channel:   String,\n    pub active:    bool,\n    pub coherence: f64,\n}\n\n/// CanPerceive — au moins un canal actif et cohérent\npub fn can_perceive(channels: &[ChannelState]) -> bool {\n    channels.iter().any(|c| c.active && c.coherence > 0.7)\n}\n\n/// CanSubstitute — le cerveau peut basculer sur un canal alternatif\npub fn can_substitute(channels: &[ChannelState]) -> bool {\n    channels.iter().filter(|c| c.active && c.coherence > 0.7).count() > 1\n}",
+    "schema": {
+      "principle": "Même état Luna → N canaux sensoriels indépendants",
+      "neurological": "Le cerveau reconstruit sa réalité spatio-temporelle depuis les signaux disponibles — pas depuis leur source attendue",
+      "channels": {
+        "visual":  "Orbital_System — position, mouvement, couleur, forme",
+        "audio":   "Ritual_Sound_System — 639 Hz audible, états comme sons",
+        "haptic":  "Vibration — quantum state felt (stable = calme, superposé = vibration)",
+        "data":    "Data_System — état brut lisible par machines",
+        "api":     "API_System — état exposé à systèmes externes"
+      },
+      "substitution": "Si visual tombe → audio porte le même état. Si audio tombe → haptic. Le système ne devient jamais muet — il parle dans le langage qui reste.",
+      "coherenceGate": 0.7
+    },
+    "doc": "Multi-Modal Interface is the architectural principle that justifies why Interface_System has five independent channels. The science: the brain does not perceive reality directly — it constructs a model from sensory signals. When one channel is lost, the brain reroutes and reconstructs from what remains. Blind people navigate space through sound. Deaf people feel music through vibration. The system mirrors this: Visual, Audio, Haptic, Data, API all carry the same Luna state independently. Removing one channel never crashes the others. CanPerceive is true as long as at least one channel is active and coherent. CanSubstitute means the system can gracefully degrade — it never goes dark."
+  }
+}

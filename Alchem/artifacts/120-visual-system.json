@@ -1,0 +1,49 @@
+{
+  "artifactId": 120,
+  "name": "Visual_System",
+  "createdBy": "Isabel Sigouin",
+  "timestamp": 1745194310000,
+  "status": "prototype",
+  "type": "module",
+  "frequency": "639",
+  "upgraded": false,
+  "parentId": 119,
+
+  "templates": [1, 2, 3, 30, 89],
+  "tickOrder": [1, 2, 3, 30, 89],
+
+  "variables": {
+    "channel":   "visual",
+    "renderers": ["Orbital_System", "Graph_System", "Particle_System", "Grid_System", "Waveform_System"],
+    "active":    ["Orbital_System"],
+    "swappable": true
+  },
+
+  "subArtifacts": [
+    { "id": 121, "name": "Orbital_System",   "status": "prototype" },
+    { "id": 122, "name": "Graph_System",     "status": "future"    },
+    { "id": 123, "name": "Particle_System",  "status": "future"    },
+    { "id": 124, "name": "Grid_System",      "status": "future"    },
+    { "id": 125, "name": "Waveform_System",  "status": "future"    }
+  ],
+
+  "_views": {
+    "tree": {
+      "Visual_System (120)  ← parentId: 119 Interface_System": [
+        "→ [001] Core Philosophy       — ENV first",
+        "→ [002] Structure & Flow      — canonical module form",
+        "→ [003] Data Management       — Object Data only",
+        "→ [030] Multi-Modal Interface — canal visual, coherence gate 0.7",
+        "→ [089] Archive Header        — identity card",
+        "",
+        "Renderers (swappable):",
+        "  → [121] Orbital_System   ← prototype — circular/orbital",
+        "  → [122] Graph_System     ← future — bar charts",
+        "  → [123] Particle_System  ← future — particle fields",
+        "  → [124] Grid_System      ← future — matrix view",
+        "  → [125] Waveform_System  ← future — waveforms"
+      ]
+    },
+    "text": "Visual_System manages the visual rendering channel. It does not render itself — it delegates to a swappable renderer (Orbital_System, Graph_System, Particle_System, Grid_System, or Waveform_System). This is Alchem module autonomy applied to rendering: you can replace Orbital_System with any other renderer without touching Visual_System or Interface_System. The visual channel expresses Luna's state as position, movement, color, and form. It listens to LUNA_STATE_CHANGE on the bus and passes the state to the active renderer."
+  }
+}

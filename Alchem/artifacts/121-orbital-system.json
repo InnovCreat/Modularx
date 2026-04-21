@@ -1,0 +1,43 @@
+{
+  "artifactId": 121,
+  "name": "Orbital_System",
+  "createdBy": "Isabel Sigouin",
+  "timestamp": 1745194320000,
+  "status": "prototype",
+  "type": "module",
+  "frequency": "639",
+  "upgraded": false,
+  "parentId": 120,
+
+  "templates": [1, 2, 3, 4, 20, 21, 23, 24, 30, 67, 89],
+  "tickOrder": [1, 2, 3, 4, 20, 21, 23, 24, 30, 67, 89],
+
+  "variables": {
+    "language":     "Rust",
+    "runtime":      "WASM",
+    "framework":    "Leptos 0.6",
+    "renderer":     "Canvas 2D — web-sys",
+    "fps":          60,
+    "canvasCenter": [250, 250],
+    "zeroJS":       true
+  },
+
+  "_views": {
+    "tree": {
+      "Orbital_System (121)  ← parentId: 120 Visual_System": [
+        "→ [001] Core Philosophy        — ENV first",
+        "→ [002] Structure & Flow       — canonical Rust module form",
+        "→ [003] Data Management        — Object Data: NucleusState, Sprite",
+        "→ [004] Design Rules           — pure render functions, no side effects",
+        "→ [020] Nucleus State          — actif/latent/instable → color + radius",
+        "→ [021] Orbital Mechanics      — Aether/Lumina/Solaris positions at 60fps",
+        "→ [023] Chromatic System       — palette appliquée aux orbital paths",
+        "→ [024] Quantum Superposition  — blur + ghost when superposé",
+        "→ [030] Multi-Modal Interface  — canal visual, CanPerceive",
+        "→ [067] 639 Hz Pulse           — CanResonate gate sur Nucleus",
+        "→ [089] Archive Header         — identity card"
+      ]
+    },
+    "text": "Orbital_System is the circular/orbital visual renderer of Luna. Written in pure Rust compiled to WASM via Leptos 0.6. Zero JavaScript — the entire renderer from UI to Canvas runs in Rust/WASM. It renders the Nucleus as a pulsating circle at center (250,250), its color and radius driven by NucleusState and pulsation bpm. Three sprites orbit at 60fps: Aether (pink, 30°/s), Lumina (cyan, -45°/s), Solaris (yellow, 20°/s). When a sprite enters superposé state, Gaussian blur and ghost double are applied. Colors follow the 5-color palette. Orbital paths match sprite colors. Orbital_System does not contain Luna — it visualizes Luna. It is swappable: Graph_System or Particle_System could replace it without touching Visual_System."
+  }
+}

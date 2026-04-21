@@ -13,6 +13,8 @@
   "tickOrder": [1, 2, 3, 4, 5, 7, 12, 67, 89],
 
   "variables": {
+    "system":        "Luna",
+    "version":       "1.0.0",
     "language":      "Rust",
     "runtime":       "WASM",
     "framework":     "Leptos 0.6",

@@ -4,8 +4,8 @@
   "category": "Environment",
   "version": "1.0.0",
   "content": {
-    "code": "// Environment declared first. Always.\nexport const ENV = Object.freeze({\n  system:  \"Alchem\",\n  version: \"1.0.0\",\n} as const);",
-    "rust": "// Environnement déclaré en premier. Toujours.\npub const SYSTEM:  &str = \"Alchem\";\npub const VERSION: &str = \"1.0.0\";\n\n#[derive(Debug, Clone)]\npub struct Env {\n    pub system:  &'static str,\n    pub version: &'static str,\n}\n\npub const ENV: Env = Env { system: SYSTEM, version: VERSION };",
+    "code": "// Environment declared first. Always.\nexport const ENV = Object.freeze({\n  system:  \"{{system}}\",\n  version: \"{{version}}\",\n} as const);",
+    "rust": "// Environnement déclaré en premier. Toujours.\npub const SYSTEM:  &str = \"{{system}}\";\npub const VERSION: &str = \"{{version}}\";\n\n#[derive(Debug, Clone)]\npub struct Env {\n    pub system:  &'static str,\n    pub version: &'static str,\n}\n\npub const ENV: Env = Env { system: SYSTEM, version: VERSION };",
     "schema": {
       "principles": [
         "Everything is a module",

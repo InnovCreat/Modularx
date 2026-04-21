@@ -11,7 +11,7 @@ mod orchestrator;
 use luna::{
     nucleus::{Nucleus, NucleusState},
     sprite::{default_sprites, Sprite, QuantumState},
-    crystal::{Crystal, CrystalState},
+    crystal::Crystal,
     pulse::{can_resonate, angle_to_pan},
 };
 
@@ -99,11 +99,11 @@ fn SpritesPanel(sprites: RwSignal<Vec<Sprite>>) -> impl IntoView {
         <div class="sprites-panel">
             <h2>"Sprites"</h2>
             <For
-                each=move || sprites.get().into_iter().enumerate().collect::<Vec<_>>()
-                key=|(i, _)| *i
-                children=move |(_, s)| {
+                each={move || sprites.get()}
+                key={|s: &Sprite| s.nom.clone()}
+                children={move |s| {
                     let quantum = match s.etat_quantique {
-                        QuantumState::Stable   => "stable",
+                        QuantumState::Stable    => "stable",
                         QuantumState::Superpose => "superposé",
                     };
                     let pan = angle_to_pan(s.angle);
@@ -115,7 +115,7 @@ fn SpritesPanel(sprites: RwSignal<Vec<Sprite>>) -> impl IntoView {
                             <span>" · pan " {format!("{:.2}", pan)}</span>
                         </div>
                     }
-                }
+                }}
             />
         </div>
     }
@@ -174,9 +174,9 @@ fn ArchivePanel(log: RwSignal<Vec<String>>) -> impl IntoView {
             <h2>"Archive"</h2>
             <ul>
                 <For
-                    each=move || log.get().into_iter().enumerate().collect::<Vec<_>>()
-                    key=|(i, _)| *i
-                    children=move |(_, entry)| view! { <li>{entry}</li> }
+                    each={move || log.get()}
+                    key={|entry: &String| entry.clone()}
+                    children={move |entry| view! { <li>{entry}</li> }}
                 />
             </ul>
         </div>

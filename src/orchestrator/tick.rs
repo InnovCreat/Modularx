@@ -30,18 +30,47 @@ pub fn tick(artifact: &Artifact, catalogue: &TemplateCatalogue) -> TickResult {
     TickResult::Ok { views: build_views(artifact, &resolved) }
 }
 
+/// Substitue les placeholders {{clé}} dans un fragment de template
+/// en utilisant les variables de l'artifact.
+///
+/// Règles :
+/// - String, Number, Bool → substitué
+/// - Object, Array        → ignoré (placeholder conservé)
+/// - Clé absente          → placeholder conservé tel quel, pas de panic
+pub fn interpolate(text: &str, vars: &serde_json::Value) -> String {
+    if vars.is_null() { return text.to_string(); }
+    let mut result = text.to_string();
+    if let Some(map) = vars.as_object() {
+        for (key, value) in map {
+            let placeholder = format!("{{{{{}}}}}", key);
+            let replacement = match value {
+                serde_json::Value::String(s) => s.clone(),
+                serde_json::Value::Number(n) => n.to_string(),
+                serde_json::Value::Bool(b)   => b.to_string(),
+                _ => continue,
+            };
+            result = result.replace(&placeholder, &replacement);
+        }
+    }
+    result
+}
+
 fn build_views(artifact: &Artifact, templates: &[&Template]) -> ArtifactViews {
-    // Code view — fragments Rust dans l'ordre du tick
+    let vars = &artifact.variables;
+
+    // Code view — fragments Rust interpolés dans l'ordre du tick
     let code = templates
         .iter()
         .filter_map(|t| t.content.rust.as_deref())
+        .map(|c| interpolate(c, vars))
         .collect::<Vec<_>>()
         .join("\n\n// ---\n\n");
 
-    // Text view — docs dans l'ordre du tick
+    // Text view — docs interpolées dans l'ordre du tick
     let explanation = templates
         .iter()
         .filter_map(|t| t.content.doc.as_deref())
+        .map(|d| interpolate(d, vars))
         .collect::<Vec<_>>()
         .join(" ");
 
@@ -156,6 +185,64 @@ mod tests {
                 assert_eq!(template_id, 67);   // template 67 manquant
             }
             TickResult::Ok { .. } => panic!("expected Err"),
+        }
+    }
+
+    // ── Interpolation ──────────────────────────────────────────────────────────
+
+    #[test]
+    fn interpolate_substitutes_string() {
+        let vars = serde_json::json!({ "system": "Luna" });
+        assert_eq!(
+            interpolate("pub const S: &str = \"{{system}}\";", &vars),
+            "pub const S: &str = \"Luna\";"
+        );
+    }
+
+    #[test]
+    fn interpolate_substitutes_number() {
+        let vars = serde_json::json!({ "pulsation": 60 });
+        assert_eq!(
+            interpolate("pulsation: {{pulsation}}", &vars),
+            "pulsation: 60"
+        );
+    }
+
+    #[test]
+    fn interpolate_unknown_variable_kept() {
+        let vars = serde_json::json!({});
+        // Variable absente → placeholder conservé, pas de panic
+        assert_eq!(
+            interpolate("gravite: {{gravite}}", &vars),
+            "gravite: {{gravite}}"
+        );
+    }
+
+    #[test]
+    fn tick_with_variables_substitutes_in_output() {
+        let mut catalogue = HashMap::new();
+        catalogue.insert(1, Template {
+            id:       1,
+            name:     "Core Philosophy".to_string(),
+            category: "Environment".to_string(),
+            version:  "1.0.0".to_string(),
+            content:  crate::artifact::template::TemplateContent {
+                code:   None,
+                rust:   Some("pub const SYSTEM: &str = \"{{system}}\";".to_string()),
+                doc:    Some("System: {{system}}".to_string()),
+                schema: None,
+            },
+        });
+
+        let mut artifact = make_artifact(vec![1]);
+        artifact.variables = serde_json::json!({ "system": "Luna" });
+
+        match tick(&artifact, &catalogue) {
+            TickResult::Ok { views } => {
+                assert!(views.code.code.contains("\"Luna\""));
+                assert!(views.text.explanation.contains("Luna"));
+            }
+            TickResult::Err { .. } => panic!("expected Ok"),
         }
     }
 }

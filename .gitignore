@@ -29,3 +29,6 @@ game28.dta
 
 # Log files
 warnings.log
+
+# Rust / WASM build output
+target/

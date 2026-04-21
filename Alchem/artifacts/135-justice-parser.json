@@ -1,0 +1,92 @@
+{
+  "artifactId": 135,
+  "name": "Justice Parser",
+  "createdBy": "Isabel Sigouin",
+  "timestamp": 1745195400000,
+  "status": "prototype",
+  "type": "module",
+  "frequency": "639",
+  "upgraded": false,
+  "parentId": 134,
+
+  "templates": [1, 2, 3, 5, 6, 25, 89],
+  "tickOrder": [1, 2, 3, 5, 6, 25, 89],
+
+  "variables": {
+    "system":   "Justice Parser",
+    "version":  "1.0.0",
+    "mode":     "auto",
+    "context":  "legal"
+  },
+
+  "schema": {
+    "modes": {
+      "rapport":  "Liste triée par verdict — PREUVE / TRANSFORMER / ÉCARTER. Format structuré, lisible par un tiers.",
+      "narratif": "Reconstruction logique des faits pertinents dans l'ordre. Les éléments de healing séparés à la fin.",
+      "auto":     "Choisit selon la densité : +10 fragments → rapport. Moins → narratif."
+    },
+    "contexts": {
+      "legal":      "Cause judiciaire — poids fort sur AXE JUSTICE, faits vs interprétations",
+      "mediation":  "Résolution de conflit — poids fort sur AXE HEALING",
+      "personal":   "Discussion personnelle impliquant une injustice — équilibre des 3 axes",
+      "ai":         "Discussion IA à décortiquer — poids fort sur AXE LOGIQUE"
+    },
+    "axes": {
+      "JUSTICE": {
+        "question": "Est-ce que cet élément est juste envers toutes les parties ?",
+        "ÉQUITABLE": "Respecte les droits, les faits, la proportion",
+        "PARTIAL":   "Penche vers une partie sans le dire explicitement",
+        "INJUSTE":   "Ignore ou viole un droit, déforme un fait"
+      },
+      "LOGIQUE": {
+        "question": "Est-ce que cet élément appartient à cette discussion ?",
+        "PERTINENT":   "Fait avancer la cause, s'appuie sur des faits vérifiables",
+        "HORS-SUJET":  "Vrai peut-être, mais ne concerne pas la cause",
+        "REDONDANT":   "Déjà dit, ne rajoute pas de signal"
+      },
+      "HEALING": {
+        "question": "Est-ce que cet élément contribue à la résolution ou l'aggrave ?",
+        "RÉPARATEUR": "Ouvre une voie, reconnaît, propose",
+        "NEUTRE":     "Informatif, sans charge émotionnelle",
+        "AGGRAVANT":  "Relance le conflit, blesse, ferme les portes"
+      }
+    },
+    "verdicts": {
+      "PREUVE":      "JUSTICE=ÉQUITABLE + LOGIQUE=PERTINENT — garder comme fait solide",
+      "TRANSFORMER": "JUSTICE=ÉQUITABLE + HEALING=AGGRAVANT — bon fond, mauvaise forme, reformuler",
+      "NUANCER":     "JUSTICE=PARTIAL — vrai mais incomplet, contextualiser",
+      "ÉCARTER":     "JUSTICE=INJUSTE ou LOGIQUE=HORS-SUJET — mettre de côté, ne pas utiliser en cause"
+    }
+  },
+
+  "_views": {
+    "tree": {
+      "Justice Parser (135)  ← parentId: 134 Audit": [
+        "→ [001] Core Philosophy    — ENV first",
+        "→ [002] Structure & Flow   — canonical module form",
+        "→ [003] Data Management    — faits (Object) vs arguments (Command)",
+        "→ [005] Communication      — one-way : fragment → verdict",
+        "→ [006] Security           — données judiciaires sensibles, interface minimale",
+        "→ [025] Healing Protocol   — axe HEALING, protocole de réparation",
+        "→ [089] Archive Header     — identité, timestamp, mode, context",
+        "",
+        "3 axes d'analyse :",
+        "  AXE JUSTICE  : ÉQUITABLE | PARTIAL | INJUSTE",
+        "  AXE LOGIQUE  : PERTINENT | HORS-SUJET | REDONDANT",
+        "  AXE HEALING  : RÉPARATEUR | NEUTRE | AGGRAVANT",
+        "",
+        "4 verdicts :",
+        "  PREUVE      → garder",
+        "  TRANSFORMER → reformuler",
+        "  NUANCER     → contextualiser",
+        "  ÉCARTER     → mettre de côté",
+        "",
+        "Mode output (variable) :",
+        "  auto     → choisit selon densité",
+        "  rapport  → liste triée, lisible par tiers",
+        "  narratif → reconstruction logique + healing séparé"
+      ]
+    },
+    "text": "Le Justice Parser décortique une discussion — judiciaire, de médiation, personnelle ou IA — et classe chaque fragment sur 3 axes : Justice (est-ce juste ?), Logique (est-ce pertinent ?), Healing (est-ce réparateur ?). Le verdict est l'un des 4 : PREUVE (fait solide à garder), TRANSFORMER (bon fond, mauvaise forme), NUANCER (vrai mais incomplet), ÉCARTER (hors-sujet ou injuste). Le format de sortie s'adapte au contexte via la variable mode : rapport structuré pour un tiers, ou reconstruction narrative si la discussion est courte. L'axe Healing est toujours traité séparément — ce qui blesse peut être vrai sans être utile à la cause. La décision finale appartient toujours à Isabel."
+  }
+}

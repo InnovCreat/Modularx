@@ -22,6 +22,8 @@ export const ALCHEM_PRINCIPLES = Object.freeze({
   DATA_OBJECT:      "types.ts = Object Data (ce qu'est une chose)",
   DATA_COMMAND:     "messages.ts = Command Data (ce qu'on demande à une chose)",
   DATA_SEPARATION:  "Object Data et Command Data ne se mélangent jamais",
+  DATA_CLASSIFY:    "Tout fichier appartient à une couche de classification déclarée",
+  DATA_CONVENTION:  "Le suffixe de fichier déclare la couche — pas le contenu",
 
   // Catégorie V — Exécution
   EXEC_ENTRY:       "app.ts ne contient que des triggers — pas de logique",

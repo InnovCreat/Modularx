@@ -1,0 +1,19 @@
+{
+  "id": 28,
+  "name": "Time Travel Replay",
+  "category": "Command Data",
+  "version": "1.0.0",
+  "content": {
+    "code": "export type ReplayMode = \"timestamp\" | \"tickNumber\" | \"eventId\";\n\nexport interface ReplayTarget {\n  readonly mode:  ReplayMode;\n  readonly value: number;\n}\n\nexport interface ReplayResult {\n  readonly ok:              boolean;\n  readonly stateAt:         unknown;   // état reconstitué\n  readonly eventsReplayed:  number;\n  readonly stoppedAt:       number;    // tick ou timestamp d'arrêt\n  readonly failedAt?:       number;    // tick fautif si erreur\n  readonly failedTemplate?: number;    // template fautif si erreur\n  readonly reason?:         string;\n}\n\nexport function canReplay(log: readonly unknown[]): boolean {\n  return log.length > 0;\n}",
+    "rust": "#[derive(Debug, Clone, Copy)]\npub enum ReplayMode { Timestamp, TickNumber, EventId }\n\n#[derive(Debug, Clone)]\npub struct ReplayTarget {\n    pub mode:  ReplayMode,\n    pub value: u64,\n}\n\n#[derive(Debug)]\npub struct ReplayResult {\n    pub ok:               bool,\n    pub events_replayed:  usize,\n    pub stopped_at:       u64,\n    pub failed_at:        Option<u32>,    // tick fautif\n    pub failed_template:  Option<u32>,    // template fautif\n    pub reason:           Option<String>,\n}\n\n/// CanReplay — capacité déclarée\npub fn can_replay(log: &[SystemEvent]) -> bool {\n    !log.is_empty()\n}",
+    "schema": {
+      "modes": {
+        "timestamp":  "Stop at first event after target Unix ms",
+        "tickNumber": "Stop after tick N — most precise",
+        "eventId":    "Stop just before this event was applied"
+      },
+      "output": "Reconstructed state + diagnostic info (failedAt, failedTemplate, reason)"
+    },
+    "doc": "Time Travel Replay executes a controlled reconstruction of system state. Three modes: by timestamp (nearest moment), by tick number (surgical precision — the same tick IDs used in the orchestrator), or by event ID (stop just before a specific change was applied). If the replay hits a failed tick, it surfaces the same failedAt/templateId diagnostic as the live orchestrator. The past and the present speak the same language."
+  }
+}

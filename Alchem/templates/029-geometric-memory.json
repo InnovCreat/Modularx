@@ -1,0 +1,19 @@
+{
+  "id": 29,
+  "name": "Geometric Memory",
+  "category": "Object Data",
+  "version": "1.0.0",
+  "content": {
+    "code": "// PHI — le ratio d'organisation naturel\nexport const PHI = 1.618033988749895;\n\n// Seuil de symétrie = même seuil que CanResonate (639 Hz)\n// Une symétrie < 0.7 = erreur visible avant d'être lue\nexport const SYMMETRY_THRESHOLD = 0.7;\n\nexport interface GeometricNode {\n  readonly id:        number;\n  readonly event:     SystemEvent;\n  readonly children:  readonly GeometricNode[];\n  readonly depth:     number;      // profondeur fractale\n  readonly symmetry:  number;      // 0.0–1.0\n}\n\nexport function isSymmetryBroken(node: GeometricNode): boolean {\n  return node.symmetry < SYMMETRY_THRESHOLD;\n}\n\n// CanDetectError — l'asymétrie est visible avant d'être lue\nexport function canDetectError(node: GeometricNode): boolean {\n  return isSymmetryBroken(node) ||\n         node.children.some(c => isSymmetryBroken(c));\n}",
+    "rust": "pub const PHI: f64 = 1.618_033_988_749_895;\npub const SYMMETRY_THRESHOLD: f64 = 0.7;   // même seuil que can_resonate\n\n#[derive(Debug, Clone)]\npub struct GeometricNode {\n    pub id:       u64,\n    pub event:    SystemEvent,\n    pub children: Vec<GeometricNode>,\n    pub depth:    u32,\n    pub symmetry: f64,   // 0.0–1.0\n}\n\n/// CanDetectError — symétrie brisée = erreur visible avant d'être lue\npub fn can_detect_error(node: &GeometricNode) -> bool {\n    node.symmetry < SYMMETRY_THRESHOLD ||\n    node.children.iter().any(|c| c.symmetry < SYMMETRY_THRESHOLD)\n}",
+    "schema": {
+      "phi":                1.618033988749895,
+      "symmetryThreshold":  0.7,
+      "fractalProperty":    "Le même motif se répète à chaque profondeur — Modularis → Luna → Nucleus → Crystal",
+      "phiClustering":      "Les événements liés se rapprochent naturellement selon le ratio PHI",
+      "symmetryAsError":    "Une asymétrie dans la structure géométrique = erreur détectable visuellement",
+      "coherenceGate":      "SYMMETRY_THRESHOLD = 0.7 = COHERENCE_THRESHOLD (639 Hz) — intentionnel"
+    },
+    "doc": "Geometric Memory organizes the event log as a fractal tree instead of a flat list. Events cluster by self-similarity (same templateId, same artifactId, same source). The tree branches at PHI ratio — naturally efficient, no manual sorting needed. Symmetry (0.0–1.0) measures structural coherence at each node. A symmetry below 0.7 (the same threshold as CanResonate at 639 Hz) marks a visible error — the geometry breaks before the text is even read. This is the connection between sacred geometry and diagnostic precision: the brain detects the asymmetry faster than it reads the log."
+  }
+}

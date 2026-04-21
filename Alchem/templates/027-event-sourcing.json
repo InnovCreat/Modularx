@@ -1,0 +1,16 @@
+{
+  "id": 27,
+  "name": "Event Sourcing",
+  "category": "Object Data",
+  "version": "1.0.0",
+  "content": {
+    "code": "// On ne stocke jamais l'état — on stocke chaque changement.\nexport interface SystemEvent {\n  readonly eventId:    number;\n  readonly timestamp:  number;     // Unix ms\n  readonly tickNumber: number;     // quel tick a produit cet event\n  readonly templateId: number;     // quel template était actif\n  readonly artifactId: number;     // quel artifact\n  readonly type:       string;\n  readonly before:     unknown;    // état avant\n  readonly after:      unknown;    // état après\n  readonly source:     string;     // nom du module\n}\n\nexport type EventLog = readonly SystemEvent[];\n\n// Reconstituer l'état à un moment donné = rejouer les events dans l'ordre\nexport function replayTo(log: EventLog, targetTimestamp: number): SystemEvent[] {\n  return log.filter(e => e.timestamp <= targetTimestamp)\n            .sort((a, b) => a.tickNumber - b.tickNumber);\n}",
+    "rust": "#[derive(Debug, Clone)]\npub struct SystemEvent {\n    pub event_id:    u64,\n    pub timestamp:   u64,       // Unix ms\n    pub tick_number: u32,\n    pub template_id: u32,\n    pub artifact_id: u32,\n    pub event_type:  String,\n    pub before:      serde_json::Value,\n    pub after:       serde_json::Value,\n    pub source:      String,\n}\n\npub fn replay_to(log: &[SystemEvent], target_ts: u64) -> Vec<&SystemEvent> {\n    let mut filtered: Vec<&SystemEvent> =\n        log.iter().filter(|e| e.timestamp <= target_ts).collect();\n    filtered.sort_by_key(|e| e.tick_number);\n    filtered\n}",
+    "schema": {
+      "principle": "Append-only. Never mutate. History is inviolable.",
+      "reconstruction": "State at time T = replay all events where timestamp ≤ T, in tick order",
+      "guarantees": ["Deterministic replay", "Exact tick sequence preserved", "Before/after captured per event"]
+    },
+    "doc": "Event Sourcing is the foundation of ChronoVision. Instead of storing the current state, we store every change as an immutable event. The state at any moment in history is reconstructed by replaying events in tick order up to that timestamp. This makes time-travel debugging deterministic — not approximate. The tick number ensures events are always replayed in the Fixed Sacred Order."
+  }
+}

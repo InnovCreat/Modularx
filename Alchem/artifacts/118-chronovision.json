@@ -1,0 +1,50 @@
+{
+  "artifactId": 118,
+  "name": "ChronoVision",
+  "createdBy": "Isabel Sigouin",
+  "timestamp": 1745194200000,
+  "status": "prototype",
+  "type": "module",
+  "frequency": "639",
+  "upgraded": false,
+  "parentId": 103,
+
+  "templates": [1, 2, 3, 5, 7, 26, 27, 28, 29, 67, 89],
+  "tickOrder": [1, 2, 3, 5, 7, 26, 27, 28, 29, 67, 89],
+
+  "variables": {
+    "phi":               1.618033988749895,
+    "symmetryThreshold": 0.7,
+    "coherenceGate":     "639 Hz — SYMMETRY_THRESHOLD = COHERENCE_THRESHOLD, intentionnel",
+    "replayModes":       ["timestamp", "tickNumber", "eventId"],
+    "maxFractalDepth":   12,
+    "storageModel":      "append-only EventLog — jamais de mutation",
+    "errorModel":        "asymétrie géométrique visible AVANT lecture du texte"
+  },
+
+  "innovations": [
+    "Tick-precise error: failedAt + templateId + reason — pas juste 'une erreur quelque part'",
+    "Replay déterministe: même Fixed Sacred Order qu'en production — le passé et le présent parlent le même langage",
+    "Geometric Memory: log fractal, clustering PHI, symétrie brisée = erreur visible",
+    "Seuil unifié: SYMMETRY_THRESHOLD 0.7 = COHERENCE_THRESHOLD 639 Hz — le même nombre gouverne la santé du crystal et la santé de la mémoire"
+  ],
+
+  "_views": {
+    "tree": {
+      "ChronoVision (118)  ← parentId: 103 Luna": [
+        "→ [001] Core Philosophy      — ENV first",
+        "→ [002] Structure & Flow     — canonical module form",
+        "→ [003] Data Management      — SystemEvent = Object Data",
+        "→ [005] Communication        — events emis sur le bus, jamais directs",
+        "→ [007] Message Bus          — SYSTEM_EVENT → ChronoVision écoute tout",
+        "→ [026] Memory Log           — base append-only, 10 entries display",
+        "→ [027] Event Sourcing       — chaque changement = event, état reconstruit",
+        "→ [028] Time Travel Replay   — rejouer jusqu'à timestamp / tick / eventId",
+        "→ [029] Geometric Memory     — fractal, PHI clustering, symétrie brisée = erreur",
+        "→ [067] 639 Hz Pulse         — CanResonate = seuil de cohérence mémoire",
+        "→ [089] Archive Header       — identity card"
+      ]
+    },
+    "text": "ChronoVision is the time-travel diagnostic system of Luna. It listens to every message on the bus and records each state change as an immutable SystemEvent. The EventLog is never mutated — only appended. At any moment you can ask: what was the state of Artifact 115 at tick 47? ChronoVision replays the log in the exact Fixed Sacred Order and returns the reconstructed state. If a tick failed, it surfaces failedAt + templateId + reason — the same diagnostic as the live orchestrator. The log is organized as a fractal geometric tree, clustered by PHI ratio. A symmetry below 0.7 (the same threshold as CanResonate at 639 Hz) makes the error visible as a geometric asymmetry — detectable before the text is read. Time is not lost. Everything that happened is still there."
+  }
+}

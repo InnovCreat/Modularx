@@ -1,0 +1,82 @@
+{
+  "artifactId": 134,
+  "name": "Audit — Classification 4D",
+  "createdBy": "Isabel Sigouin",
+  "timestamp": 1745194800000,
+  "status": "prototype",
+  "type": "module",
+  "frequency": "639",
+  "upgraded": false,
+  "parentId": 103,
+
+  "templates": [1, 2, 3, 4, 5, 89],
+  "tickOrder": [1, 2, 3, 4, 5, 89],
+
+  "variables": {
+    "system":   "Audit",
+    "version":  "1.0.0",
+    "purpose":  "Passer n'importe quel fragment de code ou discussion par la classification 4D pour décider : garder ou enlever."
+  },
+
+  "schema": {
+    "input": {
+      "fragment": "string — le code, la discussion, ou le module à auditer",
+      "source":   "string — origine : 'code', 'discussion', 'template', 'artifact'"
+    },
+    "output": {
+      "DEFINITION": {
+        "question": "WHAT IS IT — est-ce que c'est clairement identifiable comme une chose ?",
+        "pass":     "A un nom clair, un type déclaré, une frontière nette",
+        "fail":     "Flou, mélange de responsabilités, pas de type défini"
+      },
+      "BEHAVIOR": {
+        "question": "WHAT DOES IT DO — est-ce que son comportement est explicite ?",
+        "pass":     "Actions déclarées, triggers visibles, pas d'effets de bord cachés",
+        "fail":     "Magie, appels implicites, logique dissimulée"
+      },
+      "CAPACITY": {
+        "question": "CAN IT DO X — est-ce que ses capacités sont testables ?",
+        "pass":     "Préfixe Can* présent, fonction pure, retourne bool",
+        "fail":     "Capacité assumée, non vérifiée, pas de seuil déclaré"
+      },
+      "STRUCTURE": {
+        "question": "WHERE DOES IT LIVE — est-ce qu'il est au bon endroit ?",
+        "pass":     "Dans le bon répertoire, bon suffixe de fichier, un seul rôle",
+        "fail":     "Orphelin, mauvais layer, mélange de couches"
+      },
+      "RELATION": {
+        "question": "HOW DOES IT CONNECT — est-ce qu'il communique proprement ?",
+        "pass":     "Via le message bus uniquement, interface minimale exposée",
+        "fail":     "Appels directs, couplage fort, données partagées en mémoire"
+      }
+    },
+    "verdict": {
+      "GARDER":   "Passe 4 ou 5 dimensions — architecturalement solide",
+      "RÉVISER":  "Passe 2 ou 3 dimensions — bon fond, mauvaise forme",
+      "ENLEVER":  "Passe 0 ou 1 dimension — fla-fla, redondant, ou contradictoire"
+    }
+  },
+
+  "_views": {
+    "tree": {
+      "Audit — Classification 4D (134)  ← parentId: 103 Luna": [
+        "→ [001] Core Philosophy    — ENV first, Fixed Sacred Order",
+        "→ [002] Structure & Flow   — canonical module form",
+        "→ [003] Data Management    — Object / Command split",
+        "→ [004] Design Rules       — pure, immutable, explicit",
+        "→ [005] Communication      — one-way bus, typed messages",
+        "→ [089] Archive Header     — identity card",
+        "",
+        "Schéma d'audit :",
+        "  → DEFINITION  : WHAT IS IT ?",
+        "  → BEHAVIOR    : WHAT DOES IT DO ?",
+        "  → CAPACITY    : CAN IT DO X ?",
+        "  → STRUCTURE   : WHERE DOES IT LIVE ?",
+        "  → RELATION    : HOW DOES IT CONNECT ?",
+        "",
+        "Verdict : GARDER / RÉVISER / ENLEVER"
+      ]
+    },
+    "text": "L'artifact Audit est l'outil de ménage du système. Il prend n'importe quel fragment — un morceau de code, une conversation, un template, un module existant — et le fait passer par les 5 dimensions de la classification 4D (plus CAPACITY). Chaque dimension reçoit un PASS ou FAIL avec la raison. Le verdict final est binaire : GARDER (architecturalement solide), RÉVISER (bon fond, mauvaise forme), ou ENLEVER (fla-fla, redondant, contradictoire). L'audit ne détruit rien — il documente. La décision finale appartient toujours à Isabel."
+  }
+}

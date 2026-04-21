@@ -35,3 +35,10 @@ export {
   SPACE_TERMS,
   CONTROL_TERMS,
 } from "./core/classification/examples";
+
+// Artifact system exports
+export type { Template, TemplateId, TemplateCatalogue } from "./core/artifact/template";
+export type { Artifact, ArtifactHeader, ArtifactStatus, ArtifactType } from "./core/artifact/artifact";
+export type { ArtifactViews, CodeView, TreeView, TextView, TreeNode } from "./core/artifact/views";
+export { tick }            from "./core/orchestrator/tick";
+export type { TickResult } from "./core/orchestrator/tick";

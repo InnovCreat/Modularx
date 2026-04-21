@@ -5,6 +5,7 @@
   "version": "1.0.0",
   "content": {
     "code": "// Object Data — types.ts\nexport interface Thing {\n  readonly id:   string;\n  readonly name: string;\n}\n\n// Command Data — messages.ts\nexport interface DoThing {\n  type:    \"DO_THING\";\n  payload: { thingId: string };\n}",
+    "rust": "// Object Data — types.rs (ce qu'une chose EST)\n#[derive(Debug, Clone)]\npub struct Thing {\n    pub id:   String,\n    pub name: String,\n}\n\n// Command Data — messages.rs (ce qu'on lui DEMANDE)\n#[derive(Debug)]\npub enum ThingCommand {\n    DoThing { thing_id: String },\n}\n\n// Règle : ces deux enums/structs ne vivent jamais dans le même fichier.",
     "schema": {
       "objectData": "What a thing IS — static, descriptive, types.ts",
       "commandData": "What to DO with a thing — dynamic, messages.ts",

@@ -5,6 +5,7 @@
   "version": "1.0.0",
   "content": {
     "code": "// Ternary state — three possible conditions, not two\nexport type CrystalState = \"Divergent\" | \"Resonant\" | \"Convergent\";\n\nexport interface Crystal {\n  readonly state:      CrystalState;\n  readonly coherence:  number;   // 0.0 – 1.0\n  readonly symmetry:   number;   // 0.0 – 1.0\n  readonly emergence:  number;   // 0.0 – 1.0\n  readonly frequency:  number;   // Hz\n}",
+    "rust": "// État ternaire — trois conditions, pas deux\n#[derive(Debug, Clone, Copy, PartialEq)]\npub enum CrystalState {\n    Divergent,   // expansion, entropie haute\n    Resonant,    // stable, à fréquence\n    Convergent,  // contraction, cristallisation\n}\n\n#[derive(Debug, Clone)]\npub struct Crystal {\n    pub state:      CrystalState,\n    pub coherence:  f64,  // 0.0 – 1.0\n    pub symmetry:   f64,  // 0.0 – 1.0\n    pub emergence:  f64,  // 0.0 – 1.0\n    pub frequency:  f64,  // Hz\n}",
     "schema": {
       "states": {
         "Divergent":   "Expanding, unstable, high entropy",

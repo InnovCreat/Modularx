@@ -5,6 +5,7 @@
   "version": "1.0.0",
   "content": {
     "code": "// One-way message bus — the only bridge between modules\nMessageBus.on(\"MODULE_READY\", (msg) => { /* handle */ });\nMessageBus.emit({ id: makeId(), type: \"MODULE_READY\", source: \"core\", payload: null, timestamp: Date.now() });",
+    "rust": "// Bus de messages unidirectionnel — seul pont entre les modules\npub trait MessageHandler: Send + Sync {\n    fn handle(&self, msg: &Message);\n}\n\npub struct MessageBus {\n    handlers: std::collections::HashMap<String, Vec<Box<dyn MessageHandler>>>,\n}\n\nimpl MessageBus {\n    pub fn emit(&self, msg: &Message) {\n        if let Some(list) = self.handlers.get(&msg.msg_type) {\n            for h in list { h.handle(msg); }\n        }\n    }\n}",
     "schema": {
       "methods": ["on(type, handler)", "emit(message)", "off(type, handler)"],
       "invariant": "No module calls another module directly. Ever."

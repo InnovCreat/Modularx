@@ -11,7 +11,8 @@ export interface Template {
 }
 
 export interface TemplateContent {
-  readonly code?: string;             // fragment de code généré
+  readonly code?: string;             // fragment TypeScript généré
+  readonly rust?: string;             // fragment Rust équivalent (Luna)
   readonly schema?: Record<string, unknown>; // structure de données
   readonly doc?: string;              // documentation embarquée
 }

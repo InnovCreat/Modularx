@@ -1,0 +1,62 @@
+{
+  "artifactId": 103,
+  "name": "Luna — Living Core",
+  "createdBy": "Isabel Sigouin",
+  "timestamp": 1745193900000,
+  "status": "prototype",
+  "type": "module",
+  "frequency": "639",
+  "upgraded": false,
+  "parentId": null,
+
+  "templates": [1, 2, 3, 4, 5, 7, 12, 67, 89],
+  "tickOrder": [1, 2, 3, 4, 5, 7, 12, 67, 89],
+
+  "variables": {
+    "language":      "Rust",
+    "runtime":       "WASM",
+    "framework":     "Leptos 0.6",
+    "initialState":  "Resonant",
+    "coherence":     1.0,
+    "frequency":     639,
+    "architecture":  "Modularis → Luna → Interface_System"
+  },
+
+  "subArtifacts": [
+    { "id": 110, "name": "Nucleus",    "role": "Pulsating heart — gravitational center" },
+    { "id": 111, "name": "Sprites",    "role": "Orbital entities (Aether, Lumina, Solaris)" },
+    { "id": 112, "name": "Chronos",    "role": "Time controller — global tempo" },
+    { "id": 113, "name": "Rituel",     "role": "Invocation system — 8 ritual keywords" },
+    { "id": 114, "name": "Couleur",    "role": "Chromatic system — 5-color vibrational palette" },
+    { "id": 115, "name": "Quantum",    "role": "Superposition mechanics — stable vs superposé" },
+    { "id": 116, "name": "Réparation","role": "Healing module — full system restoration" },
+    { "id": 117, "name": "Archive",    "role": "Living memory — scrollable action log" }
+  ],
+
+  "_views": {
+    "tree": {
+      "Luna — Living Core (103)": [
+        "→ [001] Core Philosophy       — ENV first, Fixed Sacred Order",
+        "→ [002] Structure & Flow      — module.md + 5-file canonical form",
+        "→ [003] Data Management       — Object / Command split",
+        "→ [004] Design Rules          — pure, immutable, no magic",
+        "→ [005] Communication         — one-way bus, typed messages",
+        "→ [007] Message Bus           — on / emit / off",
+        "→ [012] Crystal State         — Divergent / Resonant / Convergent",
+        "→ [067] 639 Hz Pulse          — CanResonate, coherence 1.0",
+        "→ [089] Archive Header        — stamped, read-only",
+        "",
+        "Sub-artifacts (to tick independently):",
+        "  → [110] Nucleus             — pulsating heart",
+        "  → [111] Sprites             — Aether, Lumina, Solaris",
+        "  → [112] Chronos             — tempo global",
+        "  → [113] Rituel              — RÉVEIL SOMMEIL CHAOS HARMONIE...",
+        "  → [114] Couleur             — Rose Cyan Jaune Mint Coral",
+        "  → [115] Quantum             — stable / superposé",
+        "  → [116] Réparation          — healing",
+        "  → [117] Archive             — last 10 entries, newest on top"
+      ]
+    },
+    "text": "Luna is the living core of the Modularis framework. It is written in pure Rust compiled to WASM via Leptos 0.6. It does not contain the interface — it IS the core that the interface visualizes. Luna starts in Resonant state at full coherence (1.0) and 639 Hz. Its 8 sub-modules are each sovereign artifacts that tick independently but communicate exclusively through the message bus. Luna never calls its sub-modules directly — it emits messages and listens. The Archive records every action with timestamp and trace."
+  }
+}

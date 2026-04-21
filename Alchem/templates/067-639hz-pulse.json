@@ -5,6 +5,7 @@
   "version": "1.0.0",
   "content": {
     "code": "// 639 Hz — fréquence de cohérence et d'harmonie\n// CanResonate: true when coherence > 0.7\nexport function canResonate(coherence: number): boolean {\n  return coherence > 0.7;\n}\n\nexport function pulseAt639(timestamp: number): number {\n  return Math.sin((2 * Math.PI * 639 * timestamp) / 1000);\n}",
+    "rust": "pub const RESONANCE_FREQ: f64 = 639.0;\npub const COHERENCE_THRESHOLD: f64 = 0.7;\n\n/// CanResonate — capacité déclarée, pas inférée\npub fn can_resonate(coherence: f64) -> bool {\n    coherence > COHERENCE_THRESHOLD\n}\n\n/// Retourne la valeur du sinus à 639 Hz au timestamp donné (ms)\npub fn pulse_at_639(timestamp_ms: f64) -> f64 {\n    (2.0 * std::f64::consts::PI * RESONANCE_FREQ * timestamp_ms / 1000.0).sin()\n}",
     "schema": {
       "frequency": 639,
       "meaning": "Harmony, connection, coherence — the frequency of the heart field",

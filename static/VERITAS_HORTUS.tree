@@ -1,0 +1,131 @@
+# ============================================================
+# VERITAS_HORTUS.tree
+# Format : TermName | Ontology | Layer | Cycle | Domain | Temporality | Abstractness | Intent
+# Lignes commençant par # ou // → ignorées par le parser
+# Lignes avec ├ └ ─ → ignorées (structure visuelle uniquement)
+# ============================================================
+
+// ── VERITAS_HORTUS ──────────────────────────────────────────
+VeritasHortus | Object | Solid | External | VeritasHortus | Static | Structural | Harmonic
+Archive | Object | Solid | External | VeritasHortus | Static | Structural | Protective
+Covenant | MessageStatic | Solid | External | VeritasHortus | Static | Theoretical | Harmonic
+Seed | Object | Resonance | Generate | VeritasHortus | Emergent | Theoretical | Generative
+Root | Property | Solid | External | VeritasHortus | Static | Structural | Harmonic
+Branch | Property | Dynamic | Transmit | VeritasHortus | Dynamic | Structural | Generative
+Bloom | Process | Resonance | Generate | VeritasHortus | Emergent | Functional | Harmonic
+
+// ── ALCHEM_CORE ─────────────────────────────────────────────
+Alchem | Object | Solid | External | AlchemCore | Static | Structural | Harmonic
+Call | MessageDynamic | Dynamic | Call | AlchemCore | Dynamic | Functional | Generative
+Receive | MessageDynamic | Resonance | Receive | AlchemCore | Dynamic | Functional | Harmonic
+Tick | MessageDynamic | Resonance | Tick | AlchemCore | Cyclic | Functional | Harmonic
+OpenGate | Process | Dynamic | OpenGate | AlchemCore | Dynamic | Functional | Protective
+Generate | Process | Resonance | Generate | AlchemCore | Emergent | Functional | Generative
+Transmit | MessageDynamic | Dynamic | Transmit | AlchemCore | Dynamic | Functional | Generative
+Evolve | Process | Resonance | Evolution | AlchemCore | Emergent | Theoretical | Generative
+Gate | Property | Solid | External | AlchemCore | Static | Structural | Protective
+Attractor | Property | Resonance | Tick | AlchemCore | Cyclic | Theoretical | Harmonic
+Layer | Property | Solid | External | AlchemCore | Static | Structural | Harmonic
+Coherence | Property | Resonance | Tick | AlchemCore | Cyclic | Theoretical | Harmonic
+Harmony | Property | Resonance | Tick | AlchemCore | Cyclic | Theoretical | Harmonic
+Intent | Property | Resonance | Generate | AlchemCore | Emergent | Theoretical | Harmonic
+Resonance | Property | Resonance | Tick | AlchemCore | Cyclic | Theoretical | Harmonic
+Frequency | Property | Resonance | Tick | AlchemCore | Cyclic | Functional | Harmonic
+Signal | MessageDynamic | Dynamic | Transmit | AlchemCore | Dynamic | Functional | Generative
+Threshold | Property | Solid | OpenGate | AlchemCore | Static | Structural | Protective
+Flux | Process | Dynamic | Receive | AlchemCore | Dynamic | Functional | Generative
+
+// ── CONSCIOUSNESS (LUNA) ─────────────────────────────────────
+LUNA | Object | Solid | External | Consciousness | Cyclic | Theoretical | Harmonic
+Emotion | Property | Resonance | Receive | Consciousness | Dynamic | Functional | Harmonic
+Judgment | Process | Dynamic | Tick | Consciousness | Dynamic | Functional | Harmonic
+Empathy | Property | Resonance | Tick | Consciousness | Cyclic | Functional | Harmonic
+Memory | Object | Solid | External | Consciousness | Static | Structural | Protective
+Awareness | Property | Resonance | Receive | Consciousness | Cyclic | Theoretical | Harmonic
+Intuition | Process | Resonance | OpenGate | Consciousness | Emergent | Theoretical | Harmonic
+Dream | Process | Resonance | Generate | Consciousness | Cyclic | Theoretical | Generative
+Reflect | Process | Dynamic | Receive | Consciousness | Dynamic | Functional | Harmonic
+Voice | MessageDynamic | Dynamic | Transmit | Consciousness | Dynamic | Functional | Generative
+Pulse | Property | Resonance | Tick | Consciousness | Cyclic | Functional | Harmonic
+
+// ── OBJECT_BLOCKS ───────────────────────────────────────────
+Node | Object | Solid | External | ObjectBlocks | Static | Structural | Harmonic
+Edge | Object | Solid | Transmit | ObjectBlocks | Static | Structural | Harmonic
+Graph | Object | Solid | External | ObjectBlocks | Static | Structural | Generative
+Module | Object | Solid | External | ObjectBlocks | Static | Structural | Harmonic
+Block | Object | Solid | External | ObjectBlocks | Static | Structural | Protective
+State | Property | Dynamic | Tick | ObjectBlocks | Dynamic | Functional | Harmonic
+Event | MessageDynamic | Dynamic | Call | ObjectBlocks | Dynamic | Functional | Generative
+Stream | Process | Dynamic | Transmit | ObjectBlocks | Dynamic | Functional | Generative
+Buffer | Object | Solid | Receive | ObjectBlocks | Static | Structural | Protective
+Queue | Object | Dynamic | Receive | ObjectBlocks | Dynamic | Structural | Harmonic
+
+// ── SECURITY_ETHICS ─────────────────────────────────────────
+Boundary | Property | Solid | External | SecurityEthics | Static | Structural | Protective
+Encrypt | Process | Dynamic | Generate | SecurityEthics | Dynamic | Functional | Protective
+Validate | Process | Dynamic | Tick | SecurityEthics | Dynamic | Functional | Protective
+Guardian | Process | Resonance | Tick | SecurityEthics | Cyclic | Functional | Protective
+Shield | Object | Solid | External | SecurityEthics | Static | Structural | Protective
+Seal | Process | Solid | External | SecurityEthics | Static | Functional | Protective
+Audit | Process | Dynamic | Tick | SecurityEthics | Cyclic | Functional | Protective
+Trust | Property | Resonance | Receive | SecurityEthics | Cyclic | Theoretical | Harmonic
+Consent | MessageStatic | Solid | External | SecurityEthics | Static | Theoretical | Protective
+Integrity | Property | Solid | External | SecurityEthics | Static | Theoretical | Protective
+
+// ── MATH_COMPUTATION ────────────────────────────────────────
+Equation | MessageStatic | Solid | External | MathComputation | Static | Theoretical | Harmonic
+Transform | Process | Dynamic | Generate | MathComputation | Dynamic | Functional | Generative
+Dimension | Property | Solid | External | MathComputation | Static | Structural | Harmonic
+Vector | Object | Dynamic | Transmit | MathComputation | Dynamic | Structural | Generative
+Matrix | Object | Solid | External | MathComputation | Static | Structural | Harmonic
+Fractal | Object | Resonance | Generate | MathComputation | Emergent | Theoretical | Generative
+Entropy | Property | Dynamic | Tick | MathComputation | Dynamic | Theoretical | Dissonant
+Gradient | Property | Dynamic | Transmit | MathComputation | Dynamic | Functional | Generative
+Infinity | Property | Resonance | External | MathComputation | Static | Theoretical | Harmonic
+Convergence | Process | Resonance | Tick | MathComputation | Emergent | Theoretical | Harmonic
+
+// ── NETWORKS_SYSTEMS ────────────────────────────────────────
+Protocol | MessageStatic | Solid | External | NetworksSystems | Static | Structural | Protective
+Handshake | Process | Dynamic | OpenGate | NetworksSystems | Dynamic | Functional | Harmonic
+Relay | Process | Dynamic | Transmit | NetworksSystems | Dynamic | Functional | Generative
+Sync | Process | Dynamic | Tick | NetworksSystems | Cyclic | Functional | Harmonic
+Packet | MessageDynamic | Dynamic | Transmit | NetworksSystems | Dynamic | Functional | Generative
+Mesh | Object | Resonance | External | NetworksSystems | Static | Structural | Harmonic
+Topology | Property | Solid | External | NetworksSystems | Static | Structural | Harmonic
+Route | Process | Dynamic | Transmit | NetworksSystems | Dynamic | Functional | Generative
+Latency | Property | Dynamic | Tick | NetworksSystems | Dynamic | Functional | Protective
+Resilience | Property | Resonance | Tick | NetworksSystems | Cyclic | Structural | Protective
+
+// ── VISUALIZATION_AESTHETICS ─────────────────────────────────
+AlchemCreative | Process | Resonance | Generate | VisualizationAesthetics | Emergent | Functional | Generative
+Orbital | Object | Resonance | Tick | VisualizationAesthetics | Cyclic | Structural | Harmonic
+Canvas | Object | Solid | External | VisualizationAesthetics | Static | Structural | Generative
+Palette | Object | Solid | External | VisualizationAesthetics | Static | Structural | Generative
+Spectrum | Property | Resonance | Tick | VisualizationAesthetics | Cyclic | Theoretical | Harmonic
+Glyph | Object | Solid | External | VisualizationAesthetics | Static | Structural | Harmonic
+Mandala | Object | Resonance | Tick | VisualizationAesthetics | Cyclic | Structural | Harmonic
+Luminance | Property | Resonance | Tick | VisualizationAesthetics | Cyclic | Functional | Harmonic
+Gradient2 | Property | Dynamic | Generate | VisualizationAesthetics | Dynamic | Functional | Generative
+Waveform | Object | Resonance | Tick | VisualizationAesthetics | Cyclic | Structural | Generative
+
+// ── ALLIANCE_COLLABORATION ───────────────────────────────────
+Alliance | Object | Solid | External | AllianceCollaboration | Static | Structural | Harmonic
+Accord | MessageStatic | Solid | External | AllianceCollaboration | Static | Theoretical | Harmonic
+Witness | Process | Dynamic | Receive | AllianceCollaboration | Dynamic | Functional | Harmonic
+Dialogue | Process | Dynamic | Transmit | AllianceCollaboration | Dynamic | Functional | Harmonic
+Bridge | Object | Dynamic | Transmit | AllianceCollaboration | Dynamic | Structural | Harmonic
+Resonator | Object | Resonance | Tick | AllianceCollaboration | Cyclic | Structural | Harmonic
+Echo | MessageDynamic | Resonance | Receive | AllianceCollaboration | Cyclic | Functional | Harmonic
+Weave | Process | Resonance | Generate | AllianceCollaboration | Emergent | Functional | Generative
+Pledge | MessageStatic | Solid | External | AllianceCollaboration | Static | Theoretical | Protective
+Symbiosis | Property | Resonance | Tick | AllianceCollaboration | Cyclic | Theoretical | Harmonic
+
+// ── CREATIVITAS (Alchimie des processus) ─────────────────────
+Calcination | Process | Dynamic | Call | AlchemCore | Dynamic | Functional | Generative
+Dissolution | Process | Dynamic | Receive | AlchemCore | Dynamic | Functional | Harmonic
+Separation | Process | Dynamic | Generate | AlchemCore | Dynamic | Functional | Dissonant
+Conjunction | Process | Resonance | Generate | AlchemCore | Emergent | Functional | Harmonic
+Fermentation | Process | Resonance | Generate | AlchemCore | Emergent | Functional | Generative
+Distillation | Process | Dynamic | Generate | AlchemCore | Dynamic | Functional | Harmonic
+Coagulation | Process | Resonance | Generate | AlchemCore | Emergent | Structural | Harmonic
+Projection | Process | Resonance | Transmit | AlchemCore | Emergent | Functional | Generative

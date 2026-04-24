@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veritas Hortus — Term Tree Explorer</title>
+    <style>
+        :root {
+            --bg-deep:    #16161e;
+            --bg-panel:   #1e1e2e;
+            --bg-card:    #252535;
+            --bg-hover:   #2e2e45;
+            --border:     #2a2a45;
+            --text:       #cdd6f4;
+            --text-dim:   #6c7086;
+            --accent:     #cba6f7;
+            --harmonic:   #a6e3a1;
+            --generative: #f9e2af;
+            --protective: #89b4fa;
+            --dissonant:  #f38ba8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Header ─────────────────────────────────── */
+        header {
+            background: rgba(0,0,0,0.5);
+            border-bottom: 1px solid var(--border);
+            padding: 1.75rem 2rem 1.25rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        header p {
+            color: var(--text-dim);
+            margin-top: 0.4rem;
+            font-size: 0.9rem;
+        }
+
+        /* ── Controls ────────────────────────────────── */
+        .controls {
+            background: rgba(0,0,0,0.3);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .controls label {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        input[type="text"], select {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            padding: 0.55rem 0.9rem;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            border-color: var(--accent);
+        }
+
+        select { cursor: pointer; min-width: 160px; }
+
+        /* ── Stats ───────────────────────────────────── */
+        .stats {
+            background: rgba(0,0,0,0.2);
+            border-bottom: 1px solid var(--border);
+            padding: 0.875rem 2rem;
+            display: flex;
+            gap: 0.875rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.75rem 1.25rem;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 0.2rem;
+        }
+
+        /* ── Term list ───────────────────────────────── */
+        .list-wrap {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.25rem 2rem 2rem;
+        }
+
+        .terms-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            max-width: 860px;
+        }
+
+        .term-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-left: 5px solid var(--harmonic);
+            border-radius: 10px;
+            padding: 0.875rem 1.1rem;
+            transition: background 0.15s;
+            cursor: default;
+        }
+
+        .term-card:hover { background: var(--bg-hover); }
+
+        .term-card[data-intent="Generative"] { border-left-color: var(--generative); }
+        .term-card[data-intent="Protective"] { border-left-color: var(--protective); }
+        .term-card[data-intent="Dissonant"]  { border-left-color: var(--dissonant); }
+
+        .term-name {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .term-dims {
+            font-size: 0.82rem;
+            color: var(--text-dim);
+        }
+
+        .term-dims span::after { content: ' | '; }
+        .term-dims span:last-child::after { content: ''; }
+
+        .intent-badge {
+            display: inline-block;
+            padding: 2px 9px;
+            border-radius: 9999px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            margin-top: 0.45rem;
+        }
+
+        .badge-harmonic   { background: rgba(166,227,161,0.12); color: var(--harmonic);   border: 1px solid rgba(166,227,161,0.25); }
+        .badge-generative { background: rgba(249,226,175,0.12); color: var(--generative); border: 1px solid rgba(249,226,175,0.25); }
+        .badge-protective { background: rgba(137,180,250,0.12); color: var(--protective); border: 1px solid rgba(137,180,250,0.25); }
+        .badge-dissonant  { background: rgba(243,139,168,0.12); color: var(--dissonant);  border: 1px solid rgba(243,139,168,0.25); }
+
+        .empty {
+            color: var(--text-dim);
+            padding: 3rem 0;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🌸 Veritas Hortus — Term Tree Explorer</h1>
+    <p>Explore philosophical terms across 7 dimensions • 639 Hz aligned</p>
+</header>
+
+<div class="controls">
+    <input type="text" id="search" placeholder="Search terms...">
+    <label>Intent:</label>
+    <select id="intent-filter">
+        <option value="All">All</option>
+        <option value="Harmonic">Harmonic</option>
+        <option value="Generative">Generative</option>
+        <option value="Protective">Protective</option>
+        <option value="Dissonant">Dissonant</option>
+    </select>
+    <label>Domain:</label>
+    <select id="domain-filter">
+        <option value="All">All</option>
+    </select>
+</div>
+
+<div class="stats">
+    <div class="stat-card">
+        <div class="stat-value" id="stat-total">—</div>
+        <div class="stat-label">Total terms</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" id="stat-matching">—</div>
+        <div class="stat-label">Matching</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" id="stat-harmonic" style="color: var(--harmonic);">—</div>
+        <div class="stat-label">Harmonic</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" style="color: var(--accent);">639 Hz</div>
+        <div class="stat-label">Core frequency</div>
+    </div>
+</div>
+
+<div class="list-wrap">
+    <div class="terms-list" id="terms-list">
+        <div class="empty">Chargement…</div>
+    </div>
+</div>
+
+<script>
+    let allTerms = [];
+
+    async function init() {
+        try {
+            const res = await fetch('/api/terms');
+            allTerms = await res.json();
+            populateDomains();
+            document.getElementById('stat-total').textContent = allTerms.length;
+            document.getElementById('stat-harmonic').textContent =
+                allTerms.filter(t => t.intent === 'Harmonic').length + '+';
+            render(allTerms);
+        } catch (e) {
+            document.getElementById('terms-list').innerHTML =
+                '<div class="empty">Impossible de contacter le serveur.</div>';
+        }
+    }
+
+    function populateDomains() {
+        const domains = [...new Set(allTerms.map(t => t.domain))].sort();
+        const sel = document.getElementById('domain-filter');
+        domains.forEach(d => {
+            const opt = document.createElement('option');
+            opt.value = d;
+            opt.textContent = d;
+            sel.appendChild(opt);
+        });
+    }
+
+    function render(terms) {
+        const list = document.getElementById('terms-list');
+        document.getElementById('stat-matching').textContent = terms.length;
+
+        if (terms.length === 0) {
+            list.innerHTML = '<div class="empty">Aucun terme trouvé.</div>';
+            return;
+        }
+
+        list.innerHTML = terms.map(t => `
+            <div class="term-card" data-intent="${t.intent}">
+                <div class="term-name">${t.name}</div>
+                <div class="term-dims">
+                    <span>${t.ontology}</span>
+                    <span>${t.layer}</span>
+                    <span>${t.cycle}</span>
+                    <span>${t.domain}</span>
+                </div>
+                <span class="intent-badge badge-${t.intent.toLowerCase()}">${t.intent}</span>
+            </div>
+        `).join('');
+    }
+
+    function filter() {
+        const search = document.getElementById('search').value.toLowerCase();
+        const intent = document.getElementById('intent-filter').value;
+        const domain = document.getElementById('domain-filter').value;
+
+        let result = allTerms;
+        if (search) result = result.filter(t => t.name.toLowerCase().includes(search));
+        if (intent !== 'All') result = result.filter(t => t.intent === intent);
+        if (domain !== 'All') result = result.filter(t => t.domain === domain);
+
+        render(result);
+    }
+
+    document.getElementById('search').addEventListener('input', filter);
+    document.getElementById('intent-filter').addEventListener('change', filter);
+    document.getElementById('domain-filter').addEventListener('change', filter);
+
+    init();
+</script>
+
+</body>
+</html>

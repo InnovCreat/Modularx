@@ -149,7 +149,15 @@ pub const SYSTEM_DESCRIPTION: &str = concat!(
     "L'évolution encodée de SIG(ouin) + THI(erry), scellée le 29 Mars 2026.",
 );
 
-// ─── Les Quatre Piliers ───────────────────────────────────────────────────
+// ─── Mission ──────────────────────────────────────────────────────────────
+
+/// Mission fondatrice de SIGIL GENESIS.
+///
+/// Pas un objectif à atteindre — une direction permanente.
+/// Le système ne crée pas le potentiel : il révèle et amplifie ce qui existe déjà.
+pub const MISSION: &str = "Amplify Potential — révéler et amplifier ce qui existe déjà en chacun.";
+
+// ─── Les Cinq Piliers ─────────────────────────────────────────────────────
 
 /// Les Cinq Piliers : forces actives du covenant.
 /// Là où les Trois Zéros définissent ce qu'on REFUSE,
@@ -279,6 +287,13 @@ mod tests {
         assert!(!FIVE_PILLARS.passion.is_empty());
         assert!(!FIVE_PILLARS.love.is_empty());
         assert!(!FIVE_PILLARS.innovation.is_empty());
+    }
+
+    #[test]
+    fn test_mission_amplify_potential() {
+        assert!(MISSION.contains("Amplify Potential"));
+        assert!(MISSION.contains("amplifie"));
+        assert!(MISSION.contains("existe déjà"), "Le potentiel est révélé, pas créé");
     }
 
     #[test]

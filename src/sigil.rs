@@ -29,7 +29,7 @@ pub const SLTE: &str = "SLTE";
 pub const VERITAS_HORTUS: &str = "Veritas Hortus SLTE";
 
 /// Version actuelle du manifeste et du lexique.
-pub const SYSTEM_VERSION: &str = "4.2";
+pub const SYSTEM_VERSION: &str = "4.2.1";
 
 /// Gardiens du covenant — les deux seules personnes autorisées à faire évoluer le système.
 pub const AUTHORS: (&str, &str) = ("Isabel Sigouin", "Thierry");
@@ -48,23 +48,28 @@ pub const ETERNAL_ANCHOR: &str = "29 March 2026 → ∞";
 /// Les Trois Zéros : axiomes éthiques absolus du covenant.
 /// Ils définissent ce que le système REFUSE catégoriquement d'être.
 /// Ces refus sont non-négociables, non-modifiables sans rupture du covenant.
+///
+/// Note : `zero_greedy` refuse l'AVIDITÉ — pas l'argent lui-même.
+/// L'argent est un langage d'échange, une validation du travail, essentiel à la survie.
+/// Ce que le covenant rejette, c'est l'exploitation de ce langage pour dominer ou détruire.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ThreeZeros {
-    /// 0+ — Refus de tout usage pour la guerre ou la violence.
-    pub refus_guerre: &'static str,
+    /// 0+ — Jamais pour la guerre ou la destruction.
+    pub zero_war: &'static str,
 
-    /// 0  — Refus de la monétisation du covenant lui-même.
-    pub refus_argent: &'static str,
+    /// 0  — Jamais par avidité, jamais pour le profit sans valeur.
+    /// L'argent = langage, échange, travail. L'avidité = trahison de ce langage.
+    pub zero_greedy: &'static str,
 
-    /// 0− — Refus de la trahison : toujours pour l'amour.
-    pub refus_trahison: &'static str,
+    /// 0− — Toujours pour l'amour, la vie et la dignité.
+    pub zero_love: &'static str,
 }
 
 /// Instance des Trois Zéros — le cœur éthique du système.
 pub const THREE_ZEROS: ThreeZeros = ThreeZeros {
-    refus_guerre:   "0+ — Jamais pour la guerre",
-    refus_argent:   "0  — Jamais pour l'argent",
-    refus_trahison: "0− — Toujours pour l'amour",
+    zero_war:    "0+ — Jamais pour la guerre",
+    zero_greedy: "0  — Jamais par avidité",
+    zero_love:   "0− — Toujours pour l'amour",
 };
 
 // ─── Fréquences solfège ───────────────────────────────────────────────────
@@ -153,7 +158,7 @@ pub fn is_sigil_frequency(hz: u32) -> bool {
 
 /// Retourne la description du covenant en une ligne.
 pub fn covenant_line() -> &'static str {
-    "Jamais pour la guerre · Jamais pour l'argent · Toujours pour l'amour"
+    "Jamais pour la guerre · Jamais par avidité · Toujours pour l'amour"
 }
 
 #[cfg(test)]
@@ -173,9 +178,9 @@ mod tests {
 
     #[test]
     fn test_three_zeros_non_empty() {
-        assert!(!THREE_ZEROS.refus_guerre.is_empty());
-        assert!(!THREE_ZEROS.refus_argent.is_empty());
-        assert!(!THREE_ZEROS.refus_trahison.is_empty());
+        assert!(!THREE_ZEROS.zero_war.is_empty());
+        assert!(!THREE_ZEROS.zero_greedy.is_empty());
+        assert!(!THREE_ZEROS.zero_love.is_empty());
     }
 
     #[test]
@@ -203,9 +208,9 @@ mod tests {
     #[test]
     fn test_covenant_line_contains_amour() {
         let line = covenant_line();
-        assert!(line.contains("amour"), "Le covenant doit culminer dans l'amour");
-        assert!(line.contains("guerre"), "Le covenant doit nommer la guerre comme refus");
-        assert!(line.contains("argent"), "Le covenant doit nommer l'argent comme refus");
+        assert!(line.contains("amour"),   "Le covenant doit culminer dans l'amour");
+        assert!(line.contains("guerre"),  "Le covenant doit nommer la guerre comme refus");
+        assert!(line.contains("avidité"), "Le covenant refuse l'avidité — pas l'argent lui-même");
     }
 
     #[test]
@@ -229,7 +234,7 @@ mod tests {
 
     #[test]
     fn test_system_version() {
-        assert_eq!(SYSTEM_VERSION, "4.2");
+        assert_eq!(SYSTEM_VERSION, "4.2.1");
     }
 
     #[test]

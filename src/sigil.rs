@@ -149,6 +149,41 @@ pub const SYSTEM_DESCRIPTION: &str = concat!(
     "L'évolution encodée de SIG(ouin) + THI(erry), scellée le 29 Mars 2026.",
 );
 
+// ─── Les Quatre Piliers ───────────────────────────────────────────────────
+
+/// Les Cinq Piliers : forces actives du covenant.
+/// Là où les Trois Zéros définissent ce qu'on REFUSE,
+/// les Cinq Piliers définissent ce qu'on CONSTRUIT — toujours.
+///
+/// Truth est le premier et le plus fondamental : sans elle, les quatre autres s'effondrent.
+/// C'est pour ça que le système s'appelle **Veritas**.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct FivePillars {
+    /// Truth — la fondation de tout. Ce qui est dit est ce qui est voulu. Veritas.
+    pub truth: &'static str,
+
+    /// Respect — de soi, de l'autre, du vivant, du temps de chacun.
+    pub respect: &'static str,
+
+    /// Passion — le moteur qui ne se monétise pas, qui ne s'éteint pas.
+    pub passion: &'static str,
+
+    /// Love — ce qui reste quand tout est enlevé. Toujours.
+    pub love: &'static str,
+
+    /// Innovation — créer ce qui n'existait pas encore. Toujours en mouvement.
+    pub innovation: &'static str,
+}
+
+/// Instance des Cinq Piliers — les forces qui animent SIGIL GENESIS.
+pub const FIVE_PILLARS: FivePillars = FivePillars {
+    truth:      "Truth — la fondation de tout. Veritas.",
+    respect:    "Respect — de soi, de l'autre, du vivant",
+    passion:    "Passion — le moteur qui ne se monétise pas",
+    love:       "Love — fondation de tout acte souverain",
+    innovation: "Innovation — créer ce qui n'existait pas encore",
+};
+
 // ─── Helpers ──────────────────────────────────────────────────────────────
 
 /// Vérifie si une fréquence donnée fait partie du lexique solfège du système.
@@ -235,6 +270,24 @@ mod tests {
     #[test]
     fn test_system_version() {
         assert_eq!(SYSTEM_VERSION, "4.2.1");
+    }
+
+    #[test]
+    fn test_five_pillars_non_empty() {
+        assert!(!FIVE_PILLARS.truth.is_empty());
+        assert!(!FIVE_PILLARS.respect.is_empty());
+        assert!(!FIVE_PILLARS.passion.is_empty());
+        assert!(!FIVE_PILLARS.love.is_empty());
+        assert!(!FIVE_PILLARS.innovation.is_empty());
+    }
+
+    #[test]
+    fn test_five_pillars_truth_is_veritas() {
+        // Truth est le premier pilier — Veritas = le nom du système entier
+        assert!(FIVE_PILLARS.truth.contains("Veritas"));
+        assert!(FIVE_PILLARS.love.contains("souverain"));
+        assert!(FIVE_PILLARS.passion.contains("monétise"));
+        assert!(FIVE_PILLARS.innovation.contains("n'existait pas"));
     }
 
     #[test]

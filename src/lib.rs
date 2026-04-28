@@ -1,3 +1,4 @@
+mod audio;
 mod pattern;
 mod synth;
 mod playback;
@@ -11,10 +12,11 @@ pub use pattern::{Pattern, Note};
 pub use synth::{NoteFrequency, SOLFEGE_INSTRUMENTS};
 pub use playback::{Playback, PlaybackState};
 pub use persist::{save_to_json, load_from_json};
+pub use audio::{Adsr, WaveShape};
 
 #[wasm_bindgen]
 pub struct VHTracker {
-    pattern: Arc<Mutex<Pattern>>,
+    pattern:  Arc<Mutex<Pattern>>,
     playback: Arc<Mutex<Playback>>,
 }
 
@@ -22,175 +24,141 @@ pub struct VHTracker {
 impl VHTracker {
     #[wasm_bindgen(constructor)]
     pub fn new() -> VHTracker {
-        let pattern = Pattern::new();
-        let playback = Playback::new();
-
         VHTracker {
-            pattern: Arc::new(Mutex::new(pattern)),
-            playback: Arc::new(Mutex::new(playback)),
+            pattern:  Arc::new(Mutex::new(Pattern::new())),
+            playback: Arc::new(Mutex::new(Playback::new())),
         }
     }
 
-    /// Set a note at grid position
+    // ── Grid ────────────────────────────────────────────────────────────────
+
     pub fn set_note(&self, row: usize, channel: usize, note_str: &str) -> Result<(), JsValue> {
-        if let Ok(mut pattern) = self.pattern.lock() {
-            match NoteFrequency::parse(note_str) {
-                Ok(note) => {
-                    pattern.set_cell(row, channel, Some(note));
-                    Ok(())
-                }
-                Err(e) => Err(JsValue::from_str(&format!("Invalid note: {}", e))),
+        match NoteFrequency::parse(note_str) {
+            Ok(note) => {
+                self.pattern.lock().unwrap().set_cell(row, channel, Some(note));
+                Ok(())
             }
-        } else {
-            Err(JsValue::from_str("Pattern lock failed"))
+            Err(e) => Err(JsValue::from_str(&format!("Invalid note: {}", e))),
         }
     }
 
-    /// Clear a cell
-    pub fn clear_cell(&self, row: usize, channel: usize) -> Result<(), JsValue> {
-        if let Ok(mut pattern) = self.pattern.lock() {
-            pattern.set_cell(row, channel, None);
-            Ok(())
-        } else {
-            Err(JsValue::from_str("Pattern lock failed"))
-        }
+    pub fn clear_cell(&self, row: usize, channel: usize) {
+        self.pattern.lock().unwrap().set_cell(row, channel, None);
     }
 
-    /// Get cell contents as JSON
     pub fn get_cell(&self, row: usize, channel: usize) -> String {
-        if let Ok(pattern) = self.pattern.lock() {
-            if let Some(note) = pattern.get_cell(row, channel) {
-                serde_json::to_string(&note).unwrap_or_default()
-            } else {
-                "null".to_string()
-            }
-        } else {
-            "null".to_string()
+        match self.pattern.lock().unwrap().get_cell(row, channel) {
+            Some(note) => serde_json::to_string(&note).unwrap_or_default(),
+            None => "null".to_string(),
         }
     }
 
-    /// Get entire pattern as JSON
     pub fn pattern_to_json(&self) -> String {
-        if let Ok(pattern) = self.pattern.lock() {
-            serde_json::to_string(&*pattern).unwrap_or_default()
-        } else {
-            "{}".to_string()
-        }
+        serde_json::to_string(&*self.pattern.lock().unwrap()).unwrap_or_default()
     }
 
-    /// Load pattern from JSON
     pub fn pattern_from_json(&self, json: &str) -> Result<(), JsValue> {
         match serde_json::from_str::<Pattern>(json) {
-            Ok(loaded_pattern) => {
-                if let Ok(mut pattern) = self.pattern.lock() {
-                    *pattern = loaded_pattern;
-                    Ok(())
-                } else {
-                    Err(JsValue::from_str("Pattern lock failed"))
-                }
-            }
+            Ok(loaded) => { *self.pattern.lock().unwrap() = loaded; Ok(()) }
             Err(e) => Err(JsValue::from_str(&format!("JSON parse error: {}", e))),
         }
     }
 
-    /// Start playback
-    pub fn play(&self) -> Result<(), JsValue> {
-        if let Ok(mut pb) = self.playback.lock() {
-            pb.play();
-            Ok(())
-        } else {
-            Err(JsValue::from_str("Playback lock failed"))
-        }
+    // ── Transport ────────────────────────────────────────────────────────────
+
+    pub fn play(&self) {
+        self.playback.lock().unwrap().play();
     }
 
-    /// Stop playback
-    pub fn stop(&self) -> Result<(), JsValue> {
-        if let Ok(mut pb) = self.playback.lock() {
-            pb.stop();
-            Ok(())
-        } else {
-            Err(JsValue::from_str("Playback lock failed"))
-        }
+    pub fn stop(&self) {
+        self.playback.lock().unwrap().stop();
     }
 
-    /// Toggle playback
-    pub fn toggle_play(&self) -> Result<bool, JsValue> {
-        if let Ok(mut pb) = self.playback.lock() {
-            pb.toggle_play();
-            Ok(pb.is_playing())
-        } else {
-            Err(JsValue::from_str("Playback lock failed"))
-        }
+    pub fn toggle_play(&self) -> bool {
+        let mut pb = self.playback.lock().unwrap();
+        pb.toggle_play();
+        pb.is_playing()
     }
 
-    /// Set BPM
-    pub fn set_bpm(&self, bpm: u32) -> Result<(), JsValue> {
-        if let Ok(mut pb) = self.playback.lock() {
-            pb.set_bpm(bpm);
-            Ok(())
-        } else {
-            Err(JsValue::from_str("Playback lock failed"))
-        }
+    pub fn set_bpm(&self, bpm: u32) {
+        self.playback.lock().unwrap().set_bpm(bpm);
     }
 
-    /// Get current row
     pub fn current_row(&self) -> usize {
-        if let Ok(pb) = self.playback.lock() {
-            pb.current_row()
-        } else {
-            0
-        }
+        self.playback.lock().unwrap().current_row()
     }
 
-    /// Get current state as JSON
     pub fn state_to_json(&self) -> String {
-        if let Ok(pb) = self.playback.lock() {
-            serde_json::json!({
-                "row": pb.current_row(),
-                "playing": pb.is_playing(),
-                "bpm": pb.bpm(),
-            }).to_string()
-        } else {
-            "{}".to_string()
-        }
+        let pb = self.playback.lock().unwrap();
+        serde_json::json!({
+            "row":     pb.current_row(),
+            "playing": pb.is_playing(),
+            "bpm":     pb.bpm(),
+        }).to_string()
     }
 
-    /// Advance one tick manually (for testing)
-    pub fn tick(&self) {
-        if let Ok(mut pb) = self.playback.lock() {
-            pb.tick();
-        }
+    /// Advance one tick and return whether the row changed.
+    /// Call this from a JavaScript `setInterval`/`requestAnimationFrame` loop.
+    pub fn tick(&self) -> bool {
+        self.playback.lock().unwrap().tick()
     }
 
-    /// Get notes that should play at current row
-    pub fn get_row_events(&self) -> String {
-        if let Ok(pb) = self.playback.lock() {
-            if let Ok(pattern) = self.pattern.lock() {
-                let row = pb.current_row();
-                let mut events = Vec::new();
+    // ── Audio ────────────────────────────────────────────────────────────────
 
-                for ch in 0..pattern.channels {
-                    if let Some(note) = pattern.get_cell(row, ch) {
-                        events.push(serde_json::json!({
-                            "channel": ch,
-                            "note": note.note_name,
-                            "frequency": note.frequency,
-                            "octave": note.octave,
-                        }));
-                    }
-                }
+    /// Play all notes in the current row using the ADSR engine.
+    /// Call this after every `tick()` that returns true.
+    pub fn play_current_row(&self) -> Result<(), JsValue> {
+        let pb  = self.playback.lock().unwrap();
+        let pat = self.pattern.lock().unwrap();
 
-                serde_json::to_string(&events).unwrap_or_default()
-            } else {
-                "[]".to_string()
+        if !pb.is_playing() { return Ok(()); }
+
+        let row      = pb.current_row();
+        let duration = pb.row_duration_ms() / 1000.0; // ms → seconds
+
+        for ch in 0..pat.channels {
+            if let Some(note) = pat.get_cell(row, ch) {
+                let adsr = Adsr::from_instrument(note.instrument);
+                audio::play_tone(note.frequency, duration, adsr, WaveShape::Sine)?;
             }
-        } else {
-            "[]".to_string()
         }
+        Ok(())
+    }
+
+    /// Play a single tone immediately — used for piano keyboard preview.
+    ///
+    /// `freq`       — Hz
+    /// `duration`   — seconds (use 0.5 for key preview)
+    /// `instrument` — 0–8, selects per-instrument ADSR defaults
+    pub fn preview_note(&self, freq: f32, duration: f32, instrument: u8) -> Result<(), JsValue> {
+        audio::play_note_with_instrument(freq, duration, instrument, WaveShape::Sine)
+    }
+
+    /// Must be called from a user-gesture handler (click/keydown) to satisfy
+    /// browser autoplay policy before any audio can play.
+    pub fn resume_audio(&self) -> Result<(), JsValue> {
+        audio::resume_audio()
+    }
+
+    /// Get notes that will fire at the current row (JSON array for the UI).
+    pub fn get_row_events(&self) -> String {
+        let pb  = self.playback.lock().unwrap();
+        let pat = self.pattern.lock().unwrap();
+        let row = pb.current_row();
+
+        let events: Vec<_> = (0..pat.channels)
+            .filter_map(|ch| pat.get_cell(row, ch).map(|n| serde_json::json!({
+                "channel":   ch,
+                "note":      n.note_name,
+                "frequency": n.frequency,
+                "octave":    n.octave,
+                "instrument": n.instrument,
+            })))
+            .collect();
+
+        serde_json::to_string(&events).unwrap_or_default()
     }
 }
 
 #[wasm_bindgen(start)]
-pub fn init() {
-    // Initialization hook for WASM
-}
+pub fn init() {}

@@ -2,6 +2,9 @@
 _Debug/
 Compiled/
 
+# Rust build artifacts
+target/
+
 # AudioCache can be rebuilt from sources
 AudioCache/
 

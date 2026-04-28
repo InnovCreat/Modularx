@@ -5,6 +5,7 @@ mod render;
 mod sacred_math;
 
 use bevy::prelude::*;
+use bevy::pbr::wireframe::WireframePlugin;
 use archive::ArchivePlugin;
 use interaction::InteractionPlugin;
 use render::RenderPlugin;
@@ -19,6 +20,7 @@ fn main() {
             }),
             ..default()
         }))
+        .add_plugins(WireframePlugin)
         .add_plugins((SacredMathPlugin, RenderPlugin, InteractionPlugin, ArchivePlugin))
         .run();
 }

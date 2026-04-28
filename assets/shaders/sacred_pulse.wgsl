@@ -1,4 +1,5 @@
 #import bevy_pbr::forward_io::VertexOutput
+#import bevy_pbr::mesh_view_bindings::view
 
 // --- Uniforms (group 2 = custom material) ---
 @group(2) @binding(0) var<uniform> base_color:    vec4<f32>;
@@ -11,10 +12,11 @@ const TAU: f32 = 6.28318530;
 @fragment
 fn fragment(in: VertexOutput) -> @location(0) vec4<f32> {
     let n = normalize(in.world_normal);
-    let v = normalize(in.world_position.xyz);
+    // View direction from fragment toward the camera
+    let v = normalize(view.world_position.xyz - in.world_position.xyz);
 
     // Fresnel holographique — rim glow at silhouette
-    let fresnel = pow(1.0 - abs(dot(n, v)), fresnel_power);
+    let fresnel = pow(1.0 - saturate(dot(n, v)), fresnel_power);
 
     // Pulsation composite 639 Hz × φ
     let pulse = 0.5 + 0.5 * sin(TAU * pulse_phase * PHI);

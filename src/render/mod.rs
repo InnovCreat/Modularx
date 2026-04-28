@@ -1,3 +1,4 @@
+pub mod hud;
 pub mod material;
 pub mod modes;
 pub mod pulse;
@@ -14,10 +15,11 @@ impl Plugin for RenderPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(MaterialPlugin::<SacredMaterial>::default())
             .insert_resource(RenderMode::default())
-            .add_plugins(pulse::PulsationPlugin)
+            .add_plugins((pulse::PulsationPlugin, hud::HudPlugin))
             .add_systems(Startup, setup_scene)
             .add_systems(Update, (
                 modes::cycle_render_mode,
+                modes::apply_render_mode,
                 material::update_pulse,
                 select_solid,
                 swap_solid,
@@ -66,7 +68,8 @@ fn spawn_solid(
         Mesh3d(meshes.add(solid.build_mesh())),
         MeshMaterial3d(materials.add(SacredMaterial::for_solid(solid))),
         Transform::default(),
-        pulse::Pulsating { base_scale: 1.0, amplitude: 0.06 },
+        pulse::Pulsating   { base_scale: 1.0, amplitude: 0.06 },
+        pulse::RotatingBody { axis: bevy::math::Vec3::Y, speed_rad_s: 0.4 },
         ActiveSolid,
     ));
 }
@@ -101,7 +104,8 @@ fn swap_solid(
     registry: Res<PlatonicRegistry>,
     current: Query<Entity, With<ActiveSolid>>,
 ) {
-    if !registry.is_changed() { return; }
+    // Skip on the first frame: setup_scene already spawned the initial solid
+    if !registry.is_changed() || registry.is_added() { return; }
 
     // Despawn all current active solids
     for entity in &current {

@@ -12,11 +12,6 @@ pub struct SacredMathPlugin;
 impl Plugin for SacredMathPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(SacredFrequencies::default())
-            .insert_resource(PlatonicRegistry::default())
-            .add_systems(Update, tick_frequencies);
+            .insert_resource(PlatonicRegistry::default());
     }
-}
-
-fn tick_frequencies(time: Res<Time>, mut freqs: ResMut<SacredFrequencies>) {
-    freqs.elapsed += time.delta_secs();
 }

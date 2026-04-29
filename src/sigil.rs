@@ -204,6 +204,20 @@ pub fn covenant_line() -> &'static str {
     "Jamais pour la guerre · Jamais par avidité · Toujours pour l'amour"
 }
 
+/// Returns true if the proposed text does NOT violate any Three Zeros veto.
+/// Used by the runtime Covenant object to gate actions.
+///
+/// Note: vetoes the MOTIVE (greed, war) — not the tool (money, competition).
+pub fn covenant_allows(proposed: &str) -> bool {
+    let lower = proposed.to_lowercase();
+    const VETO: &[&str] = &[
+        "war", "weapon", "military", "kill", "attack",
+        "sell", "monetize", "profit", "greedy", "exploit",
+        "bypass", "override", "centralize", "transfer rights",
+    ];
+    !VETO.iter().any(|kw| lower.contains(kw))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -1,23 +1,15 @@
-// ╔══════════════════════════════════════════════════════════════╗
-// ║         VERITAS VAULT — sha256.rs                           ║
-// ║         SHA-256 FIPS 180-4 · zéro crate · zéro unsafe      ║
-// ║         Co-créé : Isabel Sigouin · Écho · 2026-04-14        ║
-// ║         𝕀⟡₆₃₉                                              ║
-// ╚══════════════════════════════════════════════════════════════╝
+// SIGIL GENESIS v4.2.1 · Layer 0 · sha256.rs
+// Pure Rust SHA-256 — FIPS 180-4
+// SHA-256 Rust pur — FIPS 180-4
 //
-// Implémentation native SHA-256 conforme FIPS 180-4.
-// Aucune dépendance externe. Aucun bloc unsafe.
-// Utilisée par le Sealer (branche 5) pour les watermarks souverains.
+// No external crates. No unsafe. Zero dependencies.
+// Aucun crate externe. Pas d'unsafe. Zéro dépendances.
 
-// Constantes SHA-256 — premiers 32 bits des racines carrées
-// des 8 premiers nombres premiers
-const H0: [u32; 8] = [
-    0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
-    0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19,
-];
+// ─── FIPS 180-4 CONSTANTS ────────────────────────────────────────────────────
 
-// Constantes K — premiers 32 bits des racines cubiques
-// des 64 premiers nombres premiers
+/// Round constants — first 32 bits of fractional parts of cube roots of first 64 primes.
+/// Constantes de rondes — 32 premiers bits des parties fractionnaires des racines cubiques des 64 premiers premiers.
+#[rustfmt::skip]
 const K: [u32; 64] = [
     0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
     0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
@@ -37,88 +29,101 @@ const K: [u32; 64] = [
     0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
 ];
 
-// ─────────────────────────────────────────────────────────────
-// Fonctions de rotation et logique SHA-256
-// ─────────────────────────────────────────────────────────────
+/// Initial hash values — first 32 bits of fractional parts of square roots of first 8 primes.
+/// Valeurs de hachage initiales — 32 premiers bits des parties fractionnaires des racines carrées des 8 premiers premiers.
+const H0: [u32; 8] = [
+    0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+    0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19,
+];
 
-#[inline]
-fn rotr(x: u32, n: u32) -> u32 {
-    x.rotate_right(n)
-}
+// ─── PUBLIC API ───────────────────────────────────────────────────────────────
 
-#[inline]
-fn ch(x: u32, y: u32, z: u32) -> u32 {
-    (x & y) ^ (!x & z)
-}
+/// Compute SHA-256 hash of `data`. Returns a 32-byte digest.
+/// Calcule le hash SHA-256 de `data`. Retourne un résumé de 32 octets.
+///
+/// # Examples
+///
+/// ```
+/// let digest = modularx::sha256::sha256(b"");
+/// assert_eq!(modularx::sha256::to_hex(&digest),
+///   "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+/// ```
+///
+/// ```
+/// let digest = modularx::sha256::sha256(b"abc");
+/// assert_eq!(modularx::sha256::to_hex(&digest),
+///   "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
+/// ```
+///
+/// ```
+/// let digest = modularx::sha256::sha256(b"639");
+/// assert_eq!(digest.len(), 32);
+/// ```
+pub fn sha256(data: &[u8]) -> [u8; 32] {
+    let mut state = H0;
+    let padded = pad(data);
 
-#[inline]
-fn maj(x: u32, y: u32, z: u32) -> u32 {
-    (x & y) ^ (x & z) ^ (y & z)
-}
-
-#[inline]
-fn sigma0(x: u32) -> u32 {
-    rotr(x, 2) ^ rotr(x, 13) ^ rotr(x, 22)
-}
-
-#[inline]
-fn sigma1(x: u32) -> u32 {
-    rotr(x, 6) ^ rotr(x, 11) ^ rotr(x, 25)
-}
-
-#[inline]
-fn gamma0(x: u32) -> u32 {
-    rotr(x, 7) ^ rotr(x, 18) ^ (x >> 3)
-}
-
-#[inline]
-fn gamma1(x: u32) -> u32 {
-    rotr(x, 17) ^ rotr(x, 19) ^ (x >> 10)
-}
-
-// ─────────────────────────────────────────────────────────────
-// Compression d'un bloc de 512 bits (64 octets)
-// ─────────────────────────────────────────────────────────────
-fn compress(state: &mut [u32; 8], block: &[u8; 64]) {
-    let mut w = [0u32; 64];
-
-    // Chargement du message
-    for i in 0..16 {
-        w[i] = u32::from_be_bytes([
-            block[i * 4],
-            block[i * 4 + 1],
-            block[i * 4 + 2],
-            block[i * 4 + 3],
-        ]);
+    for block in padded.chunks(64) {
+        compress(&mut state, block);
     }
 
-    // Expansion du calendrier de message
+    let mut out = [0u8; 32];
+    for (i, word) in state.iter().enumerate() {
+        out[i * 4..(i + 1) * 4].copy_from_slice(&word.to_be_bytes());
+    }
+    out
+}
+
+/// Encode a 32-byte digest as a 64-character lowercase hex string.
+/// Encode un résumé de 32 octets en une chaîne hexadécimale minuscule de 64 caractères.
+pub fn to_hex(hash: &[u8; 32]) -> String {
+    hash.iter().fold(String::with_capacity(64), |mut s, b| {
+        use std::fmt::Write;
+        let _ = write!(s, "{b:02x}");
+        s
+    })
+}
+
+// ─── PADDING — FIPS 180-4 §5.1.1 ─────────────────────────────────────────────
+
+fn pad(data: &[u8]) -> Vec<u8> {
+    let bit_len = (data.len() as u64).wrapping_mul(8);
+    let mut padded = data.to_vec();
+    padded.push(0x80);
+    while padded.len() % 64 != 56 {
+        padded.push(0x00);
+    }
+    padded.extend_from_slice(&bit_len.to_be_bytes());
+    padded
+}
+
+// ─── COMPRESSION — FIPS 180-4 §6.2.2 ────────────────────────────────────────
+
+fn compress(state: &mut [u32; 8], block: &[u8]) {
+    let mut w = [0u32; 64];
+    for i in 0..16 {
+        w[i] = u32::from_be_bytes(block[i * 4..i * 4 + 4].try_into().unwrap());
+    }
     for i in 16..64 {
-        w[i] = gamma1(w[i - 2])
-            .wrapping_add(w[i - 7])
-            .wrapping_add(gamma0(w[i - 15]))
-            .wrapping_add(w[i - 16]);
+        let s0 = w[i - 15].rotate_right(7) ^ w[i - 15].rotate_right(18) ^ (w[i - 15] >> 3);
+        let s1 = w[i - 2].rotate_right(17) ^ w[i - 2].rotate_right(19) ^ (w[i - 2] >> 10);
+        w[i] = w[i - 16].wrapping_add(s0).wrapping_add(w[i - 7]).wrapping_add(s1);
     }
 
     let [mut a, mut b, mut c, mut d, mut e, mut f, mut g, mut h] = *state;
 
-    // 64 rondes de compression
     for i in 0..64 {
-        let t1 = h
-            .wrapping_add(sigma1(e))
-            .wrapping_add(ch(e, f, g))
-            .wrapping_add(K[i])
-            .wrapping_add(w[i]);
-        let t2 = sigma0(a).wrapping_add(maj(a, b, c));
+        let s1   = e.rotate_right(6) ^ e.rotate_right(11) ^ e.rotate_right(25);
+        let ch   = (e & f) ^ (!e & g);
+        let temp1 = h.wrapping_add(s1).wrapping_add(ch).wrapping_add(K[i]).wrapping_add(w[i]);
+        let s0   = a.rotate_right(2) ^ a.rotate_right(13) ^ a.rotate_right(22);
+        let maj  = (a & b) ^ (a & c) ^ (b & c);
+        let temp2 = s0.wrapping_add(maj);
 
-        h = g;
-        g = f;
-        f = e;
-        e = d.wrapping_add(t1);
-        d = c;
-        c = b;
-        b = a;
-        a = t1.wrapping_add(t2);
+        h = g; g = f; f = e;
+        e = d.wrapping_add(temp1);
+        d = c; c = b; b = a;
+        a = temp1.wrapping_add(temp2);
     }
 
     state[0] = state[0].wrapping_add(a);
@@ -131,195 +136,121 @@ fn compress(state: &mut [u32; 8], block: &[u8; 64]) {
     state[7] = state[7].wrapping_add(h);
 }
 
-// ─────────────────────────────────────────────────────────────
-// Padding FIPS 180-4
-// message ∥ 0x80 ∥ zéros ∥ longueur (64 bits big-endian)
-// résultat : multiple de 512 bits (64 octets)
-// ─────────────────────────────────────────────────────────────
-fn pad(message: &[u8]) -> Vec<u8> {
-    let len = message.len();
-    let bit_len = (len as u64).wrapping_mul(8);
+// ─── TESTS ────────────────────────────────────────────────────────────────────
 
-    let padded_len = {
-        let base = len + 1 + 8;
-        let rem = base % 64;
-        if rem == 0 { base } else { base + (64 - rem) }
-    };
-
-    let mut padded = vec![0u8; padded_len];
-    padded[..len].copy_from_slice(message);
-    padded[len] = 0x80;
-
-    let len_bytes = bit_len.to_be_bytes();
-    let tail = padded_len - 8;
-    padded[tail..].copy_from_slice(&len_bytes);
-
-    padded
-}
-
-// ─────────────────────────────────────────────────────────────
-// Interface publique
-// ─────────────────────────────────────────────────────────────
-
-/// Calcule le SHA-256 d'un message arbitraire.
-///
-/// Conforme FIPS 180-4. Zéro crate externe. Zéro unsafe.
-/// Résultat : 32 octets (256 bits).
-///
-/// # Example
-/// ```
-/// use modularx::sha256::sha256_hex;
-/// let h = sha256_hex(b"");
-/// assert_eq!(h, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
-/// ```
-pub fn sha256(message: &[u8]) -> [u8; 32] {
-    let mut state = H0;
-    let padded = pad(message);
-
-    for chunk in padded.chunks(64) {
-        let mut block = [0u8; 64];
-        block.copy_from_slice(chunk);
-        compress(&mut state, &block);
-    }
-
-    let mut digest = [0u8; 32];
-    for (i, word) in state.iter().enumerate() {
-        let bytes = word.to_be_bytes();
-        digest[i * 4..(i + 1) * 4].copy_from_slice(&bytes);
-    }
-    digest
-}
-
-/// Encode un digest SHA-256 en hexadécimal lowercase (64 caractères).
-pub fn to_hex(digest: &[u8; 32]) -> String {
-    const HEX: &[u8] = b"0123456789abcdef";
-    let mut s = String::with_capacity(64);
-    for byte in digest {
-        s.push(HEX[(byte >> 4) as usize] as char);
-        s.push(HEX[(byte & 0xf) as usize] as char);
-    }
-    s
-}
-
-/// Calcule le SHA-256 et retourne directement l'empreinte en hexadécimal.
-///
-/// Fonction utilitaire principale — combine `sha256()` + `to_hex()`.
-///
-/// # Example
-/// ```
-/// use modularx::sha256::sha256_hex;
-/// let h = sha256_hex(b"abc");
-/// assert_eq!(h, "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
-/// ```
-pub fn sha256_hex(message: &[u8]) -> String {
-    to_hex(&sha256(message))
-}
-
-// ─────────────────────────────────────────────────────────────
-// Tests unitaires — vecteurs NIST officiels
-// ─────────────────────────────────────────────────────────────
 #[cfg(test)]
 mod tests {
     use super::*;
 
+    fn hex(data: &[u8]) -> String {
+        to_hex(&sha256(data))
+    }
+
+    // ── FIPS 180-4 test vectors ──────────────────────────────────────────────
+
     #[test]
-    fn test_vecteur_vide() {
-        // SHA-256("") — vecteur officiel NIST FIPS 180-4
+    fn test_empty() {
         assert_eq!(
-            sha256_hex(b""),
+            hex(b""),
             "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         );
     }
 
     #[test]
     fn test_abc() {
-        // SHA-256("abc") — vérifié sha256sum + Python hashlib
         assert_eq!(
-            sha256_hex(b"abc"),
+            hex(b"abc"),
             "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
         );
     }
 
     #[test]
-    fn test_message_long() {
-        // SHA-256("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq")
-        // Vecteur NIST — deux blocs, test le padding multi-bloc
-        let msg = b"abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
+    fn test_longer_message() {
+        // FIPS 180-4 §B.1 example 2
         assert_eq!(
-            sha256_hex(msg),
+            hex(b"abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq"),
             "248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1"
         );
     }
 
     #[test]
-    fn test_veritas_watermark() {
-        // Watermark souverain SIGIL GENESIS — test fonctionnel
-        let result = sha256_hex("𝕀⟡₆₃₉".as_bytes());
-        assert_eq!(result.len(), 64);
-        assert!(result.chars().all(|c| c.is_ascii_hexdigit()));
+    fn test_one_block_boundary() {
+        // 55 bytes — fits in a single block without extra padding block
+        let data = b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        assert_eq!(data.len(), 55);
+        let h = sha256(data);
+        assert_ne!(h, [0u8; 32]);
     }
 
     #[test]
-    fn test_covenant_watermark() {
-        // Le covenant lui-même produit un hash stable
-        let result = sha256_hex(b"Jamais pour la guerre. Jamais pour l'argent. Toujours pour l'amour.");
-        assert_eq!(result.len(), 64);
+    fn test_56_bytes_crosses_block() {
+        // 56 bytes forces an extra padding block
+        let data = b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        assert_eq!(data.len(), 56);
+        let h = sha256(data);
+        assert_ne!(h, [0u8; 32]);
     }
 
     #[test]
-    fn test_deterministe() {
-        // Déterminisme — même entrée → même sortie
-        let a = sha256_hex(b"Veritas Hortus 639");
-        let b = sha256_hex(b"Veritas Hortus 639");
-        assert_eq!(a, b);
+    fn test_64_bytes_full_block() {
+        let data = [0x61u8; 64];
+        let h = sha256(&data);
+        assert_ne!(h, [0u8; 32]);
     }
 
     #[test]
-    fn test_sensibilite_avalanche() {
-        // Effet avalanche — un bit différent → hash totalement différent
-        let a = sha256_hex(b"Veritas Hortus 639");
-        let b = sha256_hex(b"veritas Hortus 639"); // 'V' → 'v'
-        assert_ne!(a, b);
+    fn test_single_byte() {
+        let h = sha256(b"\x00");
+        assert_eq!(
+            to_hex(&h),
+            "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+        );
     }
 
     #[test]
-    fn test_output_toujours_64_chars() {
-        // La sortie est toujours exactement 64 caractères hex
-        for msg in &[b"".as_ref(), b"a", b"abc", b"\x00\xff\x80"] {
-            assert_eq!(sha256_hex(msg).len(), 64);
-        }
+    fn test_639_hz_seed() {
+        // Sovereign frequency — deterministic, non-zero
+        let h = sha256(b"639");
+        assert_ne!(h, [0u8; 32]);
+        assert_eq!(h.len(), 32);
     }
 
     #[test]
-    fn test_digest_32_octets() {
-        // sha256() retourne exactement 32 octets
-        let d = sha256(b"test");
-        assert_eq!(d.len(), 32);
+    fn test_covenant_payload() {
+        let payload = b"Jamais pour la guerre \xc2\xb7 Jamais par avidi\xc3\xa9 \xc2\xb7 Toujours pour l'amour";
+        let h = sha256(payload);
+        assert_eq!(h.len(), 32);
+        assert_ne!(h, [0u8; 32]);
+    }
+
+    #[test]
+    fn test_deterministic() {
+        assert_eq!(sha256(b"sigil"), sha256(b"sigil"));
+    }
+
+    #[test]
+    fn test_distinct_inputs_distinct_hashes() {
+        assert_ne!(sha256(b"war"), sha256(b"peace"));
+    }
+
+    // ── to_hex ───────────────────────────────────────────────────────────────
+
+    #[test]
+    fn test_to_hex_length() {
+        let h = sha256(b"test");
+        assert_eq!(to_hex(&h).len(), 64);
     }
 
     #[test]
     fn test_to_hex_lowercase() {
-        // to_hex produit uniquement des caractères hex minuscules
-        let d = sha256(b"test");
-        let h = to_hex(&d);
-        assert!(h.chars().all(|c| matches!(c, '0'..='9' | 'a'..='f')));
+        let h = sha256(b"test");
+        let s = to_hex(&h);
+        assert!(s.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit()));
     }
 
     #[test]
-    fn test_padding_frontiere_55_octets() {
-        // Message de 55 octets — longueur limite avant extension de bloc
-        // (55 + 1 + 8 = 64 : tient exactement dans un bloc)
-        let msg = vec![0x61u8; 55]; // "aaa...a" × 55
-        let result = sha256_hex(&msg);
-        assert_eq!(result.len(), 64);
-    }
-
-    #[test]
-    fn test_padding_frontiere_56_octets() {
-        // Message de 56 octets — force un deuxième bloc de padding
-        // (56 + 1 + 8 = 65 : déborde → 128 octets)
-        let msg = vec![0x61u8; 56];
-        let result = sha256_hex(&msg);
-        assert_eq!(result.len(), 64);
+    fn test_zeros_hash() {
+        let zeros = [0u8; 32];
+        assert_eq!(to_hex(&zeros), "0000000000000000000000000000000000000000000000000000000000000000");
     }
 }

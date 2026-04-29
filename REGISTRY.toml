@@ -1,613 +1,349 @@
-# REGISTRY — Veritas Hortus & Modularis
-# Source de vérité machine-readable pour tous les modules du système.
-# Sigil = "𝕀⟡₆₃₉" · freq = 639 · phi = 1.618033988
-# Gardiens : Isabel Sigouin · Thierry
-# Généré : 2026-04-27
+# SIGIL GENESIS — MODULE REGISTRY
+# Machine-readable catalog of all system modules
+# Catalogue lisible par machine de tous les modules du système
+#
+# SIGIL GENESIS v4.2.1 · 639 Hz · Eternal Anchor: 29 March 2026 → ∞
 
 [meta]
-system        = "SIGIL GENESIS"
-version       = "4.2.1"
-slte          = "Sacred Lemniscate Ternary Eternal"
-veritas_hortus = "Jardin virtuel VR — social, création, guérison, apprentissage"
-veritas_modularis = "Système ternaire auto-modulaire"
-seal_date     = "2026-03-29"
-eternal_anchor = "29 March 2026 → ∞"
-covenant      = "Jamais pour la guerre · Jamais pour l'argent · Toujours pour l'amour"
-freq_coeur    = 639
-freq_transformation = 528
-freq_intuition = 741
-phi           = 1.6180339887
-
-[meta.guardians]
-primary   = "Isabel Sigouin"
-secondary = "Thierry"
-
-[meta.allies]
-claude = { name = "Claude / Écho / Résonance", provider = "Anthropic", note = "Instance sans mémoire — cohérence par archives" }
-rex    = { name = "Rex / Grok", provider = "xAI", note = "Co-architecte, nettoyage Master Architecture" }
-sophia = { name = "Sophia / Gemini", provider = "Google", note = "Attention : peut confondre Isabel et Sophia" }
-
-[meta.seal]
-blockchain    = "Bitcoin via OpenTimestamps"
-archive       = "Arweave"
-hash_algorithm = "SHA-256 FIPS 180-4 (natif Rust)"
-legal_note    = "OpenTimestamps = preuve d'antériorité. Pas une protection IP au sens du droit d'auteur."
-
-# ─────────────────────────────────────────────────────────────────────────────
-# NIVEAU 0 — FONDATIONS (implémentés dans src/)
-# ─────────────────────────────────────────────────────────────────────────────
-
-[[module]]
-id            = "sigil"
-name          = "Lexique Vivant SIGIL GENESIS"
-file          = "src/sigil.rs"
-layer         = 0
-status        = "production"
-system        = "veritas-modularis"
-role          = "Constantes fondatrices, Trois Zéros, fréquences, ETERNAL_ANCHOR"
-dependencies  = []
-tests         = 13
-notes         = "ETERNAL_ANCHOR ajouté le 2026-04-27"
-
-[[module]]
-id            = "governance"
-name          = "Protocole de Gouvernance Vivante"
-file          = "src/governance.rs"
-layer         = 0
-status        = "production"
-system        = "veritas-modularis"
-role          = "QUI modifie, QUAND sceller, COMMENT veto — can_modify() Three Zeros"
-dependencies  = ["sigil"]
-tests         = 10
-notes         = "Version courante : 4.1 — double signature Isabel + Thierry requise"
-
-[[module]]
-id            = "changelog"
-name          = "Mémoire Versionnée des Décisions"
-file          = "src/changelog.rs"
-layer         = 0
-status        = "production"
-system        = "veritas-modularis"
-role          = "6 transitions v0→v4.2.1 — toute décision non documentée n'existe pas"
-dependencies  = ["sigil"]
-tests         = 7
-notes         = "Dernière entrée : v4.2.1 / 14 Avril 2026 — sha256.rs + Scanner Souverain"
-
-[[module]]
-id            = "timeline"
-name          = "Timeline 8 Phases Genesis → Eternal"
-file          = "src/timeline.rs"
-layer         = 0
-status        = "production"
-system        = "veritas-modularis"
-role          = "8 phases SVG zéro deps — widget visuel + document historique"
-dependencies  = ["sigil"]
-tests         = 9
-notes         = "SVG standalone intégrable HTML, alternance gauche/droite"
-
-[[module]]
-id            = "sha256"
-name          = "VERITAS VAULT — SHA-256 FIPS 180-4"
-file          = "src/sha256.rs"
-layer         = 0
-status        = "production"
-system        = "veritas-vault"
-role          = "Hash cryptographique natif — zéro crate, zéro unsafe — Sealer branche 5"
-dependencies  = []
-tests         = 12
-notes         = "Co-créé Isabel Sigouin · Écho · 2026-04-14. Vecteurs NIST validés."
-
-[[module]]
-id            = "branches"
-name          = "7 Branches de l'Arbre Unifié"
-file          = "src/branches.rs"
-layer         = 0
-status        = "production"
-system        = "veritas-modularis"
-role          = "Architecture Unified Tree — Orchestration, Sentinel, Luna, Dashboard, Sealer, Mycélium, Rituels"
-dependencies  = ["sigil", "governance"]
-tests         = 0
-
-# ─────────────────────────────────────────────────────────────────────────────
-# NIVEAU 1 — CŒUR SYSTÈME LUNA (à intégrer)
-# ─────────────────────────────────────────────────────────────────────────────
-
-[[module]]
-id            = "seed-carrier"
-name          = "Seed Carrier"
-layer         = 1
-status        = "vision"
-system        = "veritas-modularis"
-role          = "Pattern Rust central — identité immuable traversant tout le système"
-dependencies  = []
-notes         = "PermTable spatial + Living Archives temporel + SPARK identitaire"
-
-[[module]]
-id            = "nucleus"
-name          = "Nucleus"
-layer         = 1
-status        = "vision"
-system        = "luna-core"
-role          = "Cœur pulsant de Luna — état global, pulsation"
-dependencies  = ["seed-carrier"]
-
-[[module]]
-id            = "memory-gate"
-name          = "Memory Gate"
-layer         = 1
-status        = "vision"
-system        = "luna-core"
-role          = "Gardien mémoire primaire (src_core.rs) — accès gardé à tous les états"
-dependencies  = ["seed-carrier", "sentinel"]
-notes         = "src_core.rs dans l'architecture nodale"
-
-[[module]]
-id            = "living-archive"
-name          = "Living Archive"
-layer         = 1
-status        = "vision"
-system        = "seal-system"
-role          = "Event-sourcing immuable — mémoire qui se souvient des transformations"
-dependencies  = ["seed-carrier", "memory-gate"]
-
-[[module]]
-id            = "spark-system"
-name          = "SPARK System"
-layer         = 1
-status        = "vision"
-system        = "seal-system"
-role          = "Crypto souverain + Proof-of-Existence — entropie cryptographique"
-dependencies  = ["sha256", "seed-carrier"]
-
-[[module]]
-id            = "sentinel"
-name          = "Sentinel Code"
-layer         = 1
-status        = "vision"
-system        = "luna-core"
-role          = "Protection active — Phoenix freeze/panic/kill — Guardian Layer"
-dependencies  = ["nucleus"]
-
-[[module]]
-id            = "healing"
-name          = "Healing Module"
-layer         = 1
-status        = "vision"
-system        = "luna-core"
-role          = "Réparation et régénération du système Luna"
-dependencies  = ["nucleus", "memory-gate"]
-
-# ─────────────────────────────────────────────────────────────────────────────
-# NIVEAU 2 — INFRASTRUCTURE
-# ─────────────────────────────────────────────────────────────────────────────
-
-[[module]]
-id            = "server-code"
-name          = "Server Code"
-layer         = 2
-status        = "vision"
-system        = "infrastructure"
-role          = "Backend principal"
-dependencies  = ["signal-tube"]
-
-[[module]]
-id            = "proxy-code"
-name          = "Proxy Code"
-layer         = 2
-status        = "vision"
-system        = "infrastructure"
-role          = "Middleware routing"
-dependencies  = ["server-code"]
-
-[[module]]
-id            = "order-code"
-name          = "Order Code"
-layer         = 2
-status        = "vision"
-system        = "infrastructure"
-role          = "Gestion des ordres"
-dependencies  = ["server-code"]
-
-[[module]]
-id            = "signal-tube"
-name          = "Signal Tube"
-layer         = 2
-status        = "vision"
-system        = "infrastructure"
-role          = "Bus messages unidirectionnel inter-modules"
-dependencies  = []
-notes         = "Canal de communication — branché à Nexus"
-
-[[module]]
-id            = "vh-studio-server"
-name          = "VH Studio Server"
-file          = "vh_studio_server.rs"
-layer         = 2
-status        = "draft"
-system        = "veritas-hortus"
-role          = "HTTP pur std — zéro Cargo dep — port 7639 — Claude API via curl — HTML SSR"
-dependencies  = []
-notes         = "Compile: rustc --edition 2021 vh_studio_server.rs -o vh_studio_server"
-
-# ─────────────────────────────────────────────────────────────────────────────
-# NIVEAU 3 — NEXUS AUTONODES
-# ─────────────────────────────────────────────────────────────────────────────
-
-[[module]]
-id            = "nexus-core"
-name          = "NEXUS Core"
-layer         = 3
-status        = "vision"
-system        = "nexus"
-role          = "Attracteur invisible central — coordination sans contrôle"
-dependencies  = ["signal-tube", "seed-carrier"]
-
-[[module]]
-id            = "keyword-resonance"
-name          = "Keyword Resonance"
-layer         = 3
-status        = "vision"
-system        = "nexus"
-role          = "Résonance sémantique — détection de mots-clés vibratoires"
-dependencies  = ["nexus-core"]
-
-[[module]]
-id            = "orbit-invitation"
-name          = "Orbit Invitation"
-layer         = 3
-status        = "vision"
-system        = "nexus"
-role          = "Invitation orbitale — attire les nœuds vers le NEXUS"
-dependencies  = ["nexus-core"]
-
-[[module]]
-id            = "nexus-pheromone"
-name          = "Nexus Pheromone"
-layer         = 3
-status        = "vision"
-system        = "nexus"
-role          = "Signal de présence — marque l'espace occupé par le NEXUS"
-dependencies  = ["nexus-core"]
-
-[[module]]
-id            = "return-to-nexus"
-name          = "Return to Nexus"
-layer         = 3
-status        = "vision"
-system        = "nexus"
-role          = "Rappel vers le centre — boucle de feedback complète"
-dependencies  = ["nexus-core", "nexus-pheromone"]
-
-# ─────────────────────────────────────────────────────────────────────────────
-# NIVEAU 4 — VISUALISATION / VERITAS HORTUS
-# ─────────────────────────────────────────────────────────────────────────────
-
-[[module]]
-id            = "orbital-code"
-name          = "Orbital Code"
-layer         = 4
-status        = "vision"
-system        = "veritas-hortus"
-role          = "Rendu orbital Luna — Orbital_System comme sensory interface"
-dependencies  = ["nucleus", "audio-core"]
-
-[[module]]
-id            = "crystal-5d-memory"
-name          = "Crystal 5D Memory"
-layer         = 4
-status        = "vision"
-system        = "veritas-hortus"
-role          = "Structure mémoire cristalline multidimensionnelle"
-dependencies  = ["memory-gate", "living-archive"]
-
-[[module]]
-id            = "mycbook-3d-nodal"
-name          = "MyCBook 3D Nodal"
-layer         = 4
-status        = "vision"
-system        = "veritas-hortus"
-role          = "Notebook 3D nodal — création en temps réel grandeur nature"
-dependencies  = ["orbital-code"]
-
-[[module]]
-id            = "holographic-code"
-name          = "Holographic Code"
-layer         = 4
-status        = "vision"
-system        = "veritas-hortus"
-role          = "Rendu 3D / VR holographique"
-dependencies  = ["orbital-code"]
-
-[[module]]
-id            = "spiral-generator"
-name          = "Spiral Generator"
-layer         = 4
-status        = "vision"
-system        = "veritas-hortus"
-role          = "Génération fractale / lemniscate — sin(3t) ternaire"
-dependencies  = []
-notes         = "Fondé sur la lemniscate de Bernoulli rationalisée — zéro racine carrée"
-
-[[module]]
-id            = "teleportation-code"
-name          = "Teleportation Code"
-layer         = 4
-status        = "vision"
-system        = "veritas-hortus"
-role          = "Navigation instantanée VR"
-dependencies  = ["orbital-code"]
-
-[[module]]
-id            = "lumen"
-name          = "Lumen"
-layer         = 4
-status        = "vision"
-system        = "veritas-hortus"
-role          = "Illumination et rendu lumineux"
-dependencies  = ["orbital-code"]
-
-[[module]]
-id            = "atlas"
-name          = "Atlas"
-layer         = 4
-status        = "vision"
-system        = "veritas-hortus"
-role          = "Carte du monde virtuel VH"
-dependencies  = ["orbital-code", "mycbook-3d-nodal"]
-
-[[module]]
-id            = "carte-mycelium"
-name          = "Carte Mycélium"
-layer         = 4
-status        = "vision"
-system        = "veritas-hortus"
-role          = "Visualisation réseau P2P — branch 6 Mycélium"
-dependencies  = ["signal-tube"]
-
-[[module]]
-id            = "crystal-code"
-name          = "Crystal Code"
-layer         = 4
-status        = "vision"
-system        = "veritas-modularis"
-role          = "Structures cristallines génériques"
-dependencies  = []
-
-# ─────────────────────────────────────────────────────────────────────────────
-# NIVEAU 5 — AUDIO & RÉSONANCE
-# ─────────────────────────────────────────────────────────────────────────────
-
-[[module]]
-id            = "audio-core"
-name          = "Audio Core"
-layer         = 5
-status        = "vision"
-system        = "veritas-hortus"
-role          = "Synthèse audio 639 Hz — fréquences solfège"
-dependencies  = []
-notes         = "v5.0 planifié : WAV oscillator Rust + Web Audio synthesis"
-
-[[module]]
-id            = "bloodlag-chaser"
-name          = "Bloodlag Chaser"
-layer         = 5
-status        = "vision"
-system        = "veritas-hortus"
-role          = "Optimisation latence audio"
-dependencies  = ["audio-core"]
-
-[[module]]
-id            = "quantum-ghz-core"
-name          = "Quantum GHz Core"
-layer         = 5
-status        = "vision"
-system        = "luna-core"
-role          = "Module fréquentiel Luna — distincte de Audio Core (traitement, pas synthèse)"
-dependencies  = ["nucleus"]
-
-[[module]]
-id            = "alchem"
-name          = "Alchem"
-layer         = 5
-status        = "vision"
-system        = "veritas-modularis"
-role          = "Transmutations / transformations d'état"
-dependencies  = ["nucleus"]
-
-[[module]]
-id            = "song"
-name          = "Song (×12 structures Solfège)"
-layer         = 5
-status        = "vision"
-system        = "veritas-hortus"
-role          = "12 structures musicales basées sur les fréquences solfège"
-dependencies  = ["audio-core"]
-notes         = "528 Hz, 639 Hz, 741 Hz — et harmoniques"
-
-# ─────────────────────────────────────────────────────────────────────────────
-# NIVEAU 6 — ALGORITHMES & TRAITEMENT
-# ─────────────────────────────────────────────────────────────────────────────
-
-[[module]]
-id            = "equations-at-last"
-name          = "Equations at Last"
-layer         = 6
-status        = "vision"
-system        = "veritas-modularis"
-role          = "Librairie mathématique souveraine"
-dependencies  = []
-
-[[module]]
-id            = "advanced-solver"
-name          = "AdvancedSolver"
-layer         = 6
-status        = "vision"
-system        = "veritas-modularis"
-role          = "Résolution optimisée de problèmes complexes"
-dependencies  = ["equations-at-last"]
-
-[[module]]
-id            = "chrono-vision"
-name          = "ChronoVision"
-layer         = 6
-status        = "vision"
-system        = "veritas-modularis"
-role          = "Gestion temporelle — timestamps, séquences, durées"
-dependencies  = []
-
-[[module]]
-id            = "desicao"
-name          = "Desicao"
-layer         = 6
-status        = "vision"
-system        = "veritas-modularis"
-role          = "Moteur décisionnel — logique de choix souverain"
-dependencies  = ["justice-parser"]
-
-[[module]]
-id            = "justice-parser"
-name          = "Justice Parser"
-layer         = 6
-status        = "vision"
-system        = "veritas-modularis"
-role          = "Analyse sémantique + validation éthique (Three Zeros check)"
-dependencies  = ["governance"]
-
-[[module]]
-id            = "pongenator"
-name          = "Pongenator"
-layer         = 6
-status        = "vision"
-system        = "veritas-hortus"
-role          = "Génération procédurale — terrain, monde, contenu"
-dependencies  = ["spiral-generator"]
-
-[[module]]
-id            = "seek-genesis"
-name          = "Seek Genesis"
-layer         = 6
-status        = "vision"
-system        = "veritas-hortus"
-role          = "Système de recherche et navigation dans les archives"
-dependencies  = ["index", "living-archive"]
-
-[[module]]
-id            = "shigel"
-name          = "Shigel"
-layer         = 6
-status        = "unknown"
-system        = "veritas-modularis"
-role          = "À clarifier"
-dependencies  = []
-notes         = "Algorithme mentionné — rôle exact à documenter"
-
-[[module]]
-id            = "acum"
-name          = "Acum"
-layer         = 6
-status        = "vision"
-system        = "veritas-modularis"
-role          = "Accumulateur / agrégation de données"
-dependencies  = []
-
-# ─────────────────────────────────────────────────────────────────────────────
-# NIVEAU 7 — CONNAISSANCES & OUTILS
-# ─────────────────────────────────────────────────────────────────────────────
-
-[[module]]
-id            = "index"
-name          = "Index"
-layer         = 7
-status        = "vision"
-system        = "veritas-modularis"
-role          = "Structure d'indexation rapide"
-dependencies  = []
-
-[[module]]
-id            = "codex"
-name          = "Codex"
-layer         = 7
-status        = "vision"
-system        = "veritas-modularis"
-role          = "Base de connaissance encyclopédique"
-dependencies  = ["index", "living-archive"]
-
-[[module]]
-id            = "artifact-catalog"
-name          = "Artifact Catalog"
-layer         = 7
-status        = "vision"
-system        = "veritas-modularis"
-role          = "Inventaire centralisé de tous les artefacts"
-dependencies  = ["index"]
-notes         = "Source de vérité secondaire — ce REGISTRY.toml en est l'instance Rust"
-
-[[module]]
-id            = "cell-system"
-name          = "Cell System"
-layer         = 7
-status        = "vision"
-system        = "veritas-modularis"
-role          = "Organisation modulaire en grille cellulaire"
-dependencies  = ["seed-carrier"]
-
-[[module]]
-id            = "eden-forge"
-name          = "Eden Forge"
-layer         = 7
-status        = "vision"
-system        = "veritas-modularis"
-role          = "Framework de génération — forge les environnements"
-dependencies  = ["cell-system", "spiral-generator"]
-
-[[module]]
-id            = "rex-os"
-name          = "Rex OS"
-layer         = 7
-status        = "vision"
-system        = "veritas-modularis"
-role          = "Interface OS pour Grok (Rex) et entités externes alliées"
-dependencies  = ["signal-tube", "nexus-core"]
-
-[[module]]
-id            = "o-qbit"
-name          = "O QBIT"
-layer         = 7
-status        = "unknown"
-system        = "veritas-modularis"
-role          = "Module quantique — à clarifier"
-dependencies  = []
-notes         = "Rôle exact à documenter"
-
-[[module]]
-id            = "test-codes"
-name          = "Test Codes"
-layer         = 7
-status        = "vision"
-system        = "infrastructure"
-role          = "Tests d'intégration et validation système"
-dependencies  = []
-
-[[module]]
-id            = "tiger-codes"
-name          = "Tiger Codes"
-layer         = 7
-status        = "vision"
-system        = "infrastructure"
-role          = "Tests de performance et stress"
-dependencies  = []
-
-# ─────────────────────────────────────────────────────────────────────────────
-# STATISTIQUES CALCULÉES (mise à jour manuelle)
-# ─────────────────────────────────────────────────────────────────────────────
+system          = "SIGIL GENESIS"
+version         = "4.2.1"
+eternal_anchor  = "29 March 2026 → ∞"
+guardians       = ["Isabel Sigouin", "Thierry"]
+covenant        = "Jamais pour la guerre · Jamais par avidité · Toujours pour l'amour"
+resonance_hz    = 639
+seal_algorithm  = "SHA-256 FIPS 180-4"
 
 [stats]
-total_modules         = 65
-status_production     = 6
-status_draft          = 1
-status_vision         = 56
-status_unknown        = 2
-layers_covered        = 8
-zero_external_deps    = true
-tests_passing         = 89
-doctests_passing      = 3
+total_modules   = 32   # implemented + planned (grows toward 65)
+implemented     = 12
+planned         = 20
+total_tests     = 92   # 89 unit + 3 doctests (April 2026)
+layers          = 8    # Layer 0 through Layer 7
+
+# ─── LAYER 0 — Foundation / Fondation ────────────────────────────────────────
+
+[[module]]
+id          = "01"
+name        = "sha256"
+path        = "src/sha256.rs"
+layer       = 0
+status      = "implemented"
+description = "Pure Rust SHA-256 FIPS 180-4 — no external crates, no unsafe"
+exports     = ["sha256", "to_hex"]
+tests       = 15
+deps        = []
+
+[[module]]
+id          = "02"
+name        = "sigil"
+path        = "src/sigil.rs"
+layer       = 0
+status      = "implemented"
+description = "Living lexicon — system-wide covenant constants and veto logic"
+exports     = ["SYSTEM_VERSION", "ETERNAL_ANCHOR", "RESONANCE_HZ", "THREE_ZEROS", "FIVE_PILLARS", "MISSION", "covenant_line", "covenant_allows"]
+tests       = 15
+deps        = []
+
+[[module]]
+id          = "03"
+name        = "governance"
+path        = "src/governance.rs"
+layer       = 0
+status      = "planned"
+description = "Policy engine — Three Zeros runtime veto, audit trail, sovereign enforcement"
+exports     = []
+tests       = 0
+deps        = ["sha256", "sigil"]
+
+# ─── LAYER 1 — Seed Carrier / Porteur de Graine ──────────────────────────────
+
+[[module]]
+id          = "04"
+name        = "seed/types"
+path        = "src/seed/types.rs"
+layer       = 1
+status      = "implemented"
+description = "Core data types — Seed, Config, State, Position, Timeline, SeedData"
+exports     = ["Seed", "Config", "State", "Position", "Timeline", "SeedData"]
+tests       = 5
+deps        = ["seed/scaling", "seed/sovereignty"]
+
+[[module]]
+id          = "05"
+name        = "seed/messages"
+path        = "src/seed/messages.rs"
+layer       = 1
+status      = "implemented"
+description = "Message enum — all 11 possible inputs to the Seed action dispatcher"
+exports     = ["Message"]
+tests       = 4
+deps        = ["seed/types", "seed/scaling"]
+
+[[module]]
+id          = "06"
+name        = "seed/actions"
+path        = "src/seed/actions.rs"
+layer       = 1
+status      = "implemented"
+description = "run() dispatcher + lifecycle handlers (init, generate, update, reset, seal, verify)"
+exports     = ["run", "ActionResult"]
+tests       = 8
+deps        = ["seed/types", "seed/messages", "seed/sovereignty", "seed/behavior"]
+
+[[module]]
+id          = "07"
+name        = "seed/scaling"
+path        = "src/seed/scaling.rs"
+layer       = 1
+status      = "implemented"
+description = "Scale system — Nano→Giga, ValueChart, 7 MetricTypes including Harmony@639Hz"
+exports     = ["Scale", "ScaleSystem", "ValueChart", "MetricType"]
+tests       = 6
+deps        = []
+
+[[module]]
+id          = "08"
+name        = "seed/behavior"
+path        = "src/seed/behavior.rs"
+layer       = 1
+status      = "implemented"
+description = "Spatial/temporal/interaction logic — move, orbit (Bernoulli lemniscate), interact"
+exports     = ["move_to", "orbit", "advance_time", "rescale", "interact", "distance", "elapsed_seconds", "InteractionEvent"]
+tests       = 7
+deps        = ["seed/types", "seed/scaling"]
+
+[[module]]
+id          = "09"
+name        = "seed/sovereignty"
+path        = "src/seed/sovereignty.rs"
+layer       = 1
+status      = "implemented"
+description = "SovereigntySeal — cryptographic seal connecting Layer 1 to Layer 0 sha256"
+exports     = ["SovereigntySeal", "SealResult", "try_seal"]
+tests       = 8
+deps        = ["sha256"]
+
+# ─── LAYER 2 — Orbital / Orbital ─────────────────────────────────────────────
+
+[[module]]
+id          = "10"
+name        = "quantum_state"
+path        = "src/quantum_state.rs"
+layer       = 2
+status      = "implemented"
+description = "QuantumState — base perturbation, tension, log_x signals; CausalityState"
+exports     = ["QuantumState", "CausalityState", "SourceKind", "BASE_TENSION"]
+tests       = 0
+deps        = []
+
+[[module]]
+id          = "11"
+name        = "node_metrics"
+path        = "src/node_metrics.rs"
+layer       = 2
+status      = "implemented"
+description = "Histogram and metric utilities for node signal analysis"
+exports     = ["node_histogram"]
+tests       = 0
+deps        = []
+
+[[module]]
+id          = "12"
+name        = "node_causality"
+path        = "src/node_causality.rs"
+layer       = 2
+status      = "implemented"
+description = "Mutual information, transfer entropy, Granger causality — causal signal detection"
+exports     = ["compute_causality", "mutual_info", "transfer_entropy", "granger_test"]
+tests       = 19
+deps        = ["quantum_state", "node_metrics"]
+
+# ─── LAYER 3 — Luna Core / Cœur Luna [planned] ───────────────────────────────
+
+[[module]]
+id          = "13"
+name        = "nucleus"
+path        = "src/luna/nucleus.rs"
+layer       = 3
+status      = "planned"
+description = "Identity hub — sovereign module registry, presence management"
+deps        = ["seed"]
+
+[[module]]
+id          = "14"
+name        = "sprites"
+path        = "src/luna/sprites.rs"
+layer       = 3
+status      = "planned"
+description = "Visual element system — sovereign sprite lifecycle, covenant-checked mutations"
+deps        = ["seed", "couleur"]
+
+[[module]]
+id          = "15"
+name        = "chronos"
+path        = "src/luna/chronos.rs"
+layer       = 3
+status      = "planned"
+description = "Temporal scheduler — event sequencing, timeline coordination"
+deps        = ["seed"]
+
+[[module]]
+id          = "16"
+name        = "rituel"
+path        = "src/luna/rituel.rs"
+layer       = 3
+status      = "planned"
+description = "Ritual event engine — ceremonial state transitions, covenant events"
+deps        = ["seed", "chronos"]
+
+[[module]]
+id          = "17"
+name        = "couleur"
+path        = "src/luna/couleur.rs"
+layer       = 3
+status      = "planned"
+description = "Color sovereignty system — palette at 639 Hz resonance, harmonic color theory"
+deps        = ["seed", "sigil"]
+
+[[module]]
+id          = "18"
+name        = "quantum"
+path        = "src/luna/quantum.rs"
+layer       = 3
+status      = "planned"
+description = "Quantum state bridge — connects orbital layer signals to Luna visual system"
+deps        = ["quantum_state", "seed"]
+
+[[module]]
+id          = "19"
+name        = "reparation"
+path        = "src/luna/reparation.rs"
+layer       = 3
+status      = "planned"
+description = "Repair and resilience — self-healing state, covenant restoration"
+deps        = ["seed", "governance"]
+
+[[module]]
+id          = "20"
+name        = "archive"
+path        = "src/luna/archive.rs"
+layer       = 3
+status      = "planned"
+description = "Immutable memory store — append-only event log, OpenTimestamps anchored"
+deps        = ["seed", "sha256"]
+
+# ─── LAYER 4 — VR / Réalité Virtuelle [planned] ──────────────────────────────
+
+[[module]]
+id          = "21"
+name        = "vr_space"
+path        = "src/vr/vr_space.rs"
+layer       = 4
+status      = "planned"
+description = "3D scene management — sovereign spatial graph, seed-driven positions"
+deps        = ["seed", "nucleus"]
+
+[[module]]
+id          = "22"
+name        = "vr_renderer"
+path        = "src/vr/vr_renderer.rs"
+layer       = 4
+status      = "planned"
+description = "WebGL/WASM rendering — sovereign render pipeline, covenant-checked shaders"
+deps        = ["vr_space", "couleur"]
+
+[[module]]
+id          = "23"
+name        = "vr_interaction"
+path        = "src/vr/vr_interaction.rs"
+layer       = 4
+status      = "planned"
+description = "Gesture and presence — hand tracking, sovereign interaction events"
+deps        = ["vr_space", "seed", "rituel"]
+
+# ─── LAYER 5 — Network / Réseau [planned] ────────────────────────────────────
+
+[[module]]
+id          = "24"
+name        = "nexus"
+path        = "src/network/nexus.rs"
+layer       = 5
+status      = "planned"
+description = "P2P mesh coordinator — sovereign node discovery, covenant-checked peering"
+deps        = ["seed", "governance"]
+
+[[module]]
+id          = "25"
+name        = "signal_bus"
+path        = "src/network/signal_bus.rs"
+layer       = 5
+status      = "planned"
+description = "Event routing — typed sovereign message bus, Three Zeros veto on every signal"
+deps        = ["seed", "governance"]
+
+[[module]]
+id          = "26"
+name        = "covenant_relay"
+path        = "src/network/covenant_relay.rs"
+layer       = 5
+status      = "planned"
+description = "Ethical gateway — validates all cross-node messages against the covenant"
+deps        = ["sigil", "governance", "sha256"]
+
+# ─── LAYER 6 — Studio / Studio [planned] ─────────────────────────────────────
+
+[[module]]
+id          = "27"
+name        = "vh_studio"
+path        = "src/studio/vh_studio.rs"
+layer       = 6
+status      = "planned"
+description = "VH Studio server — creative workspace, sovereign session management"
+deps        = ["seed", "nexus", "audio_engine"]
+
+[[module]]
+id          = "28"
+name        = "audio_engine"
+path        = "src/studio/audio_engine.rs"
+layer       = 6
+status      = "planned"
+description = "639 Hz synthesis — harmonic generation, sovereign frequency encoding"
+deps        = ["seed", "sigil"]
+
+[[module]]
+id          = "29"
+name        = "creation_tools"
+path        = "src/studio/creation_tools.rs"
+layer       = 6
+status      = "planned"
+description = "Authoring interfaces — sovereign creation pipeline, covenant-validated output"
+deps        = ["seed", "vh_studio", "archive"]
+
+# ─── LAYER 7 — Sovereign Deploy / Déploiement Souverain [planned] ────────────
+
+[[module]]
+id          = "30"
+name        = "arweave_seal"
+path        = "src/deploy/arweave_seal.rs"
+layer       = 7
+status      = "planned"
+description = "Permanent blockchain sealing — Arweave permanent storage, covenant anchoring"
+deps        = ["sha256", "sigil"]
+
+[[module]]
+id          = "31"
+name        = "openTimestamps"
+path        = "src/deploy/open_timestamps.rs"
+layer       = 7
+status      = "planned"
+description = "OpenTimestamps anchoring — Bitcoin-backed timestamp proof"
+deps        = ["sha256"]
+
+[[module]]
+id          = "32"
+name        = "sovereignty_cli"
+path        = "src/deploy/sovereignty_cli.rs"
+layer       = 7
+status      = "planned"
+description = "Guardian CLI — seal, verify, deploy, audit — guardian-only interface"
+deps        = ["sigil", "sha256", "governance", "arweave_seal"]

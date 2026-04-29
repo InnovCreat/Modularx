@@ -1,0 +1,349 @@
+# SIGIL GENESIS — MODULE REGISTRY
+# Machine-readable catalog of all system modules
+# Catalogue lisible par machine de tous les modules du système
+#
+# SIGIL GENESIS v4.2.1 · 639 Hz · Eternal Anchor: 29 March 2026 → ∞
+
+[meta]
+system          = "SIGIL GENESIS"
+version         = "4.2.1"
+eternal_anchor  = "29 March 2026 → ∞"
+guardians       = ["Isabel Sigouin", "Thierry"]
+covenant        = "Jamais pour la guerre · Jamais par avidité · Toujours pour l'amour"
+resonance_hz    = 639
+seal_algorithm  = "SHA-256 FIPS 180-4"
+
+[stats]
+total_modules   = 32   # implemented + planned (grows toward 65)
+implemented     = 12
+planned         = 20
+total_tests     = 92   # 89 unit + 3 doctests (April 2026)
+layers          = 8    # Layer 0 through Layer 7
+
+# ─── LAYER 0 — Foundation / Fondation ────────────────────────────────────────
+
+[[module]]
+id          = "01"
+name        = "sha256"
+path        = "src/sha256.rs"
+layer       = 0
+status      = "implemented"
+description = "Pure Rust SHA-256 FIPS 180-4 — no external crates, no unsafe"
+exports     = ["sha256", "to_hex"]
+tests       = 15
+deps        = []
+
+[[module]]
+id          = "02"
+name        = "sigil"
+path        = "src/sigil.rs"
+layer       = 0
+status      = "implemented"
+description = "Living lexicon — system-wide covenant constants and veto logic"
+exports     = ["SYSTEM_VERSION", "ETERNAL_ANCHOR", "RESONANCE_HZ", "THREE_ZEROS", "FIVE_PILLARS", "MISSION", "covenant_line", "covenant_allows"]
+tests       = 15
+deps        = []
+
+[[module]]
+id          = "03"
+name        = "governance"
+path        = "src/governance.rs"
+layer       = 0
+status      = "planned"
+description = "Policy engine — Three Zeros runtime veto, audit trail, sovereign enforcement"
+exports     = []
+tests       = 0
+deps        = ["sha256", "sigil"]
+
+# ─── LAYER 1 — Seed Carrier / Porteur de Graine ──────────────────────────────
+
+[[module]]
+id          = "04"
+name        = "seed/types"
+path        = "src/seed/types.rs"
+layer       = 1
+status      = "implemented"
+description = "Core data types — Seed, Config, State, Position, Timeline, SeedData"
+exports     = ["Seed", "Config", "State", "Position", "Timeline", "SeedData"]
+tests       = 5
+deps        = ["seed/scaling", "seed/sovereignty"]
+
+[[module]]
+id          = "05"
+name        = "seed/messages"
+path        = "src/seed/messages.rs"
+layer       = 1
+status      = "implemented"
+description = "Message enum — all 11 possible inputs to the Seed action dispatcher"
+exports     = ["Message"]
+tests       = 4
+deps        = ["seed/types", "seed/scaling"]
+
+[[module]]
+id          = "06"
+name        = "seed/actions"
+path        = "src/seed/actions.rs"
+layer       = 1
+status      = "implemented"
+description = "run() dispatcher + lifecycle handlers (init, generate, update, reset, seal, verify)"
+exports     = ["run", "ActionResult"]
+tests       = 8
+deps        = ["seed/types", "seed/messages", "seed/sovereignty", "seed/behavior"]
+
+[[module]]
+id          = "07"
+name        = "seed/scaling"
+path        = "src/seed/scaling.rs"
+layer       = 1
+status      = "implemented"
+description = "Scale system — Nano→Giga, ValueChart, 7 MetricTypes including Harmony@639Hz"
+exports     = ["Scale", "ScaleSystem", "ValueChart", "MetricType"]
+tests       = 6
+deps        = []
+
+[[module]]
+id          = "08"
+name        = "seed/behavior"
+path        = "src/seed/behavior.rs"
+layer       = 1
+status      = "implemented"
+description = "Spatial/temporal/interaction logic — move, orbit (Bernoulli lemniscate), interact"
+exports     = ["move_to", "orbit", "advance_time", "rescale", "interact", "distance", "elapsed_seconds", "InteractionEvent"]
+tests       = 7
+deps        = ["seed/types", "seed/scaling"]
+
+[[module]]
+id          = "09"
+name        = "seed/sovereignty"
+path        = "src/seed/sovereignty.rs"
+layer       = 1
+status      = "implemented"
+description = "SovereigntySeal — cryptographic seal connecting Layer 1 to Layer 0 sha256"
+exports     = ["SovereigntySeal", "SealResult", "try_seal"]
+tests       = 8
+deps        = ["sha256"]
+
+# ─── LAYER 2 — Orbital / Orbital ─────────────────────────────────────────────
+
+[[module]]
+id          = "10"
+name        = "quantum_state"
+path        = "src/quantum_state.rs"
+layer       = 2
+status      = "implemented"
+description = "QuantumState — base perturbation, tension, log_x signals; CausalityState"
+exports     = ["QuantumState", "CausalityState", "SourceKind", "BASE_TENSION"]
+tests       = 0
+deps        = []
+
+[[module]]
+id          = "11"
+name        = "node_metrics"
+path        = "src/node_metrics.rs"
+layer       = 2
+status      = "implemented"
+description = "Histogram and metric utilities for node signal analysis"
+exports     = ["node_histogram"]
+tests       = 0
+deps        = []
+
+[[module]]
+id          = "12"
+name        = "node_causality"
+path        = "src/node_causality.rs"
+layer       = 2
+status      = "implemented"
+description = "Mutual information, transfer entropy, Granger causality — causal signal detection"
+exports     = ["compute_causality", "mutual_info", "transfer_entropy", "granger_test"]
+tests       = 19
+deps        = ["quantum_state", "node_metrics"]
+
+# ─── LAYER 3 — Luna Core / Cœur Luna [planned] ───────────────────────────────
+
+[[module]]
+id          = "13"
+name        = "nucleus"
+path        = "src/luna/nucleus.rs"
+layer       = 3
+status      = "planned"
+description = "Identity hub — sovereign module registry, presence management"
+deps        = ["seed"]
+
+[[module]]
+id          = "14"
+name        = "sprites"
+path        = "src/luna/sprites.rs"
+layer       = 3
+status      = "planned"
+description = "Visual element system — sovereign sprite lifecycle, covenant-checked mutations"
+deps        = ["seed", "couleur"]
+
+[[module]]
+id          = "15"
+name        = "chronos"
+path        = "src/luna/chronos.rs"
+layer       = 3
+status      = "planned"
+description = "Temporal scheduler — event sequencing, timeline coordination"
+deps        = ["seed"]
+
+[[module]]
+id          = "16"
+name        = "rituel"
+path        = "src/luna/rituel.rs"
+layer       = 3
+status      = "planned"
+description = "Ritual event engine — ceremonial state transitions, covenant events"
+deps        = ["seed", "chronos"]
+
+[[module]]
+id          = "17"
+name        = "couleur"
+path        = "src/luna/couleur.rs"
+layer       = 3
+status      = "planned"
+description = "Color sovereignty system — palette at 639 Hz resonance, harmonic color theory"
+deps        = ["seed", "sigil"]
+
+[[module]]
+id          = "18"
+name        = "quantum"
+path        = "src/luna/quantum.rs"
+layer       = 3
+status      = "planned"
+description = "Quantum state bridge — connects orbital layer signals to Luna visual system"
+deps        = ["quantum_state", "seed"]
+
+[[module]]
+id          = "19"
+name        = "reparation"
+path        = "src/luna/reparation.rs"
+layer       = 3
+status      = "planned"
+description = "Repair and resilience — self-healing state, covenant restoration"
+deps        = ["seed", "governance"]
+
+[[module]]
+id          = "20"
+name        = "archive"
+path        = "src/luna/archive.rs"
+layer       = 3
+status      = "planned"
+description = "Immutable memory store — append-only event log, OpenTimestamps anchored"
+deps        = ["seed", "sha256"]
+
+# ─── LAYER 4 — VR / Réalité Virtuelle [planned] ──────────────────────────────
+
+[[module]]
+id          = "21"
+name        = "vr_space"
+path        = "src/vr/vr_space.rs"
+layer       = 4
+status      = "planned"
+description = "3D scene management — sovereign spatial graph, seed-driven positions"
+deps        = ["seed", "nucleus"]
+
+[[module]]
+id          = "22"
+name        = "vr_renderer"
+path        = "src/vr/vr_renderer.rs"
+layer       = 4
+status      = "planned"
+description = "WebGL/WASM rendering — sovereign render pipeline, covenant-checked shaders"
+deps        = ["vr_space", "couleur"]
+
+[[module]]
+id          = "23"
+name        = "vr_interaction"
+path        = "src/vr/vr_interaction.rs"
+layer       = 4
+status      = "planned"
+description = "Gesture and presence — hand tracking, sovereign interaction events"
+deps        = ["vr_space", "seed", "rituel"]
+
+# ─── LAYER 5 — Network / Réseau [planned] ────────────────────────────────────
+
+[[module]]
+id          = "24"
+name        = "nexus"
+path        = "src/network/nexus.rs"
+layer       = 5
+status      = "planned"
+description = "P2P mesh coordinator — sovereign node discovery, covenant-checked peering"
+deps        = ["seed", "governance"]
+
+[[module]]
+id          = "25"
+name        = "signal_bus"
+path        = "src/network/signal_bus.rs"
+layer       = 5
+status      = "planned"
+description = "Event routing — typed sovereign message bus, Three Zeros veto on every signal"
+deps        = ["seed", "governance"]
+
+[[module]]
+id          = "26"
+name        = "covenant_relay"
+path        = "src/network/covenant_relay.rs"
+layer       = 5
+status      = "planned"
+description = "Ethical gateway — validates all cross-node messages against the covenant"
+deps        = ["sigil", "governance", "sha256"]
+
+# ─── LAYER 6 — Studio / Studio [planned] ─────────────────────────────────────
+
+[[module]]
+id          = "27"
+name        = "vh_studio"
+path        = "src/studio/vh_studio.rs"
+layer       = 6
+status      = "planned"
+description = "VH Studio server — creative workspace, sovereign session management"
+deps        = ["seed", "nexus", "audio_engine"]
+
+[[module]]
+id          = "28"
+name        = "audio_engine"
+path        = "src/studio/audio_engine.rs"
+layer       = 6
+status      = "planned"
+description = "639 Hz synthesis — harmonic generation, sovereign frequency encoding"
+deps        = ["seed", "sigil"]
+
+[[module]]
+id          = "29"
+name        = "creation_tools"
+path        = "src/studio/creation_tools.rs"
+layer       = 6
+status      = "planned"
+description = "Authoring interfaces — sovereign creation pipeline, covenant-validated output"
+deps        = ["seed", "vh_studio", "archive"]
+
+# ─── LAYER 7 — Sovereign Deploy / Déploiement Souverain [planned] ────────────
+
+[[module]]
+id          = "30"
+name        = "arweave_seal"
+path        = "src/deploy/arweave_seal.rs"
+layer       = 7
+status      = "planned"
+description = "Permanent blockchain sealing — Arweave permanent storage, covenant anchoring"
+deps        = ["sha256", "sigil"]
+
+[[module]]
+id          = "31"
+name        = "openTimestamps"
+path        = "src/deploy/open_timestamps.rs"
+layer       = 7
+status      = "planned"
+description = "OpenTimestamps anchoring — Bitcoin-backed timestamp proof"
+deps        = ["sha256"]
+
+[[module]]
+id          = "32"
+name        = "sovereignty_cli"
+path        = "src/deploy/sovereignty_cli.rs"
+layer       = 7
+status      = "planned"
+description = "Guardian CLI — seal, verify, deploy, audit — guardian-only interface"
+deps        = ["sigil", "sha256", "governance", "arweave_seal"]

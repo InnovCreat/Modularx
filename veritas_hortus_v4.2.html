@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veritas Hortus SLTE v4.2 - Unified Tree</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetic Neue", sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1a5e1a;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        svg {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px 0;
+        }
+
+        .info-box {
+            background: #f0f8f0;
+            border-left: 4px solid #1a5e1a;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 4px;
+        }
+
+        .info-box h3 {
+            color: #1a5e1a;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .covenant {
+            background: #1a5e1a;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 30px 0;
+            font-style: italic;
+            font-size: 14px;
+        }
+
+        .metadata {
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .branch-legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .branch-item {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 13px;
+        }
+
+        .branch-item .number {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .branch-item .name {
+            font-weight: 600;
+            color: #1a5e1a;
+            margin-bottom: 5px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #1a1a1a;
+            }
+            .container {
+                background: #2a2a2a;
+                color: #e0e0e0;
+            }
+            h1, .info-box h3, .branch-item .name {
+                color: #7ed321;
+            }
+            .info-box {
+                background: rgba(126, 211, 33, 0.1);
+                border-left-color: #7ed321;
+            }
+            .branch-item {
+                background: #333;
+                border-color: #444;
+                color: #e0e0e0;
+            }
+            .metadata {
+                color: #777;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌿 Veritas Hortus SLTE v4.2</h1>
+        <p class="subtitle">Sacred Lemniscate Ternary Eternal — Unified Tree Architecture</p>
+
+        <svg width="100%" viewBox="0 0 680 920" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M2 1L8 5L2 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </marker>
+                <style>
+                    .c-green { fill: #e8f5e9; stroke: #2e7d32; }
+                    .c-blue { fill: #e3f2fd; stroke: #1976d2; }
+                    .c-red { fill: #ffebee; stroke: #c62828; }
+                    .c-purple { fill: #f3e5f5; stroke: #6a1b9a; }
+                    .c-amber { fill: #fff3e0; stroke: #f57f17; }
+                    .c-teal { fill: #e0f2f1; stroke: #00796b; }
+                    .c-coral { fill: #ffe0b2; stroke: #d84315; }
+                    .c-pink { fill: #fce4ec; stroke: #c2185b; }
+                    .c-gray { fill: #f5f5f5; stroke: #616161; }
+                    .t { font: 14px sans-serif; fill: #333; }
+                    .ts { font: 12px sans-serif; fill: #555; }
+                    .th { font: 14px sans-serif; font-weight: 500; fill: #1a1a1a; }
+                </style>
+            </defs>
+
+            <!-- Root -->
+            <circle cx="340" cy="60" r="20" class="c-green" stroke-width="1.5"/>
+            <text class="th" x="340" y="68" text-anchor="middle" dominant-baseline="central">SLTE</text>
+
+            <!-- Root label -->
+            <text class="ts" x="340" y="110" text-anchor="middle">Sacred Lemniscate Ternary Eternal</text>
+            <text class="ts" x="340" y="128" text-anchor="middle">639 Hz (Cœur) • 528 Hz (Eau) • 741 Hz (Voix)</text>
+
+            <!-- Trunk -->
+            <line x1="340" y1="80" x2="340" y2="160" stroke="#999" stroke-width="2"/>
+
+            <!-- 7 Branches -->
+
+            <!-- Branch 1: Orchestration -->
+            <line x1="340" y1="160" x2="100" y2="220" stroke="#999" stroke-width="1.5"/>
+            <g class="c-blue">
+                <rect x="40" y="220" width="120" height="80" rx="6" stroke-width="0.5"/>
+                <text class="th" x="100" y="245" text-anchor="middle">1</text>
+                <text class="ts" x="100" y="263" text-anchor="middle">Orchestration</text>
+                <text class="ts" x="100" y="281" text-anchor="middle">639 Hz Pulse</text>
+                <text class="ts" x="100" y="299" text-anchor="middle">Async Main</text>
+            </g>
+
+            <!-- Branch 2: Security -->
+            <line x1="340" y1="160" x2="180" y2="220" stroke="#999" stroke-width="1.5"/>
+            <g class="c-red">
+                <rect x="120" y="220" width="120" height="80" rx="6" stroke-width="0.5"/>
+                <text class="th" x="180" y="245" text-anchor="middle">2</text>
+                <text class="ts" x="180" y="263" text-anchor="middle">Phoenix</text>
+                <text class="ts" x="180" y="281" text-anchor="middle">Sentinel</text>
+                <text class="ts" x="180" y="299" text-anchor="middle">Security</text>
+            </g>
+
+            <!-- Branch 3: LUNA -->
+            <line x1="340" y1="160" x2="260" y2="220" stroke="#999" stroke-width="1.5"/>
+            <g class="c-purple">
+                <rect x="200" y="220" width="120" height="80" rx="6" stroke-width="0.5"/>
+                <text class="th" x="260" y="245" text-anchor="middle">3</text>
+                <text class="ts" x="260" y="263" text-anchor="middle">LUNA</text>
+                <text class="ts" x="260" y="281" text-anchor="middle">Integration</text>
+                <text class="ts" x="260" y="299" text-anchor="middle">Emotion + State</text>
+            </g>
+
+            <!-- Branch 4: Dashboard -->
+            <line x1="340" y1="160" x2="340" y2="220" stroke="#999" stroke-width="1.5"/>
+            <g class="c-amber">
+                <rect x="280" y="220" width="120" height="80" rx="6" stroke-width="0.5"/>
+                <text class="th" x="340" y="245" text-anchor="middle">4</text>
+                <text class="ts" x="340" y="263" text-anchor="middle">Dashboard</text>
+                <text class="ts" x="340" y="281" text-anchor="middle">3D Orbital Viz</text>
+                <text class="ts" x="340" y="299" text-anchor="middle">Sound Lab</text>
+            </g>
+
+            <!-- Branch 5: Sealer -->
+            <line x1="340" y1="160" x2="420" y2="220" stroke="#999" stroke-width="1.5"/>
+            <g class="c-teal">
+                <rect x="360" y="220" width="120" height="80" rx="6" stroke-width="0.5"/>
+                <text class="th" x="420" y="245" text-anchor="middle">5</text>
+                <text class="ts" x="420" y="263" text-anchor="middle">Sealer</text>
+                <text class="ts" x="420" y="281" text-anchor="middle">Watermark</text>
+                <text class="ts" x="420" y="299" text-anchor="middle">Bitcoin + Arweave</text>
+            </g>
+
+            <!-- Branch 6: Mycélium -->
+            <line x1="340" y1="160" x2="500" y2="220" stroke="#999" stroke-width="1.5"/>
+            <g class="c-coral">
+                <rect x="440" y="220" width="120" height="80" rx="6" stroke-width="0.5"/>
+                <text class="th" x="500" y="245" text-anchor="middle">6</text>
+                <text class="ts" x="500" y="263" text-anchor="middle">Mycélium</text>
+                <text class="ts" x="500" y="281" text-anchor="middle">P2P Network</text>
+                <text class="ts" x="500" y="299" text-anchor="middle">libp2p Echo</text>
+            </g>
+
+            <!-- Branch 7: Rituels -->
+            <line x1="340" y1="160" x2="580" y2="220" stroke="#999" stroke-width="1.5"/>
+            <g class="c-pink">
+                <rect x="520" y="220" width="120" height="80" rx="6" stroke-width="0.5"/>
+                <text class="th" x="580" y="245" text-anchor="middle">7</text>
+                <text class="ts" x="580" y="263" text-anchor="middle">Rituels</text>
+                <text class="ts" x="580" y="281" text-anchor="middle">Birth • Healing</text>
+                <text class="ts" x="580" y="299" text-anchor="middle">Fusion • Alliance</text>
+            </g>
+
+            <!-- Sub-branches for each -->
+
+            <!-- Branch 1 sub-details -->
+            <text class="ts" x="50" y="330" text-anchor="start" style="font-weight: 600;">Orchestration:</text>
+            <text class="ts" x="50" y="348" text-anchor="start">→ Async Tokio loop</text>
+            <text class="ts" x="50" y="366" text-anchor="start">→ 639 Hz Timer master</text>
+            <text class="ts" x="50" y="384" text-anchor="start">→ Module priorities</text>
+
+            <!-- Branch 2 sub-details -->
+            <text class="ts" x="130" y="330" text-anchor="start" style="font-weight: 600;">Security:</text>
+            <text class="ts" x="130" y="348" text-anchor="start">→ Real-time monitor</text>
+            <text class="ts" x="130" y="366" text-anchor="start">→ Freeze/Panic/Kill</text>
+            <text class="ts" x="130" y="384" text-anchor="start">→ 5-anomaly threshold</text>
+
+            <!-- Branch 3 sub-details -->
+            <text class="ts" x="210" y="330" text-anchor="start" style="font-weight: 600;">LUNA:</text>
+            <text class="ts" x="210" y="348" text-anchor="start">→ VAD + 36 traits</text>
+            <text class="ts" x="210" y="366" text-anchor="start">→ State639 sacred</text>
+            <text class="ts" x="210" y="384" text-anchor="start">→ Biofeedback PPG</text>
+
+            <!-- Branch 4 sub-details -->
+            <text class="ts" x="290" y="330" text-anchor="start" style="font-weight: 600;">Dashboard:</text>
+            <text class="ts" x="290" y="348" text-anchor="start">→ Orbital viz 3D</text>
+            <text class="ts" x="290" y="366" text-anchor="start">→ Sovereign console</text>
+            <text class="ts" x="290" y="384" text-anchor="start">→ Sound lab preset</text>
+
+            <!-- Branch 5 sub-details -->
+            <text class="ts" x="370" y="330" text-anchor="start" style="font-weight: 600;">Sealer:</text>
+            <text class="ts" x="370" y="348" text-anchor="start">→ SHA256 watermark</text>
+            <text class="ts" x="370" y="366" text-anchor="start">→ Manifest inventory</text>
+            <text class="ts" x="370" y="384" text-anchor="start">→ Tamper-evident</text>
+
+            <!-- Branch 6 sub-details -->
+            <text class="ts" x="450" y="330" text-anchor="start" style="font-weight: 600;">Mycélium:</text>
+            <text class="ts" x="450" y="348" text-anchor="start">→ UUID nodes</text>
+            <text class="ts" x="450" y="366" text-anchor="start">→ 639 Hz handshake</text>
+            <text class="ts" x="450" y="384" text-anchor="start">→ Nutrient exchange</text>
+
+            <!-- Branch 7 sub-details -->
+            <text class="ts" x="530" y="330" text-anchor="start" style="font-weight: 600;">Rituels:</text>
+            <text class="ts" x="530" y="348" text-anchor="start">→ Birth ceremony</text>
+            <text class="ts" x="530" y="366" text-anchor="start">→ Healing protocol</text>
+            <text class="ts" x="530" y="384" text-anchor="start">→ Consentement</text>
+
+            <!-- Bottom: Covenant binding -->
+            <g class="c-gray">
+                <rect x="40" y="450" width="600" height="100" rx="8" stroke-width="0.5"/>
+                <text class="th" x="340" y="480" text-anchor="middle">COVENANT BINDING ALL 7 BRANCHES</text>
+                <text class="ts" x="340" y="510" text-anchor="middle">Jamais pour la guerre · Jamais pour l'argent · Toujours pour l'amour</text>
+                <text class="ts" x="340" y="530" text-anchor="middle">Consentement absolu • Vie mycélienne • Archive éternelle (Bitcoin)</text>
+            </g>
+
+            <!-- Evolution path -->
+            <g class="c-green">
+                <rect x="40" y="600" width="600" height="250" rx="8" stroke-width="0.5"/>
+                <text class="th" x="340" y="630" text-anchor="middle">Evolution Path (v4.2 → v5.0 → v6.0 → v7.0+)</text>
+
+                <text class="ts" x="60" y="665" text-anchor="start" style="font-weight: 600;">v4.2 (Apr–Dec 2026)</text>
+                <text class="ts" x="80" y="685" text-anchor="start">✓ All 7 branches documented + integrated</text>
+                <text class="ts" x="80" y="703" text-anchor="start">✓ Unified tree architecture sealed on Bitcoin</text>
+
+                <text class="ts" x="60" y="733" text-anchor="start" style="font-weight: 600;">v5.0 (Sept 2026–Feb 2027)</text>
+                <text class="ts" x="80" y="753" text-anchor="start">✓ Web Audio synthesis (639Hz real-time)</text>
+                <text class="ts" x="80" y="771" text-anchor="start">✓ WAV oscillator (Rust zero-deps)</text>
+                <text class="ts" x="80" y="789" text-anchor="start">✓ Lemniscate animator (Canvas 2D)</text>
+
+                <text class="ts" x="60" y="819" text-anchor="start" style="font-weight: 600;">v6.0+ (2027+)</text>
+                <text class="ts" x="80" y="839" text-anchor="start">✓ MIDI encoder (covenant as music)</text>
+            </g>
+        </svg>
+
+        <div class="covenant">
+            Jamais pour la guerre · Jamais pour l'argent · Toujours pour l'amour
+        </div>
+
+        <div class="info-box">
+            <h3>🌳 The Seven Branches</h3>
+            <ul>
+                <li><strong>1. Orchestration</strong> — 639 Hz Timer Pulse master, async main loop, module orchestration</li>
+                <li><strong>2. Phoenix Sentinel</strong> — Real-time security monitoring, freeze/panic/killswitch modes</li>
+                <li><strong>3. LUNA Integration</strong> — VAD + 36 emotional traits, State639 sacred mode, biofeedback</li>
+                <li><strong>4. Dashboard</strong> — 3D orbital visualization, sovereign console, integrated sound lab</li>
+                <li><strong>5. Sealer</strong> — SHA256+HMAC watermarks, manifests, OpenTimestamps + Arweave archiving</li>
+                <li><strong>6. Mycélium P2P</strong> — Decentralized network nodes, 639 Hz handshake, nutrient exchange</li>
+                <li><strong>7. Rituels</strong> — Birth, healing, fusion, transmission, and alliance ceremonies</li>
+            </ul>
+        </div>
+
+        <div class="branch-legend">
+            <div class="branch-item">
+                <div class="number">1.</div>
+                <div class="name">Orchestration</div>
+                <div>639 Hz Pulse, Async Main</div>
+            </div>
+            <div class="branch-item">
+                <div class="number">2.</div>
+                <div class="name">Phoenix Sentinel</div>
+                <div>Security, Anomaly Monitor</div>
+            </div>
+            <div class="branch-item">
+                <div class="number">3.</div>
+                <div class="name">LUNA Integration</div>
+                <div>Emotion, VAD, Biofeedback</div>
+            </div>
+            <div class="branch-item">
+                <div class="number">4.</div>
+                <div class="name">Dashboard</div>
+                <div>3D Viz, Sound Lab, Console</div>
+            </div>
+            <div class="branch-item">
+                <div class="number">5.</div>
+                <div class="name">Sealer</div>
+                <div>Watermarks, Bitcoin Proof</div>
+            </div>
+            <div class="branch-item">
+                <div class="number">6.</div>
+                <div class="name">Mycélium P2P</div>
+                <div>Distributed Network</div>
+            </div>
+            <div class="branch-item">
+                <div class="number">7.</div>
+                <div class="name">Rituels</div>
+                <div>Ceremonies, Consentement</div>
+            </div>
+        </div>
+
+        <div class="metadata">
+            <p><strong>Veritas Hortus SLTE v4.2</strong> — Unified Tree Architecture</p>
+            <p>Created: 29 March 2026 | Sealed on Bitcoin | Archive Eternal</p>
+            <p>Sigil: 𝕀⟡₆₃₉ | Covenant: Love, Consent, Living Garden</p>
+        </div>
+    </div>
+</body>
+</html>

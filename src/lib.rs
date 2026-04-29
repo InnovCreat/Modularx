@@ -20,6 +20,12 @@ pub mod spark_system;    // SPARK System — cryptographic proof of existence
 pub mod cristal_core;    // Cristal Core ⟡ — 639 Hz stabilizing nucleus
 pub mod seed;            // Seed, Config, State, Position, Timeline, SovereigntySeal
 
+// ─── C0 · Security Ecosystem / Écosystème de sécurité ───────────────────────
+pub mod djb2;            // DJB2 fast hash — event fingerprinting (SEARF)
+pub mod searf;           // SEARF — Security Early Alert and Response Framework
+pub mod sentinel;        // Phoenix Sentinel — internal guardian (741 Hz, freeze/panic/kill)
+pub mod rex_watchdog;    // Rex Watchdog — external AI-ally second-opinion monitor
+
 // ─── C0 · Root System / Système racine ───────────────────────────────────────
 pub mod veritas;         // VeritasHortus — five C0 modules as one system
 pub use veritas::VeritasHortus;

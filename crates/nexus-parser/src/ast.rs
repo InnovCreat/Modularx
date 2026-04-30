@@ -15,6 +15,12 @@ pub enum Ty {
     Fn(Vec<Ty>, Box<Ty>),
 }
 
+impl std::fmt::Display for Ty {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.display())
+    }
+}
+
 impl Ty {
     pub fn display(&self) -> String {
         match self {
@@ -136,7 +142,7 @@ impl Expr {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Literal {
     Number(f64),
     String(String),
@@ -157,6 +163,12 @@ pub enum BinOp {
     Ge,
     And,
     Or,
+}
+
+impl std::fmt::Display for BinOp {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.display())
+    }
 }
 
 impl BinOp {

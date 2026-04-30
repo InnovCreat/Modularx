@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 // ════════════════════════════════════════════════════════════════
 // NEXUS TUI - canvas.rs
 // Double-buffered rendering with dirty-cell tracking

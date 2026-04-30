@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 // ════════════════════════════════════════════════════════════════
 // NEXUS TUI - widgets.rs
 // UI components: Border, Panel, TextArea, StatusBar, ProgressBar

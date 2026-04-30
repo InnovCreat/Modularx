@@ -60,6 +60,12 @@ pub enum TokenKind {
     Eof,
 }
 
+impl std::fmt::Display for TokenKind {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.display())
+    }
+}
+
 impl TokenKind {
     /// Try to match an identifier string to a keyword.
     pub fn keyword(s: &str) -> Option<TokenKind> {

@@ -9,31 +9,47 @@ pub enum Value {
     String(String),
     Bool(bool),
     Unit,
-    Return(Box<Value>),
+}
+
+impl std::fmt::Display for Value {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Value::Number(n) => {
+                if n.fract() == 0.0 {
+                    write!(f, "{}", *n as i64)
+                } else {
+                    write!(f, "{}", n)
+                }
+            }
+            Value::String(s) => write!(f, "{}", s),
+            Value::Bool(b) => write!(f, "{}", b),
+            Value::Unit => write!(f, "()"),
+        }
+    }
 }
 
 impl Value {
     pub fn display(&self) -> String {
+        format!("{}", self)
+    }
+}
+
+// Internal-only wrapper for early return propagation
+#[derive(Debug, Clone, PartialEq)]
+enum FlowValue {
+    Val(Value),
+    Return(Value),
+}
+
+impl FlowValue {
+    fn into_value(self) -> Value {
         match self {
-            Value::Number(n) => {
-                if n.fract() == 0.0 {
-                    format!("{}", *n as i64)
-                } else {
-                    format!("{}", n)
-                }
-            }
-            Value::String(s) => format!("\"{}\"", s),
-            Value::Bool(b) => format!("{}", b),
-            Value::Unit => "()".into(),
-            Value::Return(v) => v.display(),
+            FlowValue::Val(v) | FlowValue::Return(v) => v,
         }
     }
 
-    fn unwrap_return(self) -> Value {
-        match self {
-            Value::Return(v) => *v,
-            other => other,
-        }
+    fn is_return(&self) -> bool {
+        matches!(self, FlowValue::Return(_))
     }
 }
 
@@ -72,20 +88,20 @@ pub struct EvalResult {
 
 pub fn eval(program: &Program) -> Result<EvalResult, String> {
     let mut env = Env::new();
-    let value = eval_block(&program.stmts, &mut env)?;
+    let flow = eval_block(&program.stmts, &mut env)?;
     Ok(EvalResult {
-        value: value.unwrap_return(),
+        value: flow.into_value(),
         output: env.output,
     })
 }
 
 // ── Block evaluation ─────────────────────────────────────────
 
-fn eval_block(stmts: &[Stmt], env: &mut Env) -> Result<Value, String> {
-    let mut result = Value::Unit;
+fn eval_block(stmts: &[Stmt], env: &mut Env) -> Result<FlowValue, String> {
+    let mut result = FlowValue::Val(Value::Unit);
     for stmt in stmts {
         result = eval_stmt(stmt, env)?;
-        if matches!(result, Value::Return(_)) {
+        if result.is_return() {
             return Ok(result);
         }
     }
@@ -94,19 +110,19 @@ fn eval_block(stmts: &[Stmt], env: &mut Env) -> Result<Value, String> {
 
 // ── Statement evaluation ─────────────────────────────────────
 
-fn eval_stmt(stmt: &Stmt, env: &mut Env) -> Result<Value, String> {
+fn eval_stmt(stmt: &Stmt, env: &mut Env) -> Result<FlowValue, String> {
     match stmt {
         Stmt::Let { name, expr, .. } => {
             let val = eval_expr(expr, env)?;
             env.vars.insert(name.clone(), val);
-            Ok(Value::Unit)
+            Ok(FlowValue::Val(Value::Unit))
         }
 
         Stmt::Assign { name, expr, .. } => {
             let val = eval_expr(expr, env)?;
             if env.vars.contains_key(name) {
                 env.vars.insert(name.clone(), val);
-                Ok(Value::Unit)
+                Ok(FlowValue::Val(Value::Unit))
             } else {
                 Err(format!("Undefined variable '{}'", name))
             }
@@ -114,12 +130,12 @@ fn eval_stmt(stmt: &Stmt, env: &mut Env) -> Result<Value, String> {
 
         Stmt::Expr(expr, _) => {
             eval_expr(expr, env)?;
-            Ok(Value::Unit)
+            Ok(FlowValue::Val(Value::Unit))
         }
 
         Stmt::Return(expr, _) => {
             let val = eval_expr(expr, env)?;
-            Ok(Value::Return(Box::new(val)))
+            Ok(FlowValue::Return(val))
         }
 
         Stmt::FnDef { name, params, body, .. } => {
@@ -127,7 +143,7 @@ fn eval_stmt(stmt: &Stmt, env: &mut Env) -> Result<Value, String> {
                 params: params.clone(),
                 body: body.clone(),
             });
-            Ok(Value::Unit)
+            Ok(FlowValue::Val(Value::Unit))
         }
 
         Stmt::Block(stmts, _) => eval_block(stmts, env),
@@ -140,7 +156,7 @@ fn eval_stmt(stmt: &Stmt, env: &mut Env) -> Result<Value, String> {
                     if let Some(else_stmts) = else_branch {
                         eval_block(else_stmts, env)
                     } else {
-                        Ok(Value::Unit)
+                        Ok(FlowValue::Val(Value::Unit))
                     }
                 }
                 _ => Err("If condition must be bool".into()),
@@ -154,7 +170,7 @@ fn eval_stmt(stmt: &Stmt, env: &mut Env) -> Result<Value, String> {
                 match c {
                     Value::Bool(true) => {
                         let result = eval_block(body, env)?;
-                        if matches!(result, Value::Return(_)) {
+                        if result.is_return() {
                             return Ok(result);
                         }
                     }
@@ -166,7 +182,7 @@ fn eval_stmt(stmt: &Stmt, env: &mut Env) -> Result<Value, String> {
                     return Err("Loop exceeded 1,000,000 iterations (infinite loop?)".into());
                 }
             }
-            Ok(Value::Unit)
+            Ok(FlowValue::Val(Value::Unit))
         }
     }
 }
@@ -248,7 +264,7 @@ fn eval_expr(expr: &Expr, env: &mut Env) -> Result<Value, String> {
                     // Merge output from the call
                     env.output.append(&mut call_env.output);
 
-                    Ok(result.unwrap_return())
+                    Ok(result.into_value())
                 } else {
                     Err(format!("Undefined function '{}'", name))
                 }
@@ -394,7 +410,7 @@ mod tests {
             }
         "#;
         let r = run(src).unwrap();
-        assert_eq!(r.output, vec!["\"big\""]);
+        assert_eq!(r.output, vec!["big"]);
     }
 
     #[test]
@@ -405,7 +421,7 @@ mod tests {
             print(a + b);
         "#;
         let r = run(src).unwrap();
-        assert_eq!(r.output, vec!["\"hello world\""]);
+        assert_eq!(r.output, vec!["hello world"]);
     }
 
     #[test]

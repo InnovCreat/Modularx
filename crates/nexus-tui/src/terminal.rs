@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 // ════════════════════════════════════════════════════════════════
 // NEXUS TUI - terminal.rs
 // Contrôle ANSI bas niveau + raw mode + terminal size

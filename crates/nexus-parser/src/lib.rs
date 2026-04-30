@@ -1,9 +1,14 @@
 pub mod ast;
 
+// Re-export core AST types so consumers can `use nexus_parser::{Program, Stmt, Expr, ...}`
+pub use ast::{
+    Program, Stmt, Expr, Literal, Param,
+    BinOp, UnaryOp, Ty,
+    pretty_print,
+};
+
 use nexus_span::Span;
 use nexus_token::{Token, TokenKind};
-
-use ast::*;
 
 // ── Precedence levels for Pratt parsing ──────────────────────
 
@@ -113,10 +118,6 @@ impl Parser {
             ));
             self.curr_span()
         }
-    }
-
-    fn check(&self, kind: &TokenKind) -> bool {
-        std::mem::discriminant(self.curr_kind()) == std::mem::discriminant(kind)
     }
 
     // ── Statement parsing ────────────────────────────────

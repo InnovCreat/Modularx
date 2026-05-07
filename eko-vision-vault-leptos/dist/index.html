@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0a0a">
+  <title>Eko Vision Vault</title>
+  
+<script type="module">
+import init, * as bindings from '/eko-vision-vault-leptos-8bc0ac7c22e9b56.js';
+const wasm = await init({ module_or_path: '/eko-vision-vault-leptos-8bc0ac7c22e9b56_bg.wasm' });
+
+
+window.wasmBindings = bindings;
+
+
+dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
+
+</script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+    html { scroll-behavior: smooth }
+    body {
+      background: #0a0a0a; color: #f0f0f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      font-size: 15px; line-height: 1.6; min-height: 100dvh;
+    }
+    a { color: #86e77c; text-decoration: none }
+    a:hover { text-decoration: underline }
+    button { cursor: pointer; font-family: inherit; font-size: inherit; border: none; background: none }
+    ::-webkit-scrollbar { width: 4px }
+    ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 4px }
+    .app { max-width: 640px; margin: 0 auto; padding-bottom: 72px }
+
+    /* header */
+    .hdr { position: sticky; top: 0; z-index: 50; background: rgba(10,10,10,.92); backdrop-filter: blur(12px); border-bottom: 1px solid #1e1e1e; padding: 14px 16px; display: flex; align-items: center; gap: 12px }
+    .logo { font-size: 18px; font-weight: 800; letter-spacing: -.5px; color: #86e77c }
+    .tagline { font-size: 11px; color: #666; letter-spacing: .06em; text-transform: uppercase; flex: 1; text-align: center }
+
+    /* buttons */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 14px; transition: all .15s; white-space: nowrap; cursor: pointer }
+    .btn-primary { background: #86e77c; color: #0a0a0a; border: none }
+    .btn-primary:hover { background: #6dd463; transform: translateY(-1px) }
+    .btn-primary:disabled { opacity: .4; cursor: not-allowed; transform: none; pointer-events: none }
+    .btn-outline { border: 1px solid #2a2a2a; color: #f0f0f0; background: none }
+    .btn-outline:hover { border-color: #86e77c; color: #86e77c }
+    .btn-ghost { color: #666; padding: 6px 10px; background: none; border: none }
+    .btn-ghost:hover { color: #f0f0f0 }
+
+    /* cards */
+    .card { border-bottom: 1px solid #1e1e1e; padding: 18px 16px; cursor: pointer; transition: background .12s, transform .12s }
+    .card:hover { background: #111; transform: translateY(-1px) }
+    .card-hdr { display: flex; align-items: center; gap: 10px; margin-bottom: 10px }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: #1a1a1a; border: 2px solid #86e77c; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #86e77c; flex-shrink: 0 }
+    .avatar-lg { width: 46px; height: 46px; font-size: 18px }
+    .meta { display: flex; flex-direction: column; gap: 1px; min-width: 0 }
+    .uname { font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+    .ts { font-size: 12px; color: #666 }
+    .card-body { font-size: 15px; line-height: 1.65; margin-bottom: 14px; color: #e8e8e8; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden }
+    .card-body-full { display: block; overflow: visible; -webkit-line-clamp: unset; font-size: 16px; line-height: 1.75; white-space: pre-wrap; word-break: break-word; margin-bottom: 24px }
+    .card-ftr { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap }
+    .score-wrap { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0 }
+    .score-bar { flex: 1; height: 4px; border-radius: 2px; background: #1e1e1e; overflow: hidden; max-width: 100px }
+    .score-fill { height: 100%; border-radius: 2px; background: #86e77c; transition: width .4s }
+    .score-num { font-size: 13px; font-weight: 700; color: #86e77c; min-width: 24px }
+    .views { font-size: 12px; color: #666 }
+    .tip-total { font-size: 12px; color: #86e77c; font-weight: 600 }
+    .btn-tip { border: 1px solid #86e77c; color: #86e77c; background: transparent; border-radius: 8px; padding: 5px 12px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all .15s }
+    .btn-tip:hover { background: #86e77c; color: #0a0a0a; box-shadow: 0 0 12px rgba(134,231,124,.3) }
+
+    /* nav */
+    .section-lbl { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #666; padding: 14px 16px 10px; border-bottom: 1px solid #1e1e1e }
+    .bot-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 40; background: rgba(10,10,10,.96); backdrop-filter: blur(12px); border-top: 1px solid #1e1e1e; display: flex; align-items: center; justify-content: space-around; padding: 10px 0 }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; color: #666; font-size: 11px; font-weight: 500; padding: 4px 20px; transition: color .15s; text-decoration: none; cursor: pointer; background: none; border: none; font-family: inherit }
+    .nav-item:hover, .nav-item.active { color: #86e77c }
+    .nav-icon { font-size: 20px; line-height: 1 }
+
+    /* post page */
+    .post-wrap { padding: 16px }
+    .post-hdr { display: flex; align-items: center; gap: 12px; margin-bottom: 16px }
+    .vote-row { display: flex; align-items: center; gap: 14px; margin-bottom: 24px }
+    .vote-btn { width: 36px; height: 36px; border-radius: 8px; border: 1px solid #1e1e1e; color: #666; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: none; font-family: inherit; transition: all .15s }
+    .vote-btn:hover, .vote-btn.active { border-color: #86e77c; color: #86e77c }
+    .score-big { font-size: 28px; font-weight: 800; color: #86e77c }
+
+    /* tip */
+    .tip-section { border: 1px solid #1e1e1e; border-radius: 12px; padding: 20px; margin-bottom: 24px }
+    .tip-lbl { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #666; margin-bottom: 14px }
+    .tip-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px }
+    .chip { padding: 7px 14px; border-radius: 20px; border: 1px solid #1e1e1e; font-size: 13px; font-weight: 600; color: #666; cursor: pointer; background: none; font-family: inherit; transition: all .15s }
+    .chip:hover, .chip.active { border-color: #86e77c; color: #86e77c; background: rgba(134,231,124,.06) }
+    .tip-custom { display: flex; gap: 8px; margin-bottom: 14px; align-items: center }
+    .inp { background: #0d0d0d; border: 1px solid #1e1e1e; border-radius: 8px; color: #f0f0f0; font-family: inherit; font-size: 14px; padding: 9px 12px; transition: border-color .15s; width: 100% }
+    .inp:focus { outline: none; border-color: #86e77c }
+    .inp::placeholder { color: #444 }
+    .inp-sm { max-width: 120px; width: auto }
+    .tip-from-row { display: flex; gap: 8px; align-items: center; margin-bottom: 14px }
+    .tip-from-lbl { font-size: 13px; color: #666; white-space: nowrap }
+    .btn-send { width: 100%; padding: 12px; background: #86e77c; color: #0a0a0a; border: none; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; font-family: inherit; transition: all .15s }
+    .btn-send:hover { background: #6dd463 }
+    .btn-send:disabled { opacity: .4; cursor: not-allowed }
+    .tips-list { margin-top: 16px; display: flex; flex-direction: column; gap: 8px }
+    .tip-item { display: flex; justify-content: space-between; font-size: 13px; color: #888; border-top: 1px solid #1a1a1a; padding-top: 8px }
+    .tip-item:first-child { border-top: none; padding-top: 0 }
+    .tip-from-name { color: #aaa }
+    .tip-amt { color: #86e77c; font-weight: 600 }
+    .share-row { display: flex; gap: 10px; padding: 0 0 16px }
+
+    /* create */
+    .create-wrap { padding: 16px }
+    .field-lbl { font-size: 12px; color: #666; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px }
+    .field { margin-bottom: 18px }
+    .textarea { width: 100%; min-height: 220px; background: #0d0d0d; border: 1px solid #1e1e1e; border-radius: 12px; color: #f0f0f0; font-family: inherit; font-size: 16px; line-height: 1.7; padding: 16px; resize: none; transition: border-color .15s }
+    .textarea:focus { outline: none; border-color: #86e77c }
+    .textarea::placeholder { color: #333 }
+    .char-ctr { font-size: 12px; color: #555; text-align: right; margin-top: 6px }
+    .char-ctr.warn { color: #e8b96a }
+    .char-ctr.limit { color: #e77c7c }
+    .btn-post { width: 100%; padding: 14px; background: #86e77c; color: #0a0a0a; border: none; border-radius: 10px; font-weight: 700; font-size: 16px; cursor: pointer; font-family: inherit; transition: all .15s; margin-top: 4px }
+    .btn-post:hover { background: #6dd463 }
+    .btn-post:disabled { opacity: .4; cursor: not-allowed }
+
+    /* misc */
+    .back-row { display: flex; align-items: center; gap: 8px; padding: 14px 16px; border-bottom: 1px solid #1e1e1e }
+    .empty { text-align: center; padding: 60px 24px; color: #666 }
+    .empty-icon { font-size: 48px; margin-bottom: 16px }
+    .loading { padding: 40px; text-align: center; color: #444; font-size: 14px }
+    .error-msg { padding: 20px 16px; color: #e77c7c; font-size: 14px }
+    .toast { position: fixed; bottom: 84px; left: 50%; transform: translateX(-50%) translateY(16px); background: #111; border: 1px solid #86e77c; color: #f0f0f0; font-size: 14px; font-weight: 500; padding: 10px 20px; border-radius: 24px; z-index: 1000; opacity: 0; transition: opacity .3s, transform .3s; white-space: nowrap; pointer-events: none }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0) }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: translateY(0) } }
+    .card { animation: fadeUp .25s ease forwards }
+    @media(max-width: 480px) { .tagline { display: none } }
+  </style>
+<link rel="modulepreload" href="/eko-vision-vault-leptos-8bc0ac7c22e9b56.js" crossorigin="anonymous" integrity="sha384-Di/KfRs/zSsxb5FNC5Np4skvQ2SiPDqEUVq6SbLM6lkR3jOuAe/TBR171OTZ3954"><link rel="preload" href="/eko-vision-vault-leptos-8bc0ac7c22e9b56_bg.wasm" crossorigin="anonymous" integrity="sha384-iJuPjOFoiHGJ3WqUYk8ka/FufDCfVskQyuI9ZmNKn6BMIfvHZ1VmxQnT8J2S4Zgc" as="fetch" type="application/wasm"></head>
+<body>
+  <div id="app"></div>
+</body>
+</html>

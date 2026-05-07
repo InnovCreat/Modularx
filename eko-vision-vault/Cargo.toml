@@ -1,0 +1,9 @@
+[package]
+name = "eko-vision-vault"
+version = "0.1.0"
+edition = "2021"
+description = "Sovereign merit-based idea platform — pure std Rust, no dependencies"
+
+[[bin]]
+name = "evv"
+path = "src/main.rs"

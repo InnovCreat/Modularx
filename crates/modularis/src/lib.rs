@@ -1,8 +1,11 @@
 // ════════════════════════════════════════════════════════════════
 // MODULARIS — Veritas Hortus Orchestrator
 // 639Hz pulse-based temporal coordination for composable subsystems
-// Zero external dependencies — stack-allocated hot path
+// Layers: Core → SLTQ (4D space) → Vortex (PHI reduction) → Bridge
 // ════════════════════════════════════════════════════════════════
+
+pub mod sltq;
+pub mod bridge;
 
 use std::time::{Duration, Instant};
 

@@ -5,3 +5,7 @@ edition = "2021"
 description = "Veritas Hortus Orchestrator — 639Hz pulse system for composable subsystems"
 
 [dependencies]
+nexus-lexer = { path = "../nexus-lexer" }
+nexus-parser = { path = "../nexus-parser" }
+nexus-typeck = { path = "../nexus-typeck" }
+nexus-eval = { path = "../nexus-eval" }

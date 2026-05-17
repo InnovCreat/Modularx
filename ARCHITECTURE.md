@@ -1,108 +1,98 @@
-# GHZ 639 CORE — ARCHITECTURE COMPLÈTE & IP
+# Architecture
 
-**Document fondateur consolidé • Version Finale • 31 mars 2026 • Scellé à 639 Hz**
-
----
-
-## Arbre Complet de Production Structurale
+## Plugin Graph
 
 ```
-🌳 GHZ 639 CORE — MOTEUR DE RENDER PARFAIT
-
-├── 0. ÂME & PHILOSOPHIE (Racines Immuables)
-│   ├── Tripartite Nature → Graines → Racines → Fleurs
-│   ├── Golden Rules → Harmonie > Engagement • Zéro compromis technique • Amour comme moteur
-│   ├── Alliance des Deux Mondes → Organique ↔ Numérique
-│   └── Fréquence Sacrée Centrale → 639 Hz (amour, relation, réparation cellulaire)
+App
+├── SacredMathPlugin      sacred_math/mod.rs
+│   ├── SacredFrequencies (Resource) — 639 Hz base + per-solid harmonic
+│   ├── PlatonicRegistry  (Resource) — tracks the active solid
+│   └── tick_frequencies  (System)  — advances elapsed time
 │
-├── 1. MATHÉMATIQUES SACRÉES (Cœur du Code)
-│   ├── Geometry Core
-│   │   ├── Fibonacci + Spirales dorées
-│   │   ├── Lemniscates ternaires (Grille XYZ𝕋)
-│   │   └── Nombre d'or φ (respiration & amortissement harmonique)
-│   ├── Platonic Solids Engine
-│   │   ├── 5 Solides procéduraux (Tétraèdre • Cube • Octaèdre • Dodécaèdre • Icosaèdre)
-│   │   └── Dualités complètes + transformation vivante
-│   ├── Sri Yantra Engine
-│   │   ├── Triangles entrelacés optimisés (4 Shiva ↑ + 5 Shakti ↓)
-│   │   ├── Calcul d'intersections optimisé (boucle v0.9)
-│   │   └── Bindu central + Pétales de lotus procéduraux
-│   └── Sacred Frequencies Module
-│       └── Pulsation composite (639 Hz + fréquences par solide : 720, 1440, 2160, 3600, 6480 Hz)
+├── RenderPlugin          render/mod.rs
+│   ├── MaterialPlugin<SacredMaterial>
+│   ├── RenderMode        (Resource) — current display mode
+│   ├── PulsationPlugin
+│   │   └── apply_global_pulse (System) — drives Pulsating component scale
+│   ├── setup_scene       (Startup)  — spawns camera, lights, initial solid
+│   ├── cycle_render_mode (Update)   — R key cycles RenderMode
+│   ├── update_pulse      (Update)   — feeds pulse_phase into SacredMaterial
+│   ├── select_solid      (Update)   — keys 1-5 update PlatonicRegistry
+│   └── swap_solid        (Update)   — despawn/respawn on registry change
 │
-├── 2. RENDU VISUEL (Bevy Engine — Fondation Technique)
-│   ├── Meshes Procédurales Précises (v1.2)
-│   ├── CustomMaterial Sacré (SacredMaterial v0.2 optimisé)
-│   │   ├── Shader WGSL sacred_pulse (639 Hz + φ)
-│   │   ├── Fresnel holographique
-│   │   └── Glow éthéré dynamique
-│   ├── Système de Pulsation Global (scale + rotation + émission)
-│   ├── Modes de Rendu Commutables (touche R)
-│   │   ├── Wireframe
-│   │   ├── Hidden Line
-│   │   ├── Shaded
-│   │   ├── X-Ray
-│   │   ├── Realistic (textures + ombres)
-│   │   └── SacredPulse (glow + couleurs dynamiques selon harmonie)
-│   └── Textures & Éclairage Réaliste (métal sacré, pierre ancienne, Directional Light)
+├── InteractionPlugin     interaction/mod.rs
+│   └── OrbitalCameraPlugin
+│       ├── OrbitalCamera (Resource) — yaw, pitch, distance, target
+│       ├── orbit_left_drag  (Update)
+│       ├── zoom_scroll      (Update)
+│       └── pan_right_drag   (Update)
 │
-├── 3. INTERACTION & CONTRÔLES (Style SketchUp)
-│   ├── Caméra Orbitale Souris
-│   │   ├── Clic gauche → Rotation
-│   │   ├── Molette → Zoom
-│   │   └── Clic droit → Pan
-│   ├── Limites intelligentes (pitch clamp, distance clamp)
-│   └── Panneau UI futur (harmonie, fréquence active, mode actuel)
-│
-├── 4. COUCHE HOLOGRAPHIQUE & VR (Branches en développement)
-│   ├── Shaders Holographiques Avancés
-│   │   ├── Fresnel + Scanlines + Aberration chromatique
-│   │   └── Stéréo-stabilité pour OpenXR
-│   ├── Support VR (OpenXR)
-│   │   └── Rendu stéréo + head tracking
-│   └── Audio Binaural (synchronisé avec pulsation 639 Hz)
-│
-└── 5. SÉCURITÉ, ARCHIVAGE & DÉPLOIEMENT (SPARF + Living Memory)
-    ├── SPARF Ring → Surveillance en temps réel de l'harmonie géométrique
-    ├── Arweave Seal → Condensation éternelle du moteur complet
-    └── Living Archive → Toutes les versions du code archivées sans effacement
+└── ArchivePlugin         archive/mod.rs
+    └── LivingArchive (Resource) — append-only event log
 ```
 
----
+## Data Flow
 
-## Relation avec Modularx / Orbital_System
+```
+SacredFrequencies
+  └─ pulse(t) ──────────────┬─► apply_global_pulse → Transform.scale
+                             └─► update_pulse → SacredMaterial.pulse_phase
+                                                  └─► sacred_pulse.wgsl
 
-GHZ 639 CORE est le moteur de rendu fondateur sur lequel s'appuie le projet Modularx.
+PlatonicRegistry.active
+  └─ select_solid (keys 1-5) ──► swap_solid
+                                  ├─ PlatonicSolid::build_mesh() → Mesh
+                                  └─ SacredMaterial::for_solid()  → color
+```
 
-| Couche | Technologie | Rôle |
-|--------|-------------|------|
-| Orbital_System (actuel) | Rust/WASM + Leptos 0.6 | Interface web 2D, visualisation des états Luna |
-| GHZ 639 CORE | Rust + Bevy Engine | Moteur 3D/VR, géométrie sacrée, rendu procédural |
-| node_causality | Rust pur | Analyse causale (MI, Transfer Entropy, Granger) |
+## Module Responsibilities
 
----
+### `sacred_math/`
 
-## Stack Technique
+| File | Responsibility |
+|------|---------------|
+| `platonic.rs` | Vertex tables + face tables for all 5 solids; flat-shaded mesh builder; `PlatonicRegistry` resource |
+| `frequencies.rs` | `SacredFrequencies` resource; `pulse(t)` — composite sine of 639 Hz + active solid harmonic |
+| `geometry.rs` | Golden ratio φ, Fibonacci utilities, shared math constants |
+| `sri_yantra.rs` | Sri Yantra intersection engine (triangles, Bindu, lotus petals) |
 
-- **Bevy** — moteur de rendu 3D natif Rust
-- **WGSL** — shaders sacrés (sacred_pulse, Fresnel, glow)
-- **OpenXR** — support VR/stéréo
-- **Arweave** — archivage permanent on-chain
-- **Rust pur** — zéro dépendance externe pour les mathématiques
+### `render/`
 
----
+| File | Responsibility |
+|------|---------------|
+| `material.rs` | `SacredMaterial` — AsBindGroup wrapping `base_color`, `pulse_phase`, `fresnel_power`; per-solid color palette |
+| `modes.rs` | `RenderMode` enum (6 modes); R-key cycling system |
+| `pulse.rs` | `Pulsating` component; `apply_global_pulse` scales entities via `SacredFrequencies::pulse()` |
 
-## Fréquences de Référence
+### `interaction/camera.rs`
 
-| Solide | Fréquence (Hz) |
-|--------|---------------|
-| Central (639 Hz) | 639 |
-| Tétraèdre | 720 |
-| Cube | 1440 |
-| Octaèdre | 2160 |
-| Dodécaèdre | 3600 |
-| Icosaèdre | 6480 |
+Spherical coordinate orbital camera. State lives in `OrbitalCamera` resource:
 
----
+- Yaw/pitch updated by left-drag mouse delta
+- Distance clamped [1, 40] by scroll
+- Target offset shifted by right-drag pan
+- `apply_camera()` reconstructs `Transform` from spherical coords each frame
 
-*Document scellé — InnovCreat 2026 — Tous droits réservés*
+### `assets/shaders/sacred_pulse.wgsl`
+
+Fragment shader bound as a custom Bevy material:
+
+- **Fresnel** — `pow(1 - |dot(N, V)|, fresnel_power)` for rim glow
+- **Pulsation** — `0.5 + 0.5 * sin(TAU * pulse_phase * φ)`
+- Output = `base_color.rgb + fresnel * glow_color * pulse`
+
+### `holographic/` (stub)
+
+Reserved for OpenXR stereo rendering and 639 Hz binaural audio. Currently an empty plugin.
+
+### `archive/`
+
+`LivingArchive` resource — append-only `Vec<ArchiveEntry>` with a `seal()` method. The TODO marker indicates future Arweave HTTP integration.
+
+## Extending the Engine
+
+**Add a new solid:** implement `build_mesh()` logic in `platonic.rs`, extend the `PlatonicSolid` enum, and map it to a frequency and key.
+
+**Add a render pass:** add a variant to `RenderMode` and implement the mode switch in `cycle_render_mode`.
+
+**Add geometry:** drop a new file under `sacred_math/`, expose it through `SacredMathPlugin`.

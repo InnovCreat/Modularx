@@ -1,34 +1,19 @@
-# Built things
-_Debug/
-Compiled/
-
 # Rust build artifacts
-target/
+/target/
 
-# AudioCache can be rebuilt from sources
-AudioCache/
+# Cargo lock is committed for binaries; remove this line for libraries
+# Cargo.lock
 
-# Lockfile
-_OpenInEditor.lock
+# IDE
+.idea/
+.vscode/
+*.iml
 
-# User settings
-Game.agf.user
-*.crm.user
+# macOS
+.DS_Store
 
-# Backups
-Game.agf.bak
-backup_acsprset.spr
+# Linux
+*~
 
-# Memory dumps
-*.dmp
-
-# Temporary files
-# temporarily created during sprite or room background compression
-~aclzw.tmp
-# temporary, main game data, before getting packed into exe
-game28.dta
-# temporary build of the game before being moved to Compiled/ folder
-*.exe
-
-# Log files
-warnings.log
+# Windows
+Thumbs.db

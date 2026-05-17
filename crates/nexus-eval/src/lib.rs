@@ -245,11 +245,11 @@ fn eval_expr(expr: &Expr, env: &mut Env) -> Result<Value, String> {
                 // Built-in: len(array_or_string)
                 if name == "len" {
                     if args.len() != 1 {
-                        return Err(format!("'len' expects 1 arg, got {}", args.len()));
+                        return Err("'len' expects 1 argument".into());
                     }
                     let val = eval_expr(&args[0], env)?;
                     return match val {
-                        Value::Array(elems) => Ok(Value::Number(elems.len() as f64)),
+                        Value::Array(a) => Ok(Value::Number(a.len() as f64)),
                         Value::String(s) => Ok(Value::Number(s.len() as f64)),
                         _ => Err("'len' requires array or string".into()),
                     };
@@ -258,18 +258,22 @@ fn eval_expr(expr: &Expr, env: &mut Env) -> Result<Value, String> {
                 // Built-in: push(array_var_name, element)
                 if name == "push" {
                     if args.len() != 2 {
-                        return Err(format!("'push' expects 2 args, got {}", args.len()));
+                        return Err("'push' expects 2 arguments (array, element)".into());
                     }
                     let elem = eval_expr(&args[1], env)?;
                     if let Expr::Variable(arr_name, _) = &args[0] {
-                        if let Some(Value::Array(ref mut elems)) = env.vars.get_mut(arr_name) {
-                            elems.push(elem);
-                            return Ok(Value::Unit);
+                        if let Some(val) = env.vars.get_mut(arr_name) {
+                            if let Value::Array(ref mut vec) = val {
+                                vec.push(elem);
+                                return Ok(Value::Unit);
+                            } else {
+                                return Err(format!("'{}' is not an array", arr_name));
+                            }
                         } else {
-                            return Err(format!("'push' first arg must be an array variable, '{}' is not", arr_name));
+                            return Err(format!("Undefined variable '{}'", arr_name));
                         }
                     } else {
-                        return Err("'push' first arg must be a variable name".into());
+                        return Err("'push' first argument must be a variable".into());
                     }
                 }
 

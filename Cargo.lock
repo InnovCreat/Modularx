@@ -3,6 +3,10 @@
 version = 4
 
 [[package]]
+name = "modularis"
+version = "0.1.0"
+
+[[package]]
 name = "nexus-eval"
 version = "0.1.0"
 dependencies = [

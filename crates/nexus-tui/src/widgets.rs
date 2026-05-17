@@ -143,6 +143,60 @@ impl StatusBar {
     }
 }
 
+// ── EditableTextArea ─────────────────────────────────────────
+
+pub struct EditableTextArea;
+
+impl EditableTextArea {
+    pub fn draw(
+        canvas: &mut Canvas,
+        x: u16,
+        y: u16,
+        width: u16,
+        height: u16,
+        lines: &[String],
+        scroll: u16,
+        cursor_row: usize,
+        cursor_col: usize,
+        show_cursor: bool,
+        fg: u8,
+        bg: u8,
+    ) {
+        let gutter_width: u16 = 4;
+        let text_x = x + gutter_width;
+        let text_width = width.saturating_sub(gutter_width) as usize;
+
+        let start = scroll as usize;
+        let visible = height as usize;
+        let end = (start + visible).min(lines.len());
+
+        for (i, line) in lines[start..end].iter().enumerate() {
+            let line_num = start + i + 1;
+            let screen_y = y + i as u16;
+
+            let num_str = format!("{:>3} ", line_num);
+            canvas.put_str(x, screen_y, &num_str, 240, bg, false);
+
+            let display: String = line.chars().take(text_width).collect();
+            canvas.put_str(text_x, screen_y, &display, fg, bg, false);
+
+            if show_cursor && (start + i) == cursor_row {
+                let cursor_screen_x = text_x + cursor_col as u16;
+                if (cursor_screen_x) < x + width {
+                    let ch = line.chars().nth(cursor_col).unwrap_or(' ');
+                    canvas.put_char(cursor_screen_x, screen_y, ch, bg, fg, false);
+                }
+            }
+        }
+
+        if show_cursor && lines.is_empty() {
+            let num_str = "  1 ";
+            canvas.put_str(x, y, num_str, 240, bg, false);
+            canvas.put_char(text_x, y, ' ', bg, fg, false);
+        }
+    }
+}
+
 // ── ProgressBar ──────────────────────────────────────────────
 
 pub struct ProgressBar;

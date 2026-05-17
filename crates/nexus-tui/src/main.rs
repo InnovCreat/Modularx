@@ -1,12 +1,14 @@
 // ════════════════════════════════════════════════════════════════
 // NEXUS TUI - Terminal User Interface Souverain
 // Real compiler pipeline: Lexer → Parser → TypeCheck → Eval
+// Modal editor: [i] Insert / [Esc] Normal — live compile on exit
 // Zero external dependencies — pure ANSI escape codes
 // ════════════════════════════════════════════════════════════════
 
 mod terminal;
 mod canvas;
 mod widgets;
+mod editor;
 
 use std::io;
 use std::time::{Duration, Instant};
@@ -14,7 +16,8 @@ use std::thread;
 
 use terminal::Terminal;
 use canvas::Canvas;
-use widgets::{Panel, TextArea, StatusBar, ProgressBar};
+use widgets::{Panel, TextArea, EditableTextArea, StatusBar, ProgressBar};
+use editor::{Editor, EditorMode};
 
 use nexus_lexer::Lexer;
 use nexus_parser::Parser;
@@ -30,6 +33,11 @@ enum Event {
     Escape,
     ArrowUp,
     ArrowDown,
+    ArrowLeft,
+    ArrowRight,
+    Home,
+    End,
+    Delete,
     None,
 }
 
@@ -41,6 +49,28 @@ fn read_event() -> io::Result<Event> {
                 Some(b'[') => match Terminal::read_byte()? {
                     Some(b'A') => Ok(Event::ArrowUp),
                     Some(b'B') => Ok(Event::ArrowDown),
+                    Some(b'C') => Ok(Event::ArrowRight),
+                    Some(b'D') => Ok(Event::ArrowLeft),
+                    Some(b'H') => Ok(Event::Home),
+                    Some(b'F') => Ok(Event::End),
+                    Some(b'3') => {
+                        match Terminal::read_byte()? {
+                            Some(b'~') => Ok(Event::Delete),
+                            _ => Ok(Event::Escape),
+                        }
+                    }
+                    Some(b'1') => {
+                        match Terminal::read_byte()? {
+                            Some(b'~') => Ok(Event::Home),
+                            _ => Ok(Event::Escape),
+                        }
+                    }
+                    Some(b'4') => {
+                        match Terminal::read_byte()? {
+                            Some(b'~') => Ok(Event::End),
+                            _ => Ok(Event::Escape),
+                        }
+                    }
                     _ => Ok(Event::Escape),
                 },
                 _ => Ok(Event::Escape),
@@ -55,11 +85,10 @@ fn read_event() -> io::Result<Event> {
 struct App {
     running: bool,
     active_panel: usize, // 0=source, 1=AST, 2=log
-    source_scroll: u16,
     ast_scroll: u16,
     log_scroll: u16,
     compiled: bool,
-    source_lines: Vec<String>,
+    editor: Editor,
     ast_lines: Vec<String>,
     log_lines: Vec<String>,
     tick: u64,
@@ -150,17 +179,15 @@ print(collatz(27));
 impl App {
     fn new() -> Self {
         let (_, source) = DEMO_PROGRAMS[0];
-        let source_lines = source.lines().map(String::from).collect();
 
         Self {
             running: true,
             active_panel: 0,
-            source_scroll: 0,
             ast_scroll: 0,
             log_scroll: 0,
             compiled: false,
-            source_lines,
-            ast_lines: vec!["Press [c] to compile".into()],
+            editor: Editor::new(source),
+            ast_lines: vec!["Press [c] to compile, [i] to edit".into()],
             log_lines: vec!["NEXUS Compiler ready.".into()],
             tick: 0,
             demo_index: 0,
@@ -168,8 +195,48 @@ impl App {
     }
 
     fn handle_event(&mut self, event: Event) {
+        // Insert mode: route most keys to the editor
+        if self.active_panel == 0 && self.editor.mode == EditorMode::Insert {
+            match &event {
+                Event::Escape => {
+                    self.editor.mode = EditorMode::Normal;
+                    if self.editor.dirty {
+                        self.compile();
+                        self.editor.dirty = false;
+                    }
+                    return;
+                }
+                Event::ArrowUp => { self.editor.move_up(); return; }
+                Event::ArrowDown => { self.editor.move_down(); return; }
+                Event::ArrowLeft => { self.editor.move_left(); return; }
+                Event::ArrowRight => { self.editor.move_right(); return; }
+                Event::Home => { self.editor.move_home(); return; }
+                Event::End => { self.editor.move_end(); return; }
+                Event::Delete => { self.editor.delete_char(); return; }
+                Event::Key(b) => {
+                    match *b {
+                        0x03 => { self.running = false; return; }
+                        0x1A => { self.editor.undo(); return; }
+                        0x7F | 0x08 => { self.editor.backspace(); return; }
+                        0x0D | 0x0A => { self.editor.insert_newline(); return; }
+                        0x09 => { self.editor.insert_tab(); return; }
+                        0x20..=0x7E => {
+                            self.editor.insert_char(*b as char);
+                            return;
+                        }
+                        _ => { return; }
+                    }
+                }
+                Event::None => { return; }
+            }
+        }
+
+        // Normal mode / other panels
         match event {
-            Event::Key(b'q') | Event::Key(b'Q') => {
+            Event::Key(b'q') | Event::Key(b'Q') | Event::Escape => {
+                self.running = false;
+            }
+            Event::Key(0x03) => {
                 self.running = false;
             }
             Event::Key(b'c') | Event::Key(b'C') => {
@@ -177,6 +244,11 @@ impl App {
             }
             Event::Key(b'n') | Event::Key(b'N') => {
                 self.next_demo();
+            }
+            Event::Key(b'i') | Event::Key(b'I') => {
+                if self.active_panel == 0 {
+                    self.editor.mode = EditorMode::Insert;
+                }
             }
             Event::Key(b'\t') => {
                 self.active_panel = (self.active_panel + 1) % 3;
@@ -195,7 +267,7 @@ impl App {
 
     fn active_scroll_mut(&mut self) -> &mut u16 {
         match self.active_panel {
-            0 => &mut self.source_scroll,
+            0 => &mut self.editor.scroll,
             1 => &mut self.ast_scroll,
             _ => &mut self.log_scroll,
         }
@@ -204,17 +276,16 @@ impl App {
     fn next_demo(&mut self) {
         self.demo_index = (self.demo_index + 1) % DEMO_PROGRAMS.len();
         let (name, source) = DEMO_PROGRAMS[self.demo_index];
-        self.source_lines = source.lines().map(String::from).collect();
+        self.editor.load(source);
         self.ast_lines = vec!["Press [c] to compile".into()];
         self.log_lines = vec![format!("Loaded: {}", name)];
         self.compiled = false;
-        self.source_scroll = 0;
         self.ast_scroll = 0;
         self.log_scroll = 0;
     }
 
     fn compile(&mut self) {
-        let source: String = self.source_lines.join("\n");
+        let source = self.editor.content();
         self.log_lines.clear();
         self.ast_lines.clear();
 
@@ -222,7 +293,7 @@ impl App {
 
         // Phase 1: Lexical analysis
         let (tokens, lex_diags) = Lexer::new(&source).tokenize();
-        let token_count = tokens.len().saturating_sub(1); // minus EOF
+        let token_count = tokens.len().saturating_sub(1);
         self.log_lines.push(format!("Phase 1  Lexer: {} tokens", token_count));
         for d in &lex_diags {
             self.log_lines.push(format!("  lex: {}", d));
@@ -301,9 +372,14 @@ impl App {
 
         // ── Header ───────────────────────────────────────
         let (demo_name, _) = DEMO_PROGRAMS[self.demo_index];
+        let mode_str = match self.editor.mode {
+            EditorMode::Insert => "INSERT",
+            EditorMode::Normal => "NORMAL",
+        };
         let title = format!(
-            " NEXUS v0.1.0 — {} │ {}",
+            " NEXUS v0.1.0 — {} │ {} │ {}",
             demo_name,
+            mode_str,
             if self.compiled { "compiled" } else { "ready" }
         );
         StatusBar::draw(canvas, 0, w, &title, 51, 17);
@@ -317,11 +393,20 @@ impl App {
 
         // ── Source panel (top-left) ──────────────────────
         let src_fg = if self.active_panel == 0 { 51 } else { 246 };
-        Panel::draw(canvas, 0, 1, src_width, top_height, "SOURCE", src_fg, 234);
-        TextArea::draw(
+        let src_title = if self.editor.mode == EditorMode::Insert {
+            "SOURCE [EDIT]"
+        } else {
+            "SOURCE"
+        };
+        Panel::draw(canvas, 0, 1, src_width, top_height, src_title, src_fg, 234);
+
+        let editor_height = top_height.saturating_sub(2);
+        EditableTextArea::draw(
             canvas, 1, 2,
-            src_width.saturating_sub(2), top_height.saturating_sub(2),
-            &self.source_lines, self.source_scroll,
+            src_width.saturating_sub(2), editor_height,
+            &self.editor.lines, self.editor.scroll,
+            self.editor.cursor_row, self.editor.cursor_col,
+            self.editor.mode == EditorMode::Insert && self.active_panel == 0,
             15, 234,
         );
 
@@ -340,7 +425,6 @@ impl App {
             let log_fg = if self.active_panel == 2 { 82 } else { 246 };
             Panel::draw(canvas, 0, msg_y, w, msg_height, "COMPILER LOG", log_fg, 234);
 
-            // Progress bar when compiled
             if self.compiled {
                 let bar_width = w.saturating_sub(4);
                 if bar_width > 10 {
@@ -351,7 +435,6 @@ impl App {
             let text_y = if self.compiled { msg_y + 2 } else { msg_y + 1 };
             let text_h = msg_height.saturating_sub(if self.compiled { 3 } else { 2 });
 
-            // Auto-scroll to bottom
             let log_scroll = if self.log_lines.len() as u16 > text_h {
                 self.log_lines.len() as u16 - text_h
             } else {
@@ -367,15 +450,15 @@ impl App {
         }
 
         // ── Footer ───────────────────────────────────────
-        let panel_name = match self.active_panel {
-            0 => "SOURCE",
-            1 => "AST",
-            _ => "LOG",
+        let footer = if self.active_panel == 0 && self.editor.mode == EditorMode::Insert {
+            format!(
+                " [Esc] Normal  [Ctrl+Z] Undo  │  Ln {} Col {}  │  EDITING",
+                self.editor.cursor_row + 1,
+                self.editor.cursor_col + 1,
+            )
+        } else {
+            " [q] Quit  [c] Compile  [n] Next Demo  [i] Edit  [Tab] Panel  │  Veritas Hortus".into()
         };
-        let footer = format!(
-            " [q] Quit  [c] Compile  [n] Next Demo  [Tab] Panel  │  {}  │  Veritas Hortus",
-            panel_name
-        );
         StatusBar::draw(canvas, h - 1, w, &footer, 15, 22);
     }
 }
@@ -406,6 +489,13 @@ fn main() -> io::Result<()> {
             canvas.resize(new_cols, new_rows);
             Terminal::clear()?;
         }
+
+        let top_height = if canvas.height() > 12 {
+            canvas.height() / 2 - 1
+        } else {
+            canvas.height().saturating_sub(4)
+        };
+        app.editor.set_viewport_height(top_height.saturating_sub(2));
 
         app.draw(&mut canvas);
         canvas.render()?;

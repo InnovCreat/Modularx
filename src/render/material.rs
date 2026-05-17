@@ -4,6 +4,11 @@ use bevy::{
 };
 use crate::sacred_math::{frequencies::SacredFrequencies, platonic::PlatonicSolid};
 
+pub const MODE_SHADED:       u32 = 0;
+pub const MODE_XRAY:         u32 = 1;
+pub const MODE_REALISTIC:    u32 = 2;
+pub const MODE_SACRED_PULSE: u32 = 3;
+
 #[derive(Asset, TypePath, AsBindGroup, Debug, Clone)]
 pub struct SacredMaterial {
     #[uniform(0)]
@@ -12,6 +17,8 @@ pub struct SacredMaterial {
     pub pulse_phase:   f32,
     #[uniform(2)]
     pub fresnel_power: f32,
+    #[uniform(3)]
+    pub mode:          u32,
 }
 
 impl Material for SacredMaterial {
@@ -26,29 +33,29 @@ impl Default for SacredMaterial {
             base_color:    LinearRgba::new(0.4, 0.8, 1.0, 1.0),
             pulse_phase:   0.0,
             fresnel_power: 3.0,
+            mode:          MODE_SACRED_PULSE,
         }
     }
 }
 
 impl SacredMaterial {
-    /// Each Platonic solid maps to a distinct sacred color palette
     pub fn for_solid(solid: PlatonicSolid) -> Self {
         let (r, g, b) = match solid {
-            PlatonicSolid::Tetrahedron  => (1.0, 0.3, 0.2), // fire red   — 720 Hz
-            PlatonicSolid::Cube         => (0.2, 0.6, 1.0), // earth blue — 1440 Hz
-            PlatonicSolid::Octahedron   => (0.3, 1.0, 0.5), // air green  — 2160 Hz
-            PlatonicSolid::Dodecahedron => (0.8, 0.3, 1.0), // ether violet — 3600 Hz
-            PlatonicSolid::Icosahedron  => (0.2, 0.9, 1.0), // water cyan — 6480 Hz
+            PlatonicSolid::Tetrahedron  => (1.0, 0.3, 0.2),
+            PlatonicSolid::Cube         => (0.2, 0.6, 1.0),
+            PlatonicSolid::Octahedron   => (0.3, 1.0, 0.5),
+            PlatonicSolid::Dodecahedron => (0.8, 0.3, 1.0),
+            PlatonicSolid::Icosahedron  => (0.2, 0.9, 1.0),
         };
         Self {
             base_color:    LinearRgba::new(r, g, b, 1.0),
             pulse_phase:   0.0,
             fresnel_power: 3.0,
+            mode:          MODE_SACRED_PULSE,
         }
     }
 }
 
-/// Drive pulse_phase from wall-clock time × central frequency
 pub fn update_pulse(
     time: Res<Time>,
     freqs: Res<SacredFrequencies>,

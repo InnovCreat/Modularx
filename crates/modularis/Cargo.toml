@@ -1,0 +1,7 @@
+[package]
+name = "modularis"
+version = "0.1.0"
+edition = "2021"
+description = "Veritas Hortus Orchestrator — 639Hz pulse system for composable subsystems"
+
+[dependencies]

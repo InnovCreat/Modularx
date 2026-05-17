@@ -9,6 +9,7 @@ members = [
     "crates/nexus-eval",
     "crates/nexus-tui",
     "crates/modularis",
+    "crates/modularis-demo",
 ]
 
 [workspace.package]

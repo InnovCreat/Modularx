@@ -12,6 +12,7 @@ pub enum Ty {
     Never,
     Unknown,
     Error,
+    Array(Box<Ty>),
     Fn(Vec<Ty>, Box<Ty>),
 }
 
@@ -32,6 +33,7 @@ impl Ty {
             Ty::Never => "!".into(),
             Ty::Unknown => "?".into(),
             Ty::Error => "<error>".into(),
+            Ty::Array(inner) => format!("[{}]", inner.display()),
             Ty::Fn(params, ret) => {
                 let p = params.iter().map(|t| t.display()).collect::<Vec<_>>().join(", ");
                 format!("fn({}) -> {}", p, ret.display())
@@ -126,6 +128,15 @@ pub enum Expr {
         args: Vec<Expr>,
         span: Span,
     },
+    ArrayLit {
+        elements: Vec<Expr>,
+        span: Span,
+    },
+    Index {
+        array: Box<Expr>,
+        index: Box<Expr>,
+        span: Span,
+    },
     Error(Span),
 }
 
@@ -137,6 +148,8 @@ impl Expr {
             | Expr::Binary { span: s, .. }
             | Expr::Unary { span: s, .. }
             | Expr::Call { span: s, .. }
+            | Expr::ArrayLit { span: s, .. }
+            | Expr::Index { span: s, .. }
             | Expr::Error(s) => *s,
         }
     }
@@ -332,6 +345,22 @@ fn pp_expr(expr: &Expr, out: &mut String) {
                 pp_expr(a, out);
             }
             out.push(')');
+        }
+        Expr::ArrayLit { elements, .. } => {
+            out.push('[');
+            for (i, e) in elements.iter().enumerate() {
+                if i > 0 {
+                    out.push_str(", ");
+                }
+                pp_expr(e, out);
+            }
+            out.push(']');
+        }
+        Expr::Index { array, index, .. } => {
+            pp_expr(array, out);
+            out.push('[');
+            pp_expr(index, out);
+            out.push(']');
         }
         Expr::Error(_) => out.push_str("<error>"),
     }

@@ -94,9 +94,12 @@ impl<'a> Lexer<'a> {
             b')' => TokenKind::RParen,
             b'{' => TokenKind::LBrace,
             b'}' => TokenKind::RBrace,
+            b'[' => TokenKind::LBracket,
+            b']' => TokenKind::RBracket,
             b',' => TokenKind::Comma,
             b':' => TokenKind::Colon,
             b';' => TokenKind::Semicolon,
+            b'.' => TokenKind::Dot,
 
             b'-' => {
                 if self.peek() == b'>' {

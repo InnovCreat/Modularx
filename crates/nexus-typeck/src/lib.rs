@@ -265,6 +265,52 @@ fn infer_expr(expr: &Expr, ctx: &mut TypeCtx) -> Ty {
 
         Expr::Call { callee, args, .. } => {
             if let Expr::Variable(name, _) = &**callee {
+                // Builtins
+                if name == "print" {
+                    for arg in args {
+                        infer_expr(arg, ctx);
+                    }
+                    return Ty::Unit;
+                }
+                if name == "len" {
+                    if args.len() != 1 {
+                        ctx.diagnostics.push(format!(
+                            "'len' expects 1 arg, got {}", args.len()
+                        ));
+                    } else {
+                        let arg_ty = infer_expr(&args[0], ctx);
+                        if !matches!(arg_ty, Ty::Array(_) | Ty::Str | Ty::Error | Ty::Unknown) {
+                            ctx.diagnostics.push(format!(
+                                "'len' requires array or str, found {}", arg_ty.display()
+                            ));
+                        }
+                    }
+                    return Ty::I32;
+                }
+                if name == "push" {
+                    if args.len() != 2 {
+                        ctx.diagnostics.push(format!(
+                            "'push' expects 2 args (array, element), got {}", args.len()
+                        ));
+                    } else {
+                        let arr_ty = infer_expr(&args[0], ctx);
+                        let elem_ty = infer_expr(&args[1], ctx);
+                        if let Ty::Array(inner) = &arr_ty {
+                            if !types_compatible(inner, &elem_ty) {
+                                ctx.diagnostics.push(format!(
+                                    "'push' element type mismatch: expected {}, found {}",
+                                    inner.display(), elem_ty.display()
+                                ));
+                            }
+                        } else if !matches!(arr_ty, Ty::Error | Ty::Unknown) {
+                            ctx.diagnostics.push(format!(
+                                "'push' requires array as first arg, found {}", arr_ty.display()
+                            ));
+                        }
+                    }
+                    return Ty::Unit;
+                }
+
                 if let Some((param_tys, ret_ty)) = ctx.functions.get(name).cloned() {
                     if args.len() != param_tys.len() {
                         ctx.diagnostics.push(format!(
@@ -294,6 +340,46 @@ fn infer_expr(expr: &Expr, ctx: &mut TypeCtx) -> Ty {
             }
         }
 
+        Expr::ArrayLit { elements, .. } => {
+            if elements.is_empty() {
+                Ty::Array(Box::new(Ty::Unknown))
+            } else {
+                let first_ty = infer_expr(&elements[0], ctx);
+                for elem in &elements[1..] {
+                    let elem_ty = infer_expr(elem, ctx);
+                    if !types_compatible(&first_ty, &elem_ty) {
+                        ctx.diagnostics.push(format!(
+                            "Array element type mismatch: expected {}, found {}",
+                            first_ty.display(), elem_ty.display()
+                        ));
+                    }
+                }
+                Ty::Array(Box::new(first_ty))
+            }
+        }
+
+        Expr::Index { array, index, .. } => {
+            let arr_ty = infer_expr(array, ctx);
+            let idx_ty = infer_expr(index, ctx);
+
+            if !matches!(idx_ty, Ty::I32 | Ty::Error | Ty::Unknown) {
+                ctx.diagnostics.push(format!(
+                    "Array index must be i32, found {}", idx_ty.display()
+                ));
+            }
+
+            match arr_ty {
+                Ty::Array(inner) => *inner,
+                Ty::Error | Ty::Unknown => Ty::Error,
+                other => {
+                    ctx.diagnostics.push(format!(
+                        "Cannot index into type {}", other.display()
+                    ));
+                    Ty::Error
+                }
+            }
+        }
+
         Expr::Error(_) => Ty::Error,
     }
 }
@@ -305,6 +391,7 @@ fn types_compatible(expected: &Ty, actual: &Ty) -> bool {
         (a, b) if a == b => true,
         (Ty::Error, _) | (_, Ty::Error) => true,
         (Ty::Unknown, _) | (_, Ty::Unknown) => true,
+        (Ty::Array(a), Ty::Array(b)) => types_compatible(a, b),
         (Ty::Fn(p1, r1), Ty::Fn(p2, r2)) => {
             p1.len() == p2.len()
                 && p1.iter().zip(p2).all(|(a, b)| types_compatible(a, b))

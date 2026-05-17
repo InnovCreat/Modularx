@@ -51,9 +51,12 @@ pub enum TokenKind {
     RParen,
     LBrace,
     RBrace,
+    LBracket,  // [
+    RBracket,  // ]
     Comma,
     Colon,
     Semicolon,
+    Dot,       // .
     Arrow,     // ->
 
     // Special
@@ -123,9 +126,12 @@ impl TokenKind {
             TokenKind::RParen => ")",
             TokenKind::LBrace => "{",
             TokenKind::RBrace => "}",
+            TokenKind::LBracket => "[",
+            TokenKind::RBracket => "]",
             TokenKind::Comma => ",",
             TokenKind::Colon => ":",
             TokenKind::Semicolon => ";",
+            TokenKind::Dot => ".",
             TokenKind::Arrow => "->",
             TokenKind::Eof => "EOF",
         }

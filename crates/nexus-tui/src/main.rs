@@ -117,6 +117,18 @@ let target = " NEXUS";
 print(greeting + target);
 print(greeting == "Hello");
 "#),
+    ("Arrays", r#"let arr = [10, 20, 30, 40, 50];
+print(arr[0]);
+print(arr[4]);
+print(len(arr));
+
+let mut nums = [1, 2, 3];
+push(nums, 4);
+push(nums, 5);
+print(len(nums));
+print(nums[3]);
+print(nums[4]);
+"#),
     ("Collatz conjecture", r#"fn collatz(n: i32) -> i32 {
     let mut steps = 0;
     let mut x = n;

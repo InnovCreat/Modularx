@@ -3,8 +3,7 @@ pub mod ast;
 // Re-export core AST types so consumers can `use nexus_parser::{Program, Stmt, Expr, ...}`
 pub use ast::{
     Program, Stmt, Expr, Literal, Param,
-    BinOp, UnaryOp, Ty,
-    pretty_print,
+    BinOp, UnaryOp, Ty, pretty_print,
 };
 
 use nexus_span::Span;
@@ -33,7 +32,7 @@ fn infix_prec(kind: &TokenKind) -> Option<Prec> {
         TokenKind::Lt | TokenKind::Gt | TokenKind::Le | TokenKind::Ge => Some(Prec::Compare),
         TokenKind::Plus | TokenKind::Minus => Some(Prec::Sum),
         TokenKind::Star | TokenKind::Slash => Some(Prec::Product),
-        TokenKind::LParen => Some(Prec::Call),
+        TokenKind::LParen | TokenKind::LBracket => Some(Prec::Call),
         _ => None,
     }
 }
@@ -259,6 +258,12 @@ impl Parser {
                 self.advance();
                 Ty::Str
             }
+            TokenKind::LBracket => {
+                self.advance(); // consume '['
+                let inner = self.parse_type();
+                self.expect(TokenKind::RBracket);
+                Ty::Array(Box::new(inner))
+            }
             _ => {
                 self.diagnostics.push(format!(
                     "Expected type, found '{}'",
@@ -372,8 +377,9 @@ impl Parser {
             }
 
             if *self.curr_kind() == TokenKind::LParen {
-                // Function call
                 left = self.parse_call(left);
+            } else if *self.curr_kind() == TokenKind::LBracket {
+                left = self.parse_index(left);
             } else if let Some(op) = token_to_binop(self.curr_kind()) {
                 self.advance();
                 let right = self.parse_expr(prec);
@@ -440,6 +446,21 @@ impl Parser {
                 self.expect(TokenKind::RParen);
                 expr
             }
+            TokenKind::LBracket => {
+                let start = self.advance().span; // consume '['
+                let mut elements = Vec::new();
+                while *self.curr_kind() != TokenKind::RBracket && !self.at_eof() {
+                    elements.push(self.parse_expr(Prec::Lowest));
+                    if *self.curr_kind() == TokenKind::Comma {
+                        self.advance();
+                    }
+                }
+                let end = self.expect(TokenKind::RBracket);
+                Expr::ArrayLit {
+                    elements,
+                    span: start.union(end),
+                }
+            }
             _ => {
                 let span = self.curr_span();
                 self.diagnostics.push(format!(
@@ -466,6 +487,18 @@ impl Parser {
         Expr::Call {
             callee: Box::new(callee),
             args,
+            span,
+        }
+    }
+
+    fn parse_index(&mut self, array: Expr) -> Expr {
+        self.advance(); // consume '['
+        let index = self.parse_expr(Prec::Lowest);
+        let end = self.expect(TokenKind::RBracket);
+        let span = array.span().union(end);
+        Expr::Index {
+            array: Box::new(array),
+            index: Box::new(index),
             span,
         }
     }
@@ -499,6 +532,8 @@ impl Parser {
             }
             if *self.curr_kind() == TokenKind::LParen {
                 left = self.parse_call(left);
+            } else if *self.curr_kind() == TokenKind::LBracket {
+                left = self.parse_index(left);
             } else if let Some(op) = token_to_binop(self.curr_kind()) {
                 self.advance();
                 let right = self.parse_expr(prec);

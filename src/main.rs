@@ -1,12 +1,14 @@
 mod archive;
 mod holographic;
 mod interaction;
+mod module;
 mod render;
 mod sacred_math;
 
 use bevy::prelude::*;
 use archive::ArchivePlugin;
 use interaction::InteractionPlugin;
+use module::ModulePlugin;
 use render::RenderPlugin;
 use sacred_math::SacredMathPlugin;
 
@@ -19,6 +21,8 @@ fn main() {
             }),
             ..default()
         }))
+        // ModulePlugin must come first so the registry exists before other plugins register.
+        .add_plugins(ModulePlugin)
         .add_plugins((SacredMathPlugin, RenderPlugin, InteractionPlugin, ArchivePlugin))
         .run();
 }

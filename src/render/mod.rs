@@ -7,6 +7,7 @@ use material::SacredMaterial;
 use modes::RenderMode;
 use crate::sacred_math::platonic::{PlatonicRegistry, PlatonicSolid};
 use crate::sacred_math::frequencies::SacredFrequencies;
+use crate::module::ModuleRegistry;
 
 pub struct RenderPlugin;
 
@@ -22,6 +23,11 @@ impl Plugin for RenderPlugin {
                 select_solid,
                 swap_solid,
             ));
+
+        if let Some(mut reg) = app.world_mut().get_resource_mut::<ModuleRegistry>() {
+            // Render module mirrors the active solid's harmonic — 720 Hz (Tetrahedron default)
+            reg.register("Render", 720.0);
+        }
     }
 }
 

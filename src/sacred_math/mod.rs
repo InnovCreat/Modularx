@@ -6,6 +6,7 @@ pub mod sri_yantra;
 use bevy::prelude::*;
 use frequencies::SacredFrequencies;
 use platonic::PlatonicRegistry;
+use crate::module::ModuleRegistry;
 
 pub struct SacredMathPlugin;
 
@@ -14,6 +15,10 @@ impl Plugin for SacredMathPlugin {
         app.insert_resource(SacredFrequencies::default())
             .insert_resource(PlatonicRegistry::default())
             .add_systems(Update, tick_frequencies);
+
+        if let Some(mut reg) = app.world_mut().get_resource_mut::<ModuleRegistry>() {
+            reg.register("SacredMath", 639.0);
+        }
     }
 }
 

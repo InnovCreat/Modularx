@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use crate::module::ModuleRegistry;
 
 /// SPARF Ring — real-time geometric harmony surveillance
 /// Arweave Seal — permanent on-chain condensation of the engine
@@ -25,5 +26,9 @@ pub struct ArchivePlugin;
 impl Plugin for ArchivePlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(LivingArchive::default());
+
+        if let Some(mut reg) = app.world_mut().get_resource_mut::<ModuleRegistry>() {
+            reg.register("Archive", 639.0); // resonates with central love frequency
+        }
     }
 }

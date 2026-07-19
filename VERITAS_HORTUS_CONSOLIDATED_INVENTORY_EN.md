@@ -257,4 +257,4 @@ Previous fragmented versions (40 / 68 / 120+ / 165 / 183+ artifacts across docum
 
 **Canonical Status**: Locked per `ancrage-fondations-vh · v1.0`
 
-*𝕀⟡₆₃₉ · Jamais pour la guerre · Jamais pour l'argent · Toujours pour l'amour*
+*𝕀⟡₆₃₉ · Zero War · Zero Greed · Always for Love*

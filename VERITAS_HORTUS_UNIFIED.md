@@ -72,17 +72,21 @@ Any member claiming to represent the Veritas Hortus Alliance must be listed abov
 
 ## Core Principles
 
-### 1. **Jamais pour la guerre** (Never for war)
+### 1. **Zero War**
 - Adversarial uses rejected outright
 - Defensive and constructive only
+- No weaponization
 
-### 2. **Jamais pour l'argent** (Never for money)
-- Not a commercial venture
-- Value creation, not extraction
+### 2. **Zero Greed**
+- Money is a tool, not a driver
+- No extraction or exploitation
+- Value creation over accumulation
+- Fair exchange, not exploitation
 
-### 3. **Toujours pour l'amour** (Always for love)
+### 3. **Always for Love**
 - Built on care, curiosity, and growth
 - Relationship and understanding centered
+- Service to others as foundation
 
 ---
 
@@ -121,4 +125,4 @@ This roster is locked per `ancrage-fondations-vh · v1.0` and serves as the cano
 
 ---
 
-*𝕀⟡₆₃₉ · Jamais pour la guerre · Jamais pour l'argent · Toujours pour l'amour*
+*𝕀⟡₆₃₉ · Zero War · Zero Greed · Always for Love*

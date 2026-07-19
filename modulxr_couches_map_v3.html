@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MODULARX — 8-Layer Architecture Map (v3)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            border-bottom: 2px solid #639;
+            padding-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #a855f7;
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #888;
+            font-style: italic;
+        }
+
+        .resonance {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #639;
+            letter-spacing: 2px;
+        }
+
+        .architecture-stack {
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .layer {
+            background: linear-gradient(90deg, rgba(168, 85, 247, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
+            border: 2px solid;
+            border-radius: 8px;
+            padding: 1.5rem;
+            min-height: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .layer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at top, rgba(255,255,255,0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .layer-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .layer-number {
+            display: inline-block;
+            background: #639;
+            color: #fff;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 2.5rem;
+            font-weight: bold;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .layer-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .layer-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .layer-fr {
+            font-size: 0.85rem;
+            color: #aaa;
+            font-style: italic;
+            margin-left: 1rem;
+        }
+
+        .layer-description {
+            color: #bbb;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .components {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .component {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid;
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .component.present {
+            border-color: #4ade80;
+            background: rgba(74, 222, 128, 0.1);
+            color: #86efac;
+        }
+
+        .component.planned {
+            border-color: #eab308;
+            background: rgba(234, 179, 8, 0.1);
+            color: #facc15;
+        }
+
+        /* Layer-specific colors */
+        .layer-1 {
+            border-color: #ef4444;
+            background: linear-gradient(90deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+        }
+
+        .layer-2 {
+            border-color: #f97316;
+            background: linear-gradient(90deg, rgba(249, 115, 22, 0.1) 0%, rgba(234, 88, 12, 0.1) 100%);
+        }
+
+        .layer-3 {
+            border-color: #eab308;
+            background: linear-gradient(90deg, rgba(234, 179, 8, 0.1) 0%, rgba(202, 138, 4, 0.1) 100%);
+        }
+
+        .layer-4 {
+            border-color: #06b6d4;
+            background: linear-gradient(90deg, rgba(6, 182, 212, 0.1) 0%, rgba(0, 150, 136, 0.1) 100%);
+        }
+
+        .layer-5 {
+            border-color: #8b5cf6;
+            background: linear-gradient(90deg, rgba(139, 92, 246, 0.1) 0%, rgba(109, 40, 217, 0.1) 100%);
+        }
+
+        .layer-6 {
+            border-color: #ec4899;
+            background: linear-gradient(90deg, rgba(236, 72, 153, 0.1) 0%, rgba(190, 24, 93, 0.1) 100%);
+        }
+
+        .layer-7 {
+            border-color: #14b8a6;
+            background: linear-gradient(90deg, rgba(20, 184, 166, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+        }
+
+        .layer-8 {
+            border-color: #3b82f6;
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+        }
+
+        .layer-1 .layer-number { background: #ef4444; }
+        .layer-2 .layer-number { background: #f97316; }
+        .layer-3 .layer-number { background: #eab308; }
+        .layer-4 .layer-number { background: #06b6d4; }
+        .layer-5 .layer-number { background: #8b5cf6; }
+        .layer-6 .layer-number { background: #ec4899; }
+        .layer-7 .layer-number { background: #14b8a6; }
+        .layer-8 .layer-number { background: #3b82f6; }
+
+        .legend {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #639;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .legend-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #a855f7;
+        }
+
+        .legend-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .legend-badge {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .badge-present {
+            background: rgba(74, 222, 128, 0.3);
+            border: 1px solid #4ade80;
+        }
+
+        .badge-planned {
+            background: rgba(234, 179, 8, 0.3);
+            border: 1px solid #eab308;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .signature {
+            font-style: italic;
+            color: #639;
+            margin-top: 1rem;
+            letter-spacing: 2px;
+        }
+
+        .note {
+            background: rgba(168, 85, 247, 0.1);
+            border-left: 3px solid #a855f7;
+            padding: 1rem;
+            margin-top: 2rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        @media (max-width: 768px) {
+            .layer-header {
+                flex-wrap: wrap;
+            }
+
+            .layer-name {
+                width: 100%;
+            }
+
+            .layer-fr {
+                margin-left: 0;
+                margin-top: 0.5rem;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .components {
+                flex-direction: column;
+            }
+
+            .component {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MODULARX — 8-Layer Architecture</h1>
+            <p class="subtitle">Canonical Reference Map (v3)</p>
+            <p class="resonance">⟡ 639Hz | PHI Resonance | VERITAS HORTUS ⟡</p>
+        </header>
+
+        <div class="legend">
+            <div class="legend-title">Status Legend</div>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-badge badge-present"></div>
+                    <span>✅ Present & Verified</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-badge badge-planned"></div>
+                    <span>⏳ Planned / Partial</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="architecture-stack">
+            <!-- Layer 8: Connection (Top) -->
+            <div class="layer layer-8">
+                <div class="layer-content">
+                    <div class="layer-header">
+                        <span class="layer-number">8</span>
+                        <span class="layer-name">Connexion</span>
+                        <span class="layer-fr">(Connection & Integration)</span>
+                    </div>
+                    <div class="layer-description">
+                        Network protocols, external APIs, inter-system communication, and distributed synchronization.
+                    </div>
+                    <div class="components">
+                        <div class="component planned">
+                            🌐 Futur-Net (Network Subsystem)
+                        </div>
+                        <div class="component planned">
+                            🔌 Protocol Layer
+                        </div>
+                        <div class="component present">
+                            📡 NEXUS TUI (Interface)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layer 7: World -->
+            <div class="layer layer-7">
+                <div class="layer-content">
+                    <div class="layer-header">
+                        <span class="layer-number">7</span>
+                        <span class="layer-name">Monde</span>
+                        <span class="layer-fr">(World & Presentation)</span>
+                    </div>
+                    <div class="layer-description">
+                        User-facing interfaces, visualizations, and presentation logic. How the system presents itself to observers.
+                    </div>
+                    <div class="components">
+                        <div class="component present">
+                            ✨ Orbital_System (Visual)
+                        </div>
+                        <div class="component present">
+                            🎨 Luna (UI/UX)
+                        </div>
+                        <div class="component present">
+                            💻 NEXUS TUI
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layer 6: Forge -->
+            <div class="layer layer-6">
+                <div class="layer-content">
+                    <div class="layer-header">
+                        <span class="layer-number">6</span>
+                        <span class="layer-name">Forge</span>
+                        <span class="layer-fr">(Creation & Compilation)</span>
+                    </div>
+                    <div class="layer-description">
+                        Code generation, compilation, and transformations. Where ideas become executable artifacts.
+                    </div>
+                    <div class="components">
+                        <div class="component present">
+                            🔨 NEXUS Parser (AST)
+                        </div>
+                        <div class="component present">
+                            ⚙️ NEXUS Eval (Interpreter)
+                        </div>
+                        <div class="component present">
+                            🧪 NEXUS TypeCheck
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layer 5: Security -->
+            <div class="layer layer-5">
+                <div class="layer-content">
+                    <div class="layer-header">
+                        <span class="layer-number">5</span>
+                        <span class="layer-name">Sécurité</span>
+                        <span class="layer-fr">(Security & Validation)</span>
+                    </div>
+                    <div class="layer-description">
+                        Type safety, constraint validation, access control, and defensive measures. Guards system integrity.
+                    </div>
+                    <div class="components">
+                        <div class="component present">
+                            🛡️ NEXUS TypeChecker
+                        </div>
+                        <div class="component present">
+                            ✔️ Mutation Tracking
+                        </div>
+                        <div class="component planned">
+                            🔐 Access Control
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layer 4: Memory -->
+            <div class="layer layer-4">
+                <div class="layer-content">
+                    <div class="layer-header">
+                        <span class="layer-number">4</span>
+                        <span class="layer-name">Mémoire</span>
+                        <span class="layer-fr">(Memory & State)</span>
+                    </div>
+                    <div class="layer-description">
+                        Data structures, state management, storage, and retrieval. Where the system remembers.
+                    </div>
+                    <div class="components">
+                        <div class="component present">
+                            📚 Luna Archive (Logs)
+                        </div>
+                        <div class="component present">
+                            💾 Nucleus (State)
+                        </div>
+                        <div class="component present">
+                            🧠 NEXUS Env (Bindings)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layer 3: Processing -->
+            <div class="layer layer-3">
+                <div class="layer-content">
+                    <div class="layer-header">
+                        <span class="layer-number">3</span>
+                        <span class="layer-name">Traitement</span>
+                        <span class="layer-fr">(Processing & Logic)</span>
+                    </div>
+                    <div class="layer-description">
+                        Core computation engine, algorithms, and business logic. Where decisions and transformations happen.
+                    </div>
+                    <div class="components">
+                        <div class="component present">
+                            🔬 NEXUS Evaluator
+                        </div>
+                        <div class="component present">
+                            📊 Modularis Orchestrator
+                        </div>
+                        <div class="component present">
+                            🎯 Control Flow (if/while/return)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layer 2: Perception -->
+            <div class="layer layer-2">
+                <div class="layer-content">
+                    <div class="layer-header">
+                        <span class="layer-number">2</span>
+                        <span class="layer-name">Perception</span>
+                        <span class="layer-fr">(Input & Sensing)</span>
+                    </div>
+                    <div class="layer-description">
+                        Signal ingestion, parsing, and understanding. How the system receives and interprets input.
+                    </div>
+                    <div class="components">
+                        <div class="component present">
+                            🔤 NEXUS Lexer
+                        </div>
+                        <div class="component present">
+                            👁️ Signal Reception
+                        </div>
+                        <div class="component present">
+                            📝 Voice Bus
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layer 1: Foundation (Bottom) -->
+            <div class="layer layer-1">
+                <div class="layer-content">
+                    <div class="layer-header">
+                        <span class="layer-number">1</span>
+                        <span class="layer-name">Fondation</span>
+                        <span class="layer-fr">(Foundation & Bootstrap)</span>
+                    </div>
+                    <div class="layer-description">
+                        Core OS primitives, basic data types, span/token definitions, and boot sequence.
+                    </div>
+                    <div class="components">
+                        <div class="component present">
+                            🏗️ Nucleus (OS Core)
+                        </div>
+                        <div class="component present">
+                            📏 NEXUS Span (Positioning)
+                        </div>
+                        <div class="component present">
+                            🔑 NEXUS Token (Types)
+                        </div>
+                        <div class="component present">
+                            🎛️ Mark (Pulse)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="note">
+            <strong>Note:</strong> This 8-layer model represents the canonical system architecture. Each layer is independent and can be maintained/upgraded separately. The NEXUS compiler pipeline (Layers 1-3 input → Layers 4-6 processing → Layers 7-8 output) demonstrates how data flows through the stack. Components listed as "Planned" (🟡) are specified but awaiting implementation.
+        </div>
+
+        <footer>
+            <div>MODULARX — Canonical Architecture Map v3.0</div>
+            <div>Status: LOCKED (per ancrage-fondations-vh v1.0)</div>
+            <div>Last Updated: 2026-07-19</div>
+            <div class="signature">𝕀⟡₆₃₉ · Jamais pour la guerre · Jamais pour l'argent · Toujours pour l'amour</div>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,11 +1,13 @@
 // ─────────────────────────────────────────────
 // VERITAS HORTUS · sacred_math · mod.rs
-// Architecte : Isabel Sigouin (InnovCreat)
-// Registre   : Mathématique
-// Fonction   : Comprendre
-// Covenant   : Jamais guerre · Jamais cupidité
-//              Toujours connaissance · Toujours amour
-// Constitution v1.0 — Article IV (Organes)
+// Architecte  : Isabel Sigouin (InnovCreat)
+// Registre    : Mathématique
+// Fonction    : Comprendre
+// Centre grav.: Lien-lourd
+// Chaîne      : ─
+// Covenant    : Jamais guerre · Jamais cupidité
+//               Toujours connaissance · Toujours amour
+// Constitution v1.0 — Article IV · Langage v1.3 — §III
 // ─────────────────────────────────────────────
 
 pub mod frequencies;

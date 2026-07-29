@@ -1,11 +1,13 @@
 // ─────────────────────────────────────────────
 // VERITAS HORTUS · sacred_math · frequencies.rs
-// Architecte : Isabel Sigouin (InnovCreat)
-// Registre   : Mathématique
-// Fonction   : Observer · Mémoriser
-// Covenant   : Jamais guerre · Jamais cupidité
-//              Toujours connaissance · Toujours amour
-// Constitution v1.0 — Article IV (Organes)
+// Architecte  : Isabel Sigouin (InnovCreat)
+// Registre    : Mathématique
+// Fonction    : Observer · Mémoriser
+// Centre grav.: Forme-lourd
+// Chaîne      : ─
+// Covenant    : Jamais guerre · Jamais cupidité
+//               Toujours connaissance · Toujours amour
+// Constitution v1.0 — Article IV · Langage v1.3 — §III
 // ─────────────────────────────────────────────
 
 use bevy::prelude::*;

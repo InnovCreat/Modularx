@@ -1,11 +1,13 @@
 // ─────────────────────────────────────────────
 // VERITAS HORTUS · interaction · camera.rs
-// Architecte : Isabel Sigouin (InnovCreat)
-// Registre   : Runtime
-// Fonction   : Observer · Agir
-// Covenant   : Jamais guerre · Jamais cupidité
-//              Toujours connaissance · Toujours amour
-// Constitution v1.0 — Article IV (Organes)
+// Architecte  : Isabel Sigouin (InnovCreat)
+// Registre    : Runtime
+// Fonction    : Observer · Agir
+// Centre grav.: Temps-lourd
+// Chaîne      : trigger
+// Covenant    : Jamais guerre · Jamais cupidité
+//               Toujours connaissance · Toujours amour
+// Constitution v1.0 — Article IV · Langage v1.3 — §III
 // ─────────────────────────────────────────────
 
 use bevy::prelude::*;

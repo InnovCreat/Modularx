@@ -1,11 +1,13 @@
 // ─────────────────────────────────────────────
 // VERITAS HORTUS · main · main.rs
-// Architecte : Isabel Sigouin (InnovCreat)
-// Registre   : Runtime
-// Fonction   : Agir · Communiquer
-// Covenant   : Jamais guerre · Jamais cupidité
-//              Toujours connaissance · Toujours amour
-// Constitution v1.0 — Article IV (Organes)
+// Architecte  : Isabel Sigouin (InnovCreat)
+// Registre    : Runtime
+// Fonction    : Agir · Communiquer
+// Centre grav.: Lien-lourd
+// Chaîne      : ─
+// Covenant    : Jamais guerre · Jamais cupidité
+//               Toujours connaissance · Toujours amour
+// Constitution v1.0 — Article IV · Langage v1.3 — §III
 // ─────────────────────────────────────────────
 
 mod archive;

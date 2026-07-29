@@ -1,11 +1,13 @@
 // ─────────────────────────────────────────────
 // VERITAS HORTUS · holographic · mod.rs
-// Architecte : Isabel Sigouin (InnovCreat)
-// Registre   : Runtime
-// Fonction   : Communiquer · Observer
-// Covenant   : Jamais guerre · Jamais cupidité
-//              Toujours connaissance · Toujours amour
-// Constitution v1.0 — Article IV (Organes)
+// Architecte  : Isabel Sigouin (InnovCreat)
+// Registre    : Runtime
+// Fonction    : Communiquer · Observer
+// Centre grav.: Lien-lourd
+// Chaîne      : concret
+// Covenant    : Jamais guerre · Jamais cupidité
+//               Toujours connaissance · Toujours amour
+// Constitution v1.0 — Article IV · Langage v1.3 — §III
 // ─────────────────────────────────────────────
 
 use bevy::prelude::*;

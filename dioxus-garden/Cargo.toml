@@ -1,0 +1,50 @@
+[package]
+name = "dioxus-garden"
+version = "0.1.0"
+edition = "2021"
+
+# Dioxus 0.7 web frontend for SYNAPS VM / Veritas Hortus
+# Build: cd dioxus-garden && dx serve --platform web
+# Requires: cargo install dioxus-cli
+
+[[bin]]
+name = "dioxus-garden"
+path = "src/main.rs"
+
+[dependencies]
+# Dioxus 0.7 — web renderer only (no Axum, no server functions)
+dioxus = { version = "0.7", features = ["web"] }
+
+# Serialization — for parsing state.json
+serde = { version = "1", features = ["derive"] }
+
+# HTTP fetch — thin wasm-bindgen wrapper over browser Fetch API
+gloo-net = "0.6"
+
+# Timers — Interval (16ms RAF-like) + TimeoutFuture (100ms poll)
+gloo-timers = { version = "0.3", features = ["futures", "callbacks"] }
+
+# JS interop
+wasm-bindgen = "0.2"
+js-sys = "0.3"
+
+# Web platform APIs (DOM + Canvas 2D + Web Audio)
+[dependencies.web-sys]
+version = "0.3"
+features = [
+  # DOM
+  "Window", "Document", "Element",
+  "HtmlCanvasElement", "HtmlElement",
+  # Canvas 2D
+  "CanvasRenderingContext2d", "CanvasGradient",
+  # Web Audio API
+  "AudioContext",
+  "OscillatorNode", "OscillatorType",
+  "GainNode", "AudioParam",
+  "AudioDestinationNode", "AudioNode",
+]
+
+[profile.release]
+# Minimize WASM binary size
+opt-level = "z"
+lto = true

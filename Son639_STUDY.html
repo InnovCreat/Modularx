@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Son639 — Fichier d'étude commenté</title>
+<style>
+  body {
+    background: #0a0a12;
+    color: #c8b8e8;
+    font-family: 'Courier New', monospace;
+    max-width: 860px;
+    margin: 40px auto;
+    padding: 0 24px 80px;
+    line-height: 1.7;
+  }
+  h1 { color: #b88aff; letter-spacing: 3px; margin-bottom: 4px; }
+  h2 { color: #7a6aaa; letter-spacing: 2px; margin-top: 40px; border-bottom: 1px solid #1a1228; padding-bottom: 6px; }
+  .freq { color: #ffcc44; font-size: 12px; letter-spacing: 3px; margin-bottom: 32px; }
+  pre {
+    background: #0e0820;
+    border: 1px solid #2a1a4a;
+    border-radius: 4px;
+    padding: 20px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  /* Zones visuelles dans le code */
+  .section-label {
+    display: block;
+    margin: 24px 0 6px;
+    font-size: 11px;
+    color: #5a4a7a;
+    letter-spacing: 2px;
+  }
+  /* Bouton démo */
+  #demo-btn {
+    display: inline-block;
+    background: rgba(180,100,255,0.08);
+    border: 1px solid rgba(180,100,255,0.3);
+    color: #b88aff;
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 2px;
+    padding: 10px 24px;
+    cursor: pointer;
+    margin: 20px 0;
+    transition: background 0.2s;
+  }
+  #demo-btn:hover { background: rgba(180,100,255,0.2); }
+  #demo-btn.active { border-color: #44ff88; color: #44ff88; }
+  #demo-status {
+    display: inline-block;
+    margin-left: 16px;
+    font-size: 12px;
+    color: #5a4a7a;
+  }
+  /* Boutons de morph */
+  .morph-row { margin: 12px 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .morph-btn {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #9988bb;
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 6px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .morph-btn:hover { background: rgba(255,255,255,0.1); }
+  .morph-btn.neu { border-color: #ffcc44; color: #ffcc44; }
+  .morph-btn.pos { border-color: #44ff88; color: #44ff88; }
+  .morph-btn.neg { border-color: #ff4444; color: #ff4444; }
+  .note {
+    background: rgba(255,204,68,0.06);
+    border-left: 2px solid #ffcc44;
+    padding: 10px 16px;
+    margin: 16px 0;
+    font-size: 12px;
+    color: #aa9966;
+  }
+  .graph {
+    background: #0e0820;
+    border: 1px solid #2a1a4a;
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-size: 12px;
+    color: #7a6aaa;
+    font-family: monospace;
+  }
+</style>
+</head>
+<body>
+
+<h1>SON 639 Hz</h1>
+<div class="freq">✦ Fichier d'étude — Web Audio API · Veritas Hortus ✦</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     DÉMO INTERACTIVE
+     Ici tu peux tester le code pendant que tu le lis.
+     ════════════════════════════════════════════════════════ -->
+
+<h2>§ 0 — Démo interactive</h2>
+
+<p>Clique pour démarrer le son, puis teste les morphings :</p>
+
+<button id="demo-btn" onclick="Son639.toggle()">🔇 ACTIVER 639 Hz</button>
+<span id="demo-status">AudioContext : non créé</span>
+
+<div class="morph-row">
+  <button class="morph-btn neu" onclick="Son639.morphTo(639, 1.5); setStatus('NEU → 639 Hz')">NEU · 639 Hz</button>
+  <button class="morph-btn pos" onclick="Son639.morphTo(528, 1.5); setStatus('POS → 528 Hz')">POS · 528 Hz</button>
+  <button class="morph-btn neg" onclick="Son639.morphTo(396, 1.5); setStatus('NEG → 396 Hz')">NEG · 396 Hz</button>
+  <button class="morph-btn"    onclick="Son639.setUrgency(true);  setStatus('urgency ON')">Urgency ON</button>
+  <button class="morph-btn"    onclick="Son639.setUrgency(false); setStatus('urgency OFF')">Urgency OFF</button>
+  <button class="morph-btn"    onclick="Son639.fadeOut();         setStatus('fadeOut 2s…')">FadeOut</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONCEPT : WEB AUDIO API — graphe de nœuds
+     ════════════════════════════════════════════════════════ -->
+
+<h2>§ 1 — Concept : le graphe audio</h2>
+
+<p>
+  La Web Audio API fonctionne comme un graphe de <strong>nœuds</strong> connectés.
+  Chaque nœud traite le signal et le passe au suivant.
+  On ne joue pas un fichier MP3 — on <em>génère</em> le son mathématiquement.
+</p>
+
+<div class="graph">
+  OscillatorNode           → GainNode              → AudioContext.destination
+  (génère une onde)          (contrôle le volume)    (les haut-parleurs)
+
+  osc.frequency = 639 Hz     gain.value = 0.04       → oreilles du user
+  osc.type      = 'sine'     (4% du volume max)
+</div>
+
+<div class="note">
+  <strong>sine</strong> = onde sinusoïdale pure. C'est la forme la plus douce.
+  Autres types disponibles : 'square' (carre), 'sawtooth' (scie), 'triangle'.
+  Pour Veritas Hortus on utilise 'sine' — pas d'harmoniques agressives.
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     CODE COMMENTÉ — PARTIE 1 : VARIABLES GLOBALES
+     ════════════════════════════════════════════════════════ -->
+
+<h2>§ 2 — Variables globales (avant Son639)</h2>
+
+<pre>
+// ─────────────────────────────────────────────────────────────────────────
+// lastTernary : mémorise le dernier état ternaire reçu de state.json
+//
+// Pourquoi ? Dans updateState() on compare s.ternary (nouveau) avec
+// lastTernary (ancien). Si différent → morphTo(). Sinon → rien.
+// Sans cette mémoire, on lancerait un morph à chaque tick (100ms)
+// même si le ternaire n'a pas changé → glissando permanent indésirable.
+// ─────────────────────────────────────────────────────────────────────────
+let lastTernary = 'NEU';   // valeur initiale : état neutre au démarrage
+
+// ─────────────────────────────────────────────────────────────────────────
+// HZ_MAP : table de correspondance ternaire → fréquence
+//
+// Ces fréquences sont issues des "solfège solarien" / healing frequencies :
+//   NEU  639 Hz  →  connexion, amour, hum de base de Veritas Hortus
+//   POS  528 Hz  →  transformation, réparation de l'ADN (528 = "miracle tone")
+//   NEG  396 Hz  →  libération de la peur, chaos accepté
+//
+// Un objet JS utilisé comme dictionnaire (lookup table). Plus rapide et
+// lisible qu'un switch/case ou une série de if/else.
+// ─────────────────────────────────────────────────────────────────────────
+const HZ_MAP = { NEU: 639, POS: 528, NEG: 396 };
+</pre>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     CODE COMMENTÉ — PARTIE 2 : L'OBJET Son639
+     ════════════════════════════════════════════════════════ -->
+
+<h2>§ 3 — L'objet Son639 — structure</h2>
+
+<pre>
+// ─────────────────────────────────────────────────────────────────────────
+// Son639 : objet singleton (un seul dans la page)
+//
+// Pourquoi un objet plutôt que des variables séparées ?
+//   → Toutes les données et méthodes audio sont regroupées en un seul endroit.
+//   → On évite de polluer le scope global avec ctx, osc, gainNode, etc.
+//   → Syntaxe claire : Son639.morphTo(528, 1.5) dit exactement ce qu'on fait.
+//
+// Un "singleton" = une seule instance, jamais copiée.
+// ─────────────────────────────────────────────────────────────────────────
+const Son639 = {
+
+  // ── Propriétés (état interne) ────────────────────────────────────────
+
+  ctx:      null,   // AudioContext — le moteur audio du navigateur.
+                    // null tant que l'utilisateur n'a pas cliqué.
+                    // IMPORTANT : les navigateurs INTERDISENT la création
+                    // automatique d'un AudioContext avant un geste utilisateur
+                    // (clic, touche clavier, etc.) pour éviter les autoplays
+                    // publicitaires agressifs. C'est la "Autoplay Policy".
+                    // Solution : on crée le ctx uniquement dans toggle() après clic.
+
+  osc:      null,   // OscillatorNode — génère l'onde sinusoïdale.
+                    // Une fois démarré (osc.start()), il tourne en continu.
+                    // On NE peut PAS le redémarrer après osc.stop() —
+                    // il faudrait en créer un nouveau. C'est un quirk de l'API.
+
+  gainNode: null,   // GainNode — comme un bouton de volume.
+                    // gain.value = 0 → silence total
+                    // gain.value = 1 → volume max (très fort pour une sine pure !)
+                    // gain.value = 0.04 → 4% du max → très discret, agréable
+
+  running:  false,  // true si l'oscillateur tourne (après osc.start()).
+                    // Sert de garde : on ne morphe pas si l'audio n'est pas actif.
+
+  muted:    false,  // true si l'utilisateur a cliqué sur 🔇 (muet mais pas arrêté).
+                    // Mute ≠ stop : le gain va à 0 mais l'oscillateur continue.
+                    // Quand on démute, on remonte le gain → pas de clic/pop.
+</pre>
+
+
+<h2>§ 4 — Méthode init()</h2>
+
+<pre>
+  // ─────────────────────────────────────────────────────────────────────
+  // init() : crée le moteur audio et le démarre
+  //
+  // Appelé une seule fois depuis toggle() au premier clic.
+  // ─────────────────────────────────────────────────────────────────────
+  init() {
+
+    // Garde : si ctx existe déjà, on ne recrée rien.
+    // Ça évite le double-démarrage si init() est appelé deux fois.
+    if (this.ctx) return;
+
+    // ── Créer l'AudioContext ─────────────────────────────────────────
+    // AudioContext = le "moteur" audio du navigateur.
+    // window.webkitAudioContext = ancienne syntaxe pour vieux Safari.
+    // L'opérateur || choisit le premier qui existe.
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+    // ── Créer l'oscillateur ──────────────────────────────────────────
+    // createOscillator() retourne un OscillatorNode connecté AU ctx.
+    // Il génère un signal périodique (onde mathématique).
+    this.osc = this.ctx.createOscillator();
+
+    // ── Créer le nœud de gain (volume) ──────────────────────────────
+    // createGain() retourne un GainNode.
+    // C'est un simple multiplicateur : signal_out = signal_in × gain.value
+    this.gainNode = this.ctx.createGain();
+
+    // ── Configurer l'oscillateur ─────────────────────────────────────
+    // type 'sine' = onde sinusoïdale pure (la plus douce, zéro harmoniques)
+    this.osc.type = 'sine';
+
+    // setValueAtTime(valeur, temps) = "fixe cette valeur à cet instant précis"
+    // ctx.currentTime = "maintenant" en secondes depuis création du contexte.
+    // Pourquoi pas juste osc.frequency.value = 639 ?
+    //   → setValueAtTime s'intègre dans la timeline audio pour éviter les
+    //     conflits avec les autres méthodes de scheduling (linearRamp, etc.)
+    this.osc.frequency.setValueAtTime(639, this.ctx.currentTime);
+
+    // ── Configurer le volume ─────────────────────────────────────────
+    // 0.04 = 4% du volume max. Assez pour entendre, pas assez pour déranger.
+    // On peut utiliser .value directement ici car aucun ramp n'est schedulé.
+    this.gainNode.gain.value = 0.04;
+
+    // ── Connecter le graphe ──────────────────────────────────────────
+    // osc → gainNode → destination (haut-parleurs)
+    // .connect() retourne le nœud destination → on peut chaîner.
+    // ctx.destination = sortie finale vers les haut-parleurs du système.
+    this.osc.connect(this.gainNode).connect(this.ctx.destination);
+
+    // ── Démarrer l'oscillateur ───────────────────────────────────────
+    // osc.start() = commence à générer le signal MAINTENANT.
+    // Sans argument = démarre immédiatement.
+    // IMPORTANT : une fois start() appelé, l'oscillateur ne peut
+    // pas être remis à zéro. Il faut en créer un nouveau pour "redémarrer".
+    this.osc.start();
+
+    // Marquer comme actif pour que les autres méthodes fonctionnent.
+    this.running = true;
+  },
+</pre>
+
+
+<h2>§ 5 — Méthode morphTo()</h2>
+
+<pre>
+  // ─────────────────────────────────────────────────────────────────────
+  // morphTo(hz, duration) : glisse en douceur vers une nouvelle fréquence
+  //
+  // Paramètres :
+  //   hz       : fréquence cible en Hertz (ex: 528)
+  //   duration : durée du glissando en secondes (ex: 1.5)
+  //
+  // Exemple d'appel : Son639.morphTo(528, 1.5)
+  //   → la fréquence glisse de 639 Hz vers 528 Hz en 1 seconde et demie.
+  // ─────────────────────────────────────────────────────────────────────
+  morphTo(hz, duration) {
+
+    // Garde : si le son n'est pas démarré, ne rien faire.
+    // !this.ctx  → init() n'a pas encore été appelé
+    // !this.running → l'oscillateur a été arrêté (fadeOut)
+    if (!this.ctx || !this.running) return;
+
+    // ── linearRampToValueAtTime ──────────────────────────────────────
+    // C'est la méthode clé. Elle schedule une interpolation LINÉAIRE
+    // entre la valeur courante et `hz`, se terminant à currentTime + duration.
+    //
+    // Visualisation du glissando (639 → 528 en 1.5s) :
+    //
+    //  Hz
+    // 639 ┐
+    //     │╲
+    //     │ ╲
+    //     │  ╲
+    //     │   ╲
+    // 528 └────╲──────────────────── temps
+    //     t=0  t=1.5s
+    //
+    // Alternatives dans l'API :
+    //   setValueAtTime()          → changement instantané (clic sonore brutal)
+    //   linearRampToValueAtTime() → rampe linéaire (ce qu'on utilise) ← smooth
+    //   exponentialRampToValueAtTime() → rampe exponentielle (plus "naturelle")
+    //   setTargetAtTime()         → convergence exponentielle vers cible
+    //
+    // On choisit LINÉAIRE pour que la transition soit prévisible et audible.
+    this.osc.frequency.linearRampToValueAtTime(hz, this.ctx.currentTime + duration);
+  },
+</pre>
+
+
+<h2>§ 6 — Méthode setUrgency()</h2>
+
+<pre>
+  // ─────────────────────────────────────────────────────────────────────
+  // setUrgency(on) : ajoute un vibrato discret quand la VM est en urgence
+  //
+  // Paramètres :
+  //   on : boolean — true si urgency > 0 dans state.json
+  //
+  // Le vibrato = légère oscillation de la fréquence autour de la base.
+  // Ici ±8 Hz à une vitesse lente (0.005 radians/ms ≈ 0.8 Hz de modulation).
+  //
+  // Note : ce n'est pas un "vrai" vibrato LFO (Low Frequency Oscillator)
+  // car on le recalcule à chaque tick (100ms). Un vrai LFO utiliserait un
+  // second OscillatorNode connecté au paramètre frequency du premier.
+  // Ici on garde simple : Math.sin(Date.now() * 0.005) suffit.
+  // ─────────────────────────────────────────────────────────────────────
+  setUrgency(on) {
+
+    // Gardes supplémentaires :
+    // this.muted → si l'user a coupé le son, inutile de moduler
+    if (!this.ctx || !this.running || this.muted) return;
+
+    // Récupérer la fréquence de base du ternaire actuel.
+    // Ex : si lastTernary = 'POS', base = 528.
+    // Le || 639 est un fallback si lastTernary contient une valeur inattendue.
+    const base = HZ_MAP[lastTernary] || 639;
+
+    // Calculer la cible :
+    //   ON  → base + 8 * sin(temps)  →  oscillation entre base-8 et base+8
+    //   OFF → base                   →  retour à la fréquence stable
+    //
+    // Date.now() = timestamp en millisecondes depuis l'epoch Unix.
+    // * 0.005 → convertit en une valeur qui évolue lentement (≈ 0.8 cycle/s)
+    // Math.sin() → valeur entre -1 et +1 → * 8 → entre -8 et +8 Hz
+    const target = on ? base + 8 * Math.sin(Date.now() * 0.005) : base;
+
+    // setTargetAtTime(valeur, depuis, timeConstant) :
+    //   Converge exponentiellement vers `valeur` avec une constante de temps.
+    //   timeConstant = 0.3s → atteint ~63% de la cible en 0.3s.
+    //   Plus souple que linearRamp pour ce type de modulation continue.
+    this.osc.frequency.setTargetAtTime(target, this.ctx.currentTime, 0.3);
+  },
+</pre>
+
+
+<h2>§ 7 — Méthode fadeOut()</h2>
+
+<pre>
+  // ─────────────────────────────────────────────────────────────────────
+  // fadeOut() : extinction progressive du son sur 2 secondes
+  //
+  // Appelé quand s.state === 'halted' dans updateState().
+  // La VM s'est arrêtée → le son s'éteint doucement.
+  // ─────────────────────────────────────────────────────────────────────
+  fadeOut() {
+
+    if (!this.ctx || !this.running) return;
+
+    // ── Rampe de volume vers 0 ───────────────────────────────────────
+    // On ne coupe pas le son brutalement (ça ferait un "pop" désagréable).
+    // On fait glisser le GAIN (volume) de sa valeur actuelle vers 0
+    // en 2 secondes via une rampe linéaire.
+    //
+    //  gain
+    //  0.04 ┐
+    //       │╲
+    //       │ ╲
+    //       │  ╲
+    //    0  └───╲── temps
+    //       t=0  t=2s
+    this.gainNode.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
+
+    // ── Nettoyage différé ────────────────────────────────────────────
+    // On attend 2.2s (un peu plus que le ramp pour être sûr qu'il est fini),
+    // puis on ferme l'AudioContext pour libérer les ressources système.
+    //
+    // ctx.close() libère les threads audio du navigateur.
+    // try/catch car close() peut échouer si ctx est déjà fermé.
+    // this.running = false → les gardes des autres méthodes bloquent tout appel ultérieur.
+    setTimeout(() => {
+      try { this.ctx.close(); } catch(e) {}
+      this.running = false;
+    }, 2200);
+  },
+</pre>
+
+
+<h2>§ 8 — Méthode toggle()</h2>
+
+<pre>
+  // ─────────────────────────────────────────────────────────────────────
+  // toggle() : démarrer / muter / démuter — appelé par le bouton HTML
+  //
+  // 3 cas possibles :
+  //   1. Premier clic → ctx est null → on crée + démarre le son
+  //   2. Son actif → on mute (gain → 0) et on note muted = true
+  //   3. Son muté  → on démute (gain → 0.04) et on note muted = false
+  // ─────────────────────────────────────────────────────────────────────
+  toggle() {
+
+    const btn = document.getElementById('audio-btn');  // le bouton HTML
+
+    // CAS 1 : premier clic — AudioContext pas encore créé
+    if (!this.ctx) {
+      this.init();           // créer le contexte + l'oscillateur + démarrer
+      this.muted = false;    // état initial = non muté
+      btn.textContent = '🔊 639 Hz — ON';
+      btn.classList.add('active');   // style CSS vert pour indiquer ON
+      return;                // sortir ici, rien d'autre à faire
+    }
+
+    // CAS 2 & 3 : le son est déjà démarré → basculer mute
+    this.muted = !this.muted;  // inverser le booléen
+
+    // setTargetAtTime(cible, depuis, timeConstant) :
+    //   Si muted → cible = 0 (silence)
+    //   Si pas muted → cible = 0.04 (volume normal)
+    //   timeConstant = 0.1s → transition rapide mais pas un clic brutal
+    this.gainNode.gain.setTargetAtTime(
+      this.muted ? 0 : 0.04,
+      this.ctx.currentTime,
+      0.1
+    );
+
+    // Mettre à jour le texte et la classe CSS du bouton
+    btn.textContent = this.muted ? '🔇 639 Hz — OFF' : '🔊 639 Hz — ON';
+    btn.classList.toggle('active', !this.muted);
+    //                             ^^^^^^^^^^^ true = ajouter la classe, false = retirer
+  },
+
+};  // fin de l'objet Son639
+</pre>
+
+
+<h2>§ 9 — Intégration dans updateState()</h2>
+
+<pre>
+// ─────────────────────────────────────────────────────────────────────────
+// updateState() : appelé toutes les 100ms, lit state.json
+// C'est ici que le son réagit à la VM.
+// ─────────────────────────────────────────────────────────────────────────
+async function updateState() {
+  try {
+    const res = await fetch('state.json?t=' + Date.now());
+    if (!res.ok) throw new Error('not found');
+    const s = await res.json();
+    state = s;
+
+    updatePanel(s);    // mise à jour du panel HTML
+
+    // ── Rewire flash (visuel) ────────────────────────────────────────
+    if (s.rewires > lastRewires) {
+      for (let i = 0; i < s.rewires - lastRewires; i++) flashRewire();
+      lastRewires = s.rewires;
+    }
+
+    // ── Audio triggers ───────────────────────────────────────────────
+
+    // 1. MORPH : si le ternaire a changé depuis la dernière lecture
+    //
+    //    s.ternary     = valeur actuelle lue dans state.json ('NEU','POS','NEG')
+    //    lastTernary   = valeur mémorisée du tick précédent
+    //
+    //    Si elles diffèrent → la VM vient de changer d'état → glissando.
+    //    Son639.running vérifie que le bouton a été cliqué (audio actif).
+    if (Son639.running && s.ternary !== lastTernary) {
+      Son639.morphTo(HZ_MAP[s.ternary] || 639, 1.5);
+      //                                        ^^^
+      //                                        durée : 1.5 secondes
+    }
+
+    // 2. URGENCY : vibrato si la VM est sous pression
+    //
+    //    s.urgency est un float : 0.0 si calme, > 0 si la VM est en état d'urgence.
+    //    On appelle setUrgency à chaque tick (100ms) → le vibrato est "vivant".
+    if (Son639.running) Son639.setUrgency(s.urgency > 0);
+
+    // 3. HALT : extinction si la VM s'est arrêtée
+    //
+    //    s.state === 'halted' → la VM a fini son programme.
+    //    fadeOut() commence la rampe de volume → s'éteint en 2s.
+    //    Après fadeOut(), Son639.running passe à false → plus de morphs.
+    if (s.state === 'halted' && Son639.running) Son639.fadeOut();
+
+    // 4. MÉMORISER le ternaire pour le prochain tick
+    //
+    //    IMPORTANT : cette ligne doit être après les checks audio,
+    //    pas avant. Si on met à jour lastTernary avant la comparaison,
+    //    la condition !== sera toujours fausse → jamais de morph.
+    lastTernary = s.ternary;
+
+  } catch {
+    state = null;
+    document.getElementById('waiting').style.display = 'block';
+  }
+}
+</pre>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCHÉMA RÉCAPITULATIF
+     ════════════════════════════════════════════════════════ -->
+
+<h2>§ 10 — Schéma récapitulatif</h2>
+
+<div class="graph">
+┌─────────────────────────────────────────────────────┐
+│  SYNAPS VM (main.rs)                                │
+│  → écrit state.json toutes les 100ms                │
+│    { ternary: "POS", urgency: 0.5, state: "running" }
+└──────────────────────────┬──────────────────────────┘
+                           │ fetch()
+┌──────────────────────────▼──────────────────────────┐
+│  updateState() dans garden.html                     │
+│                                                     │
+│  ternary changé ?  → Son639.morphTo(528, 1.5)       │
+│  urgency > 0 ?     → Son639.setUrgency(true)        │
+│  state = halted ?  → Son639.fadeOut()               │
+└──────────────────────────┬──────────────────────────┘
+                           │
+┌──────────────────────────▼──────────────────────────┐
+│  Son639 (Web Audio API)                             │
+│                                                     │
+│  OscillatorNode  →  GainNode  →  destination        │
+│  freq: 639 Hz       vol: 0.04     (haut-parleurs)   │
+│  type: sine                                         │
+└─────────────────────────────────────────────────────┘
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     GLOSSAIRE WEB AUDIO
+     ════════════════════════════════════════════════════════ -->
+
+<h2>§ 11 — Glossaire Web Audio API</h2>
+
+<pre>
+AudioContext             Le "moteur" audio. Un par page. Contient l'horloge
+                         précise (ctx.currentTime en secondes).
+
+OscillatorNode           Génère un signal périodique (onde mathématique).
+                         Propriétés : type, frequency, detune.
+
+GainNode                 Multiplicateur de volume.
+                         gain.value = 0 → silence / = 1 → volume max.
+
+AudioParam               Les propriétés modulables (frequency, gain.gain).
+                         Supportent le scheduling temporel :
+                           .setValueAtTime(v, t)
+                           .linearRampToValueAtTime(v, t)
+                           .exponentialRampToValueAtTime(v, t)
+                           .setTargetAtTime(v, t, tc)
+
+ctx.currentTime          Horloge haute précision du contexte audio (float64).
+                         Toujours croissante, jamais réinitialisée.
+
+ctx.destination          Le nœud de sortie final → haut-parleurs.
+
+linearRamp               Interpolation linéaire : droite entre A et B.
+                         Perçue comme un glissando "artificiel" mais prévisible.
+
+setTargetAtTime          Convergence exponentielle : rapide au début, lente
+                         vers la fin. Plus "naturelle" pour les petits ajustements.
+
+timeConstant (τ)         Dans setTargetAtTime : temps pour atteindre 63% de
+                         la cible. Après 5τ on est à 99.3% de la cible.
+</pre>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     CODE SOURCE COMPLET — COPY-PASTE DIRECT
+     ════════════════════════════════════════════════════════ -->
+
+<h2>§ 12 — Code source complet (copy-paste)</h2>
+
+<p>Ces deux blocs vont dans <code>garden.html</code> :</p>
+
+<span class="section-label">── BLOC 1 : variables globales (dans &lt;script&gt;, avant tout) ──</span>
+<pre>
+let lastTernary = 'NEU';
+const HZ_MAP = { NEU: 639, POS: 528, NEG: 396 };
+</pre>
+
+<span class="section-label">── BLOC 2 : objet Son639 (dans &lt;script&gt;, avant updateState) ──</span>
+<pre>
+const Son639 = {
+  ctx: null, osc: null, gainNode: null, running: false, muted: false,
+
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.osc = this.ctx.createOscillator();
+    this.gainNode = this.ctx.createGain();
+    this.osc.type = 'sine';
+    this.osc.frequency.setValueAtTime(639, this.ctx.currentTime);
+    this.gainNode.gain.value = 0.04;
+    this.osc.connect(this.gainNode).connect(this.ctx.destination);
+    this.osc.start();
+    this.running = true;
+  },
+
+  morphTo(hz, duration) {
+    if (!this.ctx || !this.running) return;
+    this.osc.frequency.linearRampToValueAtTime(hz, this.ctx.currentTime + duration);
+  },
+
+  setUrgency(on) {
+    if (!this.ctx || !this.running || this.muted) return;
+    const base = HZ_MAP[lastTernary] || 639;
+    const target = on ? base + 8 * Math.sin(Date.now() * 0.005) : base;
+    this.osc.frequency.setTargetAtTime(target, this.ctx.currentTime, 0.3);
+  },
+
+  fadeOut() {
+    if (!this.ctx || !this.running) return;
+    this.gainNode.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
+    setTimeout(() => { try { this.ctx.close(); } catch(e){} this.running = false; }, 2200);
+  },
+
+  toggle() {
+    const btn = document.getElementById('audio-btn');
+    if (!this.ctx) {
+      this.init();
+      this.muted = false;
+      btn.textContent = '🔊 639 Hz — ON';
+      btn.classList.add('active');
+      return;
+    }
+    this.muted = !this.muted;
+    this.gainNode.gain.setTargetAtTime(this.muted ? 0 : 0.04, this.ctx.currentTime, 0.1);
+    btn.textContent = this.muted ? '🔇 639 Hz — OFF' : '🔊 639 Hz — ON';
+    btn.classList.toggle('active', !this.muted);
+  },
+};
+</pre>
+
+<span class="section-label">── BLOC 3 : triggers dans updateState() (après le bloc rewireLines) ──</span>
+<pre>
+    // Audio triggers
+    if (Son639.running &amp;&amp; s.ternary !== lastTernary) {
+      Son639.morphTo(HZ_MAP[s.ternary] || 639, 1.5);
+    }
+    if (Son639.running) Son639.setUrgency(s.urgency > 0);
+    if (s.state === 'halted' &amp;&amp; Son639.running) Son639.fadeOut();
+    lastTernary = s.ternary;
+</pre>
+
+<span class="section-label">── BLOC 4 : bouton HTML (dans #panel, avant #ternary-badge) ──</span>
+<pre>
+&lt;button id="audio-btn" onclick="Son639.toggle()"&gt;🔇 ACTIVER 639 Hz&lt;/button&gt;
+</pre>
+
+<span class="section-label">── BLOC 5 : CSS du bouton (dans &lt;style&gt;) ──</span>
+<pre>
+#audio-btn {
+  display: block;
+  width: 100%;
+  background: rgba(180,100,255,0.06);
+  border: 1px solid rgba(180,100,255,0.2);
+  color: #7a6aaa;
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: 2px;
+  padding: 6px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+#audio-btn:hover { background: rgba(180,100,255,0.14); color: #b88aff; }
+#audio-btn.active { border-color: rgba(100,255,180,0.35); color: #44ff88; }
+</pre>
+
+<!-- ═══════════════════════════════════════════════════════════
+     JS DE LA DÉMO
+     ════════════════════════════════════════════════════════ -->
+<script>
+// Même code que dans garden.html, sans les parties VM
+let lastTernary = 'NEU';
+const HZ_MAP = { NEU: 639, POS: 528, NEG: 396 };
+
+const Son639 = {
+  ctx: null, osc: null, gainNode: null, running: false, muted: false,
+
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.osc = this.ctx.createOscillator();
+    this.gainNode = this.ctx.createGain();
+    this.osc.type = 'sine';
+    this.osc.frequency.setValueAtTime(639, this.ctx.currentTime);
+    this.gainNode.gain.value = 0.04;
+    this.osc.connect(this.gainNode).connect(this.ctx.destination);
+    this.osc.start();
+    this.running = true;
+    document.getElementById('demo-status').textContent = 'AudioContext : running · ' + this.ctx.sampleRate + ' Hz';
+  },
+
+  morphTo(hz, duration) {
+    if (!this.ctx || !this.running) return;
+    this.osc.frequency.linearRampToValueAtTime(hz, this.ctx.currentTime + duration);
+  },
+
+  setUrgency(on) {
+    if (!this.ctx || !this.running || this.muted) return;
+    const base = HZ_MAP[lastTernary] || 639;
+    const target = on ? base + 8 * Math.sin(Date.now() * 0.005) : base;
+    this.osc.frequency.setTargetAtTime(target, this.ctx.currentTime, 0.3);
+  },
+
+  fadeOut() {
+    if (!this.ctx || !this.running) return;
+    this.gainNode.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
+    setTimeout(() => {
+      try { this.ctx.close(); } catch(e) {}
+      this.running = false;
+      document.getElementById('demo-status').textContent = 'AudioContext : closed (halted)';
+    }, 2200);
+  },
+
+  toggle() {
+    const btn = document.getElementById('demo-btn');
+    if (!this.ctx) {
+      this.init();
+      this.muted = false;
+      btn.textContent = '🔊 639 Hz — ON';
+      btn.classList.add('active');
+      return;
+    }
+    this.muted = !this.muted;
+    this.gainNode.gain.setTargetAtTime(this.muted ? 0 : 0.04, this.ctx.currentTime, 0.1);
+    btn.textContent = this.muted ? '🔇 639 Hz — OFF' : '🔊 639 Hz — ON';
+    btn.classList.toggle('active', !this.muted);
+    document.getElementById('demo-status').textContent = this.muted ? 'muté' : 'AudioContext : running';
+  },
+};
+
+function setStatus(msg) {
+  document.getElementById('demo-status').textContent = msg;
+}
+</script>
+
+</body>
+</html>

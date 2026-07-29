@@ -1,5 +1,10 @@
 // ─────────────────────────────────────────────
-// VERITAS HORTUS · render · material_advanced.rs
+// EXPERIMENTAL · hors crate — non compilé
+// Ré-intégrer dans src/render/ + déclarer `pub mod material_advanced;`
+// dans src/render/mod.rs pour l'activer.
+// Voir experimental/README.md pour la doctrine du dossier.
+// ─────────────────────────────────────────────
+// VERITAS HORTUS · render · material_advanced.rs (experimental)
 // Architecte  : Isabel Sigouin (InnovCreat)
 // Registre    : Runtime
 // Fonction    : Communiquer
@@ -7,6 +12,7 @@
 // Révolution  : interne
 // Souveraineté: nulle
 // Chaîne      : concret
+// Statut      : experimental (brouillon)
 // Covenant    : Jamais guerre · Jamais cupidité
 //               Toujours connaissance · Toujours amour
 // Constitution v1.0 — Article IV · Langage v1.4 — Deux Centres

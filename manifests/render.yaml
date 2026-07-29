@@ -59,8 +59,6 @@ architecture:
   components:
     - id: material
       responsibility: "SacredMaterial (base_color + pulse_phase + fresnel_power) + palette par solide."
-    - id: material_advanced
-      responsibility: "Matériau avancé (13 paramètres) — audio-reactivity support."
     - id: pulse
       responsibility: "PulsationPlugin — applique la pulse 639 Hz aux entités Pulsating."
     - id: modes
@@ -115,6 +113,16 @@ testing:
   unit_tests: ~
   integration_tests: ~
   coverage_target_pct: 60
+
+gaps:
+  - id: material_advanced
+    location: "experimental/render/material_advanced.rs"
+    description: >-
+      Matériau avancé à 13 uniforms (fresnel/glow/quantum/crystalline/holographic
+      + audio-reactivity) et shader assets/shaders/sacred_pulse_advanced.wgsl.
+      Déplacé dans experimental/ le 2026-07-29 car jamais déclaré dans src/render/mod.rs.
+    reason: "orphan-in-crate — retiré du build, gardé comme brouillon"
+    reintegration: "voir experimental/README.md — étapes de ré-intégration"
 
 tags: [render, 3d, wgsl, pulse, 639hz, platonic, presentation]
 status: active

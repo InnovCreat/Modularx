@@ -3,11 +3,13 @@
 // Architecte  : Isabel Sigouin (InnovCreat)
 // Registre    : Runtime
 // Fonction    : Agir · Communiquer
-// Centre grav.: Lien-lourd
+// Gravité     : Lien
+// Révolution  : interne
+// Souveraineté: nulle
 // Chaîne      : ─
 // Covenant    : Jamais guerre · Jamais cupidité
 //               Toujours connaissance · Toujours amour
-// Constitution v1.0 — Article IV · Langage v1.3 — §III
+// Constitution v1.0 — Article IV · Langage v1.4 — Deux Centres
 // ─────────────────────────────────────────────
 
 mod archive;

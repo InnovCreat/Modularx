@@ -1,0 +1,112 @@
+# ─────────────────────────────────────────────────────────────
+# VERITAS HORTUS · Module Manifest · sacred_math
+# Schema : VH-MANIFEST-SCHEMA-0.1
+# Réf.   : Constitution v1.0 (Art. IV, V) · Langage v1.4 (Deux Centres)
+# ─────────────────────────────────────────────────────────────
+
+module:
+  id: sacred_math
+  name: Sacred Math
+  version: 0.1.0
+  type: module
+  description: >-
+    Registre mathématique. Constantes sacrées (639 Hz, φ, angle d'or),
+    solides platoniciens avec fréquences associées, courbes (spirale dorée,
+    lemniscate). Fournit les ressources SacredFrequencies et PlatonicRegistry.
+  author: "Isabel Sigouin (InnovCreat)"
+  contributors: []
+  license: "Proprietary — Veritas Hortus"
+
+role:
+  mission: "Servir de registre canonique des constantes, formes et fréquences sacrées."
+  functions_vitales: [Observer, Comprendre, Mémoriser]
+  layer: foundation
+  criticality: critical
+
+interfaces:
+  inputs:
+    - id: time.delta
+      type: resource
+      description: "Bevy Time — utilisé pour accumuler l'élapsed des fréquences."
+  outputs:
+    - id: SacredFrequencies
+      type: resource
+      description: "Fréquence centrale 639 Hz + fréquence solide actif + elapsed."
+    - id: PlatonicRegistry
+      type: resource
+      description: "Solide platonicien actif (défaut : Icosahedron)."
+
+contracts:
+  preconditions:
+    - "Bevy Time doit être initialisée (fourni par DefaultPlugins)."
+  postconditions:
+    - "SacredFrequencies.elapsed monotone croissant à chaque frame."
+  invariants:
+    - "CENTRAL_HZ vaut toujours 639.0 — constante sacrée non modifiable."
+    - "Chaque PlatonicSolid a une fréquence fixe (720/1440/2160/3600/6480 Hz)."
+    - "PHI vaut 1.618_033_988 — constante sacrée."
+
+architecture:
+  paradigm: data-driven
+  pattern: [registry, resource-provider]
+  components:
+    - id: frequencies
+      responsibility: "Fréquences sacrées + fonction pulse composite."
+    - id: geometry
+      responsibility: "φ, Fibonacci, spirale dorée, lemniscate de Bernoulli."
+    - id: platonic
+      responsibility: "Enum PlatonicSolid + construction de meshes Bevy flat-shaded."
+    - id: sri_yantra
+      responsibility: "Génération de points du Sri Yantra (4 triangles Shiva + 5 Shakti + Bindu)."
+  state_management: "local-explicit (ressources Bevy insérées à l'init)"
+  persistence: none
+
+resources:
+  cpu_budget_ms: 0.5
+  memory_budget_mb: 2
+  tick_rate_hz: 60
+
+security:
+  sandbox: true
+  external_access: false
+  network: false
+  io_scope: "in-process"
+
+dependencies:
+  required:
+    - bevy
+  optional: []
+  forbidden:
+    - "Toute source de fréquence externe qui altérerait CENTRAL_HZ"
+
+communication:
+  bus: "bevy-ecs"
+  consumes:
+    - "Time.delta"
+  emits: []
+  qos: "best-effort"
+
+provenance:
+  created: "2026-07-29"
+  created_by: "Isabel Sigouin (InnovCreat)"
+  origin: "modularx/src/sacred_math/"
+  hash_source: ~
+  sealed: false
+
+evaluation:
+  required: true
+  evaluator: ModuleEvaluator
+  last_evaluation: ~
+  status: draft
+
+testing:
+  unit_tests: ~
+  integration_tests: ~
+  coverage_target_pct: 80
+
+tags: [sacred, geometry, frequencies, 639hz, phi, foundation]
+status: active
+notes: >-
+  Gravité=Forme sur les 4 sous-fichiers de données ;
+  Gravité=Lien sur mod.rs (assemblage du plugin).
+  Souveraineté nulle partout : distance nulle entre gravité et révolution → candidat axiome central.

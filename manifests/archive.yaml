@@ -1,0 +1,104 @@
+# ─────────────────────────────────────────────────────────────
+# VERITAS HORTUS · Module Manifest · archive
+# Schema : VH-MANIFEST-SCHEMA-0.1
+# Réf.   : Constitution v1.0 (Art. IV, V) · Langage v1.4 (Deux Centres)
+# ─────────────────────────────────────────────────────────────
+
+module:
+  id: archive
+  name: Living Archive
+  version: 0.1.0
+  type: registry
+  description: >-
+    Mémoire vivante du système. Ressource LivingArchive tenant une liste
+    d'ArchiveEntry (timestamp + message). Prévoit un futur scellement Arweave
+    (TODO dans seal()).
+  author: "Isabel Sigouin (InnovCreat)"
+  contributors: []
+  license: "Proprietary — Veritas Hortus"
+
+role:
+  mission: "Mémoriser les événements marquants du système et préparer leur scellement immutable."
+  functions_vitales: [Mémoriser, Observer]
+  layer: core
+  criticality: high
+
+interfaces:
+  inputs:
+    - id: "seal(time, message)"
+      type: method
+      description: "Ajoute une entrée horodatée à l'archive vivante."
+  outputs:
+    - id: LivingArchive
+      type: resource
+      description: "Vec<ArchiveEntry> avec timestamp (f64) + message (String)."
+
+contracts:
+  preconditions: []
+  postconditions:
+    - "Après seal(t, m), l'entrée (t, m) est présente en dernière position."
+  invariants:
+    - "Les entrées sont append-only — jamais modifiées ni supprimées après ajout."
+    - "L'ordre d'insertion reflète l'ordre chronologique d'invocation de seal()."
+
+architecture:
+  paradigm: event-sourcing
+  pattern: [registry, append-only-log]
+  components:
+    - id: LivingArchive
+      responsibility: "Ressource Bevy tenant le journal des ArchiveEntry."
+    - id: ArchiveEntry
+      responsibility: "Struct (timestamp, message)."
+  state_management: "local-explicit"
+  persistence: "in-memory (TODO: Arweave)"
+
+resources:
+  cpu_budget_ms: 0.1
+  memory_budget_mb: 8
+  tick_rate_hz: ~
+
+security:
+  sandbox: true
+  external_access: false     # false tant que le TODO Arweave n'est pas actif
+  network: false             # idem
+  io_scope: "in-process"
+
+dependencies:
+  required:
+    - bevy
+  optional:
+    - "reqwest ou ureq (futur — pour Arweave)"
+  forbidden:
+    - "toute mutation en place d'une entrée existante"
+
+communication:
+  bus: "bevy-ecs"
+  consumes: []
+  emits: []
+  qos: "durable (in-memory)"
+
+provenance:
+  created: "2026-07-29"
+  created_by: "Isabel Sigouin (InnovCreat)"
+  origin: "modularx/src/archive/"
+  hash_source: ~
+  sealed: false
+
+evaluation:
+  required: true
+  evaluator: ModuleEvaluator
+  last_evaluation: ~
+  status: draft
+
+testing:
+  unit_tests: ~
+  integration_tests: ~
+  coverage_target_pct: 80
+
+tags: [archive, memory, event-sourcing, sparf, arweave, core]
+status: active
+notes: >-
+  Gravité=Temps, Révolution=externe:état système observé → Souveraineté grande.
+  Résonance directe avec la Q2 du Langage (l'état comme historique) et
+  le pattern event-sourcing (§VIII des Précédents convergents).
+  Le futur seal() vers Arweave transformera external_access=true et network=true.

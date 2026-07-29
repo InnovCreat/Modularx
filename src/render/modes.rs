@@ -3,11 +3,13 @@
 // Architecte  : Isabel Sigouin (InnovCreat)
 // Registre    : Runtime
 // Fonction    : Décider · Communiquer
-// Centre grav.: Temps-lourd
+// Gravité     : Temps
+// Révolution  : externe:input utilisateur
+// Souveraineté: grande
 // Chaîne      : trigger
 // Covenant    : Jamais guerre · Jamais cupidité
 //               Toujours connaissance · Toujours amour
-// Constitution v1.0 — Article IV · Langage v1.3 — §III
+// Constitution v1.0 — Article IV · Langage v1.4 — Deux Centres
 // ─────────────────────────────────────────────
 
 use bevy::prelude::*;

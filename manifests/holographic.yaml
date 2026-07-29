@@ -1,0 +1,94 @@
+# ─────────────────────────────────────────────────────────────
+# VERITAS HORTUS · Module Manifest · holographic
+# Schema : VH-MANIFEST-SCHEMA-0.1
+# Réf.   : Constitution v1.0 (Art. IV, V) · Langage v1.4 (Deux Centres)
+# ─────────────────────────────────────────────────────────────
+
+module:
+  id: holographic
+  name: Holographic Layer
+  version: 0.0.1
+  type: module
+  description: >-
+    Couche holographique et VR en développement. Prévu : shaders Fresnel +
+    Scanlines + Aberration chromatique, rendu stéréo OpenXR, audio binaural
+    synchronisé à 639 Hz. Actuellement un stub (Plugin sans systèmes).
+  author: "Isabel Sigouin (InnovCreat)"
+  contributors: []
+  license: "Proprietary — Veritas Hortus"
+
+role:
+  mission: "Étendre le rendu vers une expérience holographique et VR immersive."
+  functions_vitales: [Communiquer, Observer]
+  layer: presentation
+  criticality: low
+
+interfaces:
+  inputs: []
+  outputs: []
+
+contracts:
+  preconditions: []
+  postconditions: []
+  invariants:
+    - "Le plugin n'a aucun effet observable tant que les TODO ne sont pas implémentés."
+
+architecture:
+  paradigm: draft
+  pattern: [plugin, stub]
+  components:
+    - id: HolographicPlugin
+      responsibility: "Point d'attache futur pour bevy_oxr et l'audio binaural."
+  state_management: ~
+  persistence: none
+
+resources:
+  cpu_budget_ms: ~
+  memory_budget_mb: ~
+  tick_rate_hz: ~
+
+security:
+  sandbox: true
+  external_access: false
+  network: false
+  io_scope: "in-process"
+
+dependencies:
+  required:
+    - bevy
+  optional:
+    - "bevy_oxr / bevy_openxr (futur — rendu stéréo)"
+    - "binaural audio crate (futur — synchronisation 639 Hz)"
+  forbidden: []
+
+communication:
+  bus: "bevy-ecs"
+  consumes: []
+  emits: []
+  qos: ~
+
+provenance:
+  created: "2026-07-29"
+  created_by: "Isabel Sigouin (InnovCreat)"
+  origin: "modularx/src/holographic/"
+  hash_source: ~
+  sealed: false
+
+evaluation:
+  required: false            # évaluation reportée tant que le module est un stub
+  evaluator: ModuleEvaluator
+  last_evaluation: ~
+  status: draft
+
+testing:
+  unit_tests: ~
+  integration_tests: ~
+  coverage_target_pct: ~
+
+tags: [holographic, vr, xr, binaural, stub, draft]
+status: draft
+notes: >-
+  Ce module figure dans le repo mais n'est pas branché dans main.rs.
+  À activer quand bevy_oxr sera ajouté aux dépendances.
+  Souveraineté nulle par défaut (stub) — deviendra grande dès qu'un pivot externe
+  (casque XR, audio device) sera introduit.

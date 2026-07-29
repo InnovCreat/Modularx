@@ -3,11 +3,13 @@
 // Architecte  : Isabel Sigouin (InnovCreat)
 // Registre    : Mathématique
 // Fonction    : Observer · Mémoriser
-// Centre grav.: Forme-lourd
+// Gravité     : Forme
+// Révolution  : interne
+// Souveraineté: nulle
 // Chaîne      : ─
 // Covenant    : Jamais guerre · Jamais cupidité
 //               Toujours connaissance · Toujours amour
-// Constitution v1.0 — Article IV · Langage v1.3 — §III
+// Constitution v1.0 — Article IV · Langage v1.4 — Deux Centres
 // ─────────────────────────────────────────────
 
 use bevy::prelude::*;

@@ -1,0 +1,125 @@
+# ─────────────────────────────────────────────────────────────
+# VERITAS HORTUS · Module Manifest · render
+# Schema : VH-MANIFEST-SCHEMA-0.1
+# Réf.   : Constitution v1.0 (Art. IV, V) · Langage v1.4 (Deux Centres)
+# ─────────────────────────────────────────────────────────────
+
+module:
+  id: render
+  name: Render
+  version: 0.1.0
+  type: module
+  description: >-
+    Rendu 3D des solides platoniciens. Scène, éclairage, matériaux WGSL,
+    pulsation 639 Hz, modes de rendu (Wireframe, Shaded, XRay, Realistic,
+    SacredPulse…), sélection clavier (touches 1-5).
+  author: "Isabel Sigouin (InnovCreat)"
+  contributors: []
+  license: "Proprietary — Veritas Hortus"
+
+role:
+  mission: "Rendre visible le langage sacré : solides platoniciens qui pulsent à 639 Hz."
+  functions_vitales: [Agir, Communiquer]
+  layer: presentation
+  criticality: high
+
+interfaces:
+  inputs:
+    - id: PlatonicRegistry
+      type: resource
+      description: "Solide actif à afficher (fourni par sacred_math)."
+    - id: SacredFrequencies
+      type: resource
+      description: "639 Hz + fréquence solide — pilote pulse_phase et échelle."
+    - id: "ButtonInput<KeyCode>"
+      type: resource
+      description: "Touches 1-5 (solides) et R (cycle modes)."
+  outputs:
+    - id: "Entity(ActiveSolid)"
+      type: entity
+      description: "Le solide actif : Mesh3d + SacredMaterial + Pulsating."
+    - id: RenderMode
+      type: resource
+      description: "Mode de rendu courant (6 modes cycliques)."
+
+contracts:
+  preconditions:
+    - "SacredMathPlugin doit être chargé avant RenderPlugin (fournit les ressources)."
+    - "Le shader shaders/sacred_pulse.wgsl doit exister."
+  postconditions:
+    - "Une seule entité ActiveSolid existe à tout instant après startup."
+    - "pulse_phase(t) = t × 639 / 1000 sur tous les matériaux SacredMaterial."
+  invariants:
+    - "Changement de PlatonicSolid → despawn de l'ancien + spawn du nouveau (jamais mutation en place)."
+    - "Chaque solide reçoit sa couleur canonique (feu/terre/air/éther/eau)."
+
+architecture:
+  paradigm: event-driven
+  pattern: [plugin, publish-subscribe, material-based]
+  components:
+    - id: material
+      responsibility: "SacredMaterial (base_color + pulse_phase + fresnel_power) + palette par solide."
+    - id: material_advanced
+      responsibility: "Matériau avancé (13 paramètres) — audio-reactivity support."
+    - id: pulse
+      responsibility: "PulsationPlugin — applique la pulse 639 Hz aux entités Pulsating."
+    - id: modes
+      responsibility: "Enum RenderMode (6 modes) + cycle par touche R."
+  state_management: "local-explicit"
+  persistence: none
+
+resources:
+  cpu_budget_ms: 4.0
+  memory_budget_mb: 64
+  tick_rate_hz: 60
+
+security:
+  sandbox: true
+  external_access: false
+  network: false
+  io_scope: "gpu-render"
+
+dependencies:
+  required:
+    - bevy
+    - "bevy::render"
+    - sacred_math
+  optional: []
+  forbidden: []
+
+communication:
+  bus: "bevy-ecs"
+  consumes:
+    - PlatonicRegistry
+    - SacredFrequencies
+    - "ButtonInput<KeyCode>"
+  emits:
+    - "info!('Solide → …')"
+    - "info!('Render mode → …')"
+  qos: "best-effort"
+
+provenance:
+  created: "2026-07-29"
+  created_by: "Isabel Sigouin (InnovCreat)"
+  origin: "modularx/src/render/"
+  hash_source: ~
+  sealed: false
+
+evaluation:
+  required: true
+  evaluator: ModuleEvaluator
+  last_evaluation: ~
+  status: draft
+
+testing:
+  unit_tests: ~
+  integration_tests: ~
+  coverage_target_pct: 60
+
+tags: [render, 3d, wgsl, pulse, 639hz, platonic, presentation]
+status: active
+notes: >-
+  render/mod.rs et material : Gravité=Forme/Lien, Souveraineté nulle.
+  pulse.rs et modes.rs : Gravité=Temps, Souveraineté grande (dérivés de fréquences / d'inputs).
+  Une opportunité v1.4 : évaluer si render/mod.rs pourrait devenir automodulaire
+  (spawner de solides plutôt que registry fixe).

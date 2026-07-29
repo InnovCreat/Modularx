@@ -1,0 +1,111 @@
+# ─────────────────────────────────────────────────────────────
+# VERITAS HORTUS · Module Manifest · interaction
+# Schema : VH-MANIFEST-SCHEMA-0.1
+# Réf.   : Constitution v1.0 (Art. IV, V) · Langage v1.4 (Deux Centres)
+# ─────────────────────────────────────────────────────────────
+
+module:
+  id: interaction
+  name: Interaction
+  version: 0.1.0
+  type: module
+  description: >-
+    Point d'entrée des inputs utilisateur. Contient actuellement la caméra
+    orbitale (yaw, pitch, distance, target) contrôlée à la souris.
+  author: "Isabel Sigouin (InnovCreat)"
+  contributors: []
+  license: "Proprietary — Veritas Hortus"
+
+role:
+  mission: "Traduire les gestes utilisateur en modifications de l'état spatial."
+  functions_vitales: [Observer, Agir]
+  layer: presentation
+  criticality: high
+
+interfaces:
+  inputs:
+    - id: MouseMotion
+      type: event
+      description: "Delta souris."
+    - id: MouseWheel
+      type: event
+      description: "Molette (Line ou Pixel)."
+    - id: ButtonInput<MouseButton>
+      type: resource
+      description: "Boutons souris (Left = orbite, Right = pan)."
+  outputs:
+    - id: OrbitalCamera
+      type: resource
+      description: "yaw · pitch · distance · target — état de la caméra orbitale."
+    - id: Transform<Camera3d>
+      type: component
+      description: "Transformation appliquée à la caméra 3D."
+
+contracts:
+  preconditions:
+    - "Une entité Camera3d doit exister dans la scène."
+  postconditions:
+    - "pitch ∈ [-1.4, 1.4] · distance ∈ [1.0, 40.0] (clamp systématique)."
+    - "Camera regarde toujours vers OrbitalCamera.target."
+  invariants:
+    - "Les limites de pitch et distance ne sont jamais franchies."
+
+architecture:
+  paradigm: event-driven
+  pattern: [plugin, controller]
+  components:
+    - id: camera
+      responsibility: "Caméra orbitale (yaw/pitch/distance/target) + 3 systèmes drag/zoom."
+  state_management: "local-explicit (OrbitalCamera resource)"
+  persistence: none
+
+resources:
+  cpu_budget_ms: 0.2
+  memory_budget_mb: 1
+  tick_rate_hz: 60
+
+security:
+  sandbox: true
+  external_access: false
+  network: false
+  io_scope: "user-input"
+
+dependencies:
+  required:
+    - bevy
+    - "bevy::input"
+  optional: []
+  forbidden: []
+
+communication:
+  bus: "bevy-ecs"
+  consumes:
+    - MouseMotion
+    - MouseWheel
+    - "ButtonInput<MouseButton>"
+  emits: []
+  qos: "immediate"
+
+provenance:
+  created: "2026-07-29"
+  created_by: "Isabel Sigouin (InnovCreat)"
+  origin: "modularx/src/interaction/"
+  hash_source: ~
+  sealed: false
+
+evaluation:
+  required: true
+  evaluator: ModuleEvaluator
+  last_evaluation: ~
+  status: draft
+
+testing:
+  unit_tests: ~
+  integration_tests: ~
+  coverage_target_pct: 60
+
+tags: [interaction, camera, input, orbital]
+status: active
+notes: >-
+  camera.rs : Gravité=Temps, Révolution=externe:input utilisateur → Souveraineté grande (dérivé).
+  Le module orbite littéralement le pivot utilisateur — cohérent avec la doctrine v1.4.

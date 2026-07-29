@@ -13,6 +13,7 @@
 // ─────────────────────────────────────────────
 
 mod archive;
+mod gabarit;
 mod holographic;
 mod interaction;
 mod render;

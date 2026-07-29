@@ -1,3 +1,13 @@
+// ─────────────────────────────────────────────
+// VERITAS HORTUS · archive · mod.rs
+// Architecte : Isabel Sigouin (InnovCreat)
+// Registre   : Événements
+// Fonction   : Mémoriser · Observer
+// Covenant   : Jamais guerre · Jamais cupidité
+//              Toujours connaissance · Toujours amour
+// Constitution v1.0 — Article IV (Organes)
+// ─────────────────────────────────────────────
+
 use bevy::prelude::*;
 
 /// SPARF Ring — real-time geometric harmony surveillance

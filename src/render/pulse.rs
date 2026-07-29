@@ -1,3 +1,13 @@
+// ─────────────────────────────────────────────
+// VERITAS HORTUS · render · pulse.rs
+// Architecte : Isabel Sigouin (InnovCreat)
+// Registre   : Runtime
+// Fonction   : Communiquer
+// Covenant   : Jamais guerre · Jamais cupidité
+//              Toujours connaissance · Toujours amour
+// Constitution v1.0 — Article IV (Organes)
+// ─────────────────────────────────────────────
+
 use bevy::prelude::*;
 use crate::sacred_math::frequencies::SacredFrequencies;
 

@@ -1,3 +1,13 @@
+// ─────────────────────────────────────────────
+// VERITAS HORTUS · render · modes.rs
+// Architecte : Isabel Sigouin (InnovCreat)
+// Registre   : Runtime
+// Fonction   : Décider · Communiquer
+// Covenant   : Jamais guerre · Jamais cupidité
+//              Toujours connaissance · Toujours amour
+// Constitution v1.0 — Article IV (Organes)
+// ─────────────────────────────────────────────
+
 use bevy::prelude::*;
 
 #[derive(Resource, Default, Debug, Clone, Copy, PartialEq)]

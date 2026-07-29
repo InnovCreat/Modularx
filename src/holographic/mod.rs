@@ -1,3 +1,13 @@
+// ─────────────────────────────────────────────
+// VERITAS HORTUS · holographic · mod.rs
+// Architecte : Isabel Sigouin (InnovCreat)
+// Registre   : Runtime
+// Fonction   : Communiquer · Observer
+// Covenant   : Jamais guerre · Jamais cupidité
+//              Toujours connaissance · Toujours amour
+// Constitution v1.0 — Article IV (Organes)
+// ─────────────────────────────────────────────
+
 use bevy::prelude::*;
 
 /// Holographic & VR layer (branche en développement)

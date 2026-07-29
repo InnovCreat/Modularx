@@ -1,3 +1,13 @@
+// ─────────────────────────────────────────────
+// VERITAS HORTUS · sacred_math · sri_yantra.rs
+// Architecte : Isabel Sigouin (InnovCreat)
+// Registre   : Mathématique
+// Fonction   : Comprendre
+// Covenant   : Jamais guerre · Jamais cupidité
+//              Toujours connaissance · Toujours amour
+// Constitution v1.0 — Article IV (Organes)
+// ─────────────────────────────────────────────
+
 use bevy::prelude::Vec2;
 
 /// Sri Yantra — 4 Shiva triangles (↑) + 5 Shakti triangles (↓) + Bindu

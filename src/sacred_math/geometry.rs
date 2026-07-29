@@ -1,3 +1,13 @@
+// ─────────────────────────────────────────────
+// VERITAS HORTUS · sacred_math · geometry.rs
+// Architecte : Isabel Sigouin (InnovCreat)
+// Registre   : Mathématique
+// Fonction   : Comprendre
+// Covenant   : Jamais guerre · Jamais cupidité
+//              Toujours connaissance · Toujours amour
+// Constitution v1.0 — Article IV (Organes)
+// ─────────────────────────────────────────────
+
 use bevy::prelude::Vec2;
 
 pub const PHI: f32 = 1.618_033_988;

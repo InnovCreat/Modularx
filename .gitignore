@@ -32,3 +32,10 @@ game28.dta
 
 # Log files
 warnings.log
+
+# Node.js
+node_modules/
+dist/
+
+# Rust
+crystal-ascii-3d/target/

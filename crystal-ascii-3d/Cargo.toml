@@ -1,0 +1,6 @@
+[package]
+name = "crystal-ascii-3d"
+version = "0.1.0"
+edition = "2021"
+description = "Crystal ASCII 3D — NEXUS Sovereign Renderer for Veritas Hortus"
+license = "MIT"
